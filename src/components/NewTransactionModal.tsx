@@ -89,10 +89,20 @@ export default function NewTransactionModal({
       if (remainingTokens.length > 0) {
         const catToken = remainingTokens[0]
         if (catToken) {
-          const partialCat = lookups.categorias.find(c => 
-            c.nome.toLowerCase().includes(catToken.toLowerCase()) && 
-            (c.tipo === tipo || c.tipo === 'AMBOS')
+          const validCats = lookups.categorias.filter(c => c.tipo === tipo || c.tipo === 'AMBOS')
+          
+          // Try to find a category that starts with the inputted token (best autocomplete match)
+          let partialCat = validCats.find(c => 
+            c.nome.toLowerCase().startsWith(catToken.toLowerCase())
           )
+          
+          // Fallback to testing if the string just includes it
+          if (!partialCat) {
+            partialCat = validCats.find(c =>
+              c.nome.toLowerCase().includes(catToken.toLowerCase())
+            )
+          }
+
           setCategoriaId(partialCat ? partialCat.id : '')
         }
 
