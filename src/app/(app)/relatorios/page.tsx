@@ -1,9 +1,11 @@
 import { getTenantPrisma } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import FinancialSummary from "@/components/reports/FinancialSummary"
-import CategoryReport from "@/components/reports/CategoryReport"
+import IncomeByCategory from "@/components/reports/IncomeByCategory"
+import ExpensesByCategory from "@/components/reports/ExpensesByCategory"
+import IncomeByCulto from "@/components/reports/IncomeByCulto"
 import MonthlyEvolutionReport from "@/components/reports/MonthlyEvolutionReport"
-import { getFinancialSummary, getCategoryTotals, getMonthlyTotals, getMonthlyEvolution } from "@/app/actions/finance"
+import { getFinancialSummary, getIncomeByCategory, getExpensesByCategory, getIncomeByCulto, getMonthlyEvolution } from "@/app/actions/finance"
 
 export default async function RelatoriosPage({
   searchParams,
@@ -18,10 +20,11 @@ export default async function RelatoriosPage({
 
   const currentYear = searchParams.ano ? parseInt(searchParams.ano) : new Date().getFullYear()
 
-  const [summary, transactionsByCategory, grouped, evolutionData] = await Promise.all([
+  const [summary, incomeByCategory, expensesByCategory, incomeByCulto, evolutionData] = await Promise.all([
     getFinancialSummary(currentYear),
-    getCategoryTotals(currentYear),
-    getMonthlyTotals(currentYear),
+    getIncomeByCategory(currentYear),
+    getExpensesByCategory(currentYear),
+    getIncomeByCulto(currentYear),
     getMonthlyEvolution()
   ])
 
@@ -47,38 +50,13 @@ export default async function RelatoriosPage({
 
       <FinancialSummary entradas={summary.entradas} saidas={summary.saidas} saldo={summary.saldo} />
 
-      <CategoryReport data={transactionsByCategory} />
+      <IncomeByCategory data={incomeByCategory} />
+      
+      <IncomeByCulto data={incomeByCulto} />
+
+      <ExpensesByCategory data={expensesByCategory} />
 
       <MonthlyEvolutionReport data={evolutionData} />
-
-      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Mês</th>
-              <th style={{ textAlign: 'right', color: 'var(--success)' }}>Entradas</th>
-              <th style={{ textAlign: 'right', color: 'var(--danger)' }}>Saídas</th>
-              <th style={{ textAlign: 'right' }}>Saldo</th>
-            </tr>
-          </thead>
-          <tbody>
-            {months.map((m, idx) => {
-              const data = grouped[idx] || { entradas: 0, saidas: 0 }
-              const saldo = data.entradas - data.saidas
-              return (
-                <tr key={m}>
-                  <td style={{ fontWeight: 500 }}>{m}</td>
-                  <td style={{ textAlign: 'right' }}>R$ {data.entradas.toFixed(2).replace('.', ',')}</td>
-                  <td style={{ textAlign: 'right' }}>R$ {data.saidas.toFixed(2).replace('.', ',')}</td>
-                  <td style={{ textAlign: 'right', fontWeight: 'bold', color: saldo >= 0 ? 'var(--success)' : 'var(--danger)' }}>
-                    R$ {saldo.toFixed(2).replace('.', ',')}
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </div>
     </div>
   )
 }

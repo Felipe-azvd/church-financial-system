@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function CategoryReport({
+export default function ExpensesByCategory({
   data
 }: {
   data: { category: string; total: number }[]
@@ -8,7 +8,7 @@ export default function CategoryReport({
   return (
     <div className="card" style={{ padding: 0, overflow: 'hidden', marginBottom: 'var(--spacing-xl)' }}>
       <h2 style={{ padding: 'var(--spacing-md)', margin: 0, borderBottom: '1px solid var(--border-color)', fontSize: '1.25rem', color: 'var(--text-primary)' }}>
-        Transações por Categoria
+        Saídas por Categoria
       </h2>
       <table className="data-table">
         <thead>
@@ -21,14 +21,14 @@ export default function CategoryReport({
           {data.length === 0 ? (
             <tr>
               <td colSpan={2} style={{ textAlign: 'center', padding: 'var(--spacing-xl)', color: 'var(--text-muted)' }}>
-                Nenhuma transação com categoria encontrada.
+                Nenhuma saída por categoria registrada.
               </td>
             </tr>
           ) : (
             data.map((item) => (
               <tr key={item.category}>
                 <td style={{ fontWeight: 500 }}>{item.category}</td>
-                <td style={{ textAlign: 'right', fontWeight: 'bold' }}>
+                <td style={{ textAlign: 'right', fontWeight: 'bold', color: 'var(--danger)' }}>
                   {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.total)}
                 </td>
               </tr>

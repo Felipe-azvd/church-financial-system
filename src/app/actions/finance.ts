@@ -133,7 +133,7 @@ export async function getFinancialSummary(ano: number) {
   }
 }
 
-export async function getCategoryTotals(ano: number) {
+export async function getIncomeByCategory(ano: number) {
   const { db, tenantId } = await getTenantPrisma()
   const startDate = new Date(`${ano}-01-01T00:00:00.000Z`)
   const endDate = new Date(`${ano}-12-31T23:59:59.999Z`)
@@ -143,6 +143,7 @@ export async function getCategoryTotals(ano: number) {
     _sum: { valor: true },
     where: {
       igreja_id: tenantId,
+      tipo: "ENTRADA",
       categoria_id: { not: null },
       data: { gte: startDate, lte: endDate }
     }
@@ -157,6 +158,66 @@ export async function getCategoryTotals(ano: number) {
     const cat = categories.find(c => c.id === g.categoria_id)
     return {
       category: cat ? cat.nome : "Desconhecida",
+      total: g._sum.valor || 0
+    }
+  }).sort((a, b) => b.total - a.total)
+}
+
+export async function getExpensesByCategory(ano: number) {
+  const { db, tenantId } = await getTenantPrisma()
+  const startDate = new Date(`${ano}-01-01T00:00:00.000Z`)
+  const endDate = new Date(`${ano}-12-31T23:59:59.999Z`)
+
+  const grouped = await db.transacao.groupBy({
+    by: ["categoria_id"],
+    _sum: { valor: true },
+    where: {
+      igreja_id: tenantId,
+      tipo: "SAIDA",
+      categoria_id: { not: null },
+      data: { gte: startDate, lte: endDate }
+    }
+  })
+
+  const categoryIds = grouped.map((g) => g.categoria_id as string)
+  const categories = await db.categoria.findMany({
+    where: { id: { in: categoryIds } }
+  })
+
+  return grouped.map(g => {
+    const cat = categories.find(c => c.id === g.categoria_id)
+    return {
+      category: cat ? cat.nome : "Desconhecida",
+      total: g._sum.valor || 0
+    }
+  }).sort((a, b) => b.total - a.total)
+}
+
+export async function getIncomeByCulto(ano: number) {
+  const { db, tenantId } = await getTenantPrisma()
+  const startDate = new Date(`${ano}-01-01T00:00:00.000Z`)
+  const endDate = new Date(`${ano}-12-31T23:59:59.999Z`)
+
+  const grouped = await db.transacao.groupBy({
+    by: ["culto_id"],
+    _sum: { valor: true },
+    where: {
+      igreja_id: tenantId,
+      tipo: "ENTRADA",
+      culto_id: { not: null },
+      data: { gte: startDate, lte: endDate }
+    }
+  })
+
+  const cultoIds = grouped.map((g) => g.culto_id as string)
+  const cultos = await db.culto.findMany({
+    where: { id: { in: cultoIds } }
+  })
+
+  return grouped.map(g => {
+    const cultoObj = cultos.find(c => c.id === g.culto_id)
+    return {
+      culto: cultoObj ? cultoObj.nome : "Desconhecido",
       total: g._sum.valor || 0
     }
   }).sort((a, b) => b.total - a.total)
