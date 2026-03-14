@@ -1,20 +1,32 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { createTransaction } from '@/app/actions/finance'
+import { createTransaction, updateTransaction } from '@/app/actions/finance'
 
 type Lookup = { id: string; nome: string; tipo?: string }
+
+export type TransactionEditData = {
+  id: string
+  descricao: string
+  valor: number
+  data: string
+  tipo: string
+  categoria_id?: string | null
+  culto_id?: string | null
+}
 
 export default function NewTransactionModal({
   isOpen,
   onClose,
   onSuccess,
   lookups,
+  transaction
 }: {
   isOpen: boolean
   onClose: () => void
   onSuccess: () => void
   lookups: { categorias: Lookup[]; cultos: Lookup[] }
+  transaction?: TransactionEditData | null
 }) {
   const [tipo, setTipo] = useState<'ENTRADA' | 'SAIDA'>('ENTRADA')
   const [loading, setLoading] = useState(false)
@@ -23,36 +35,91 @@ export default function NewTransactionModal({
   const [quickEntry, setQuickEntry] = useState('')
   const [descricao, setDescricao] = useState('')
   const [categoriaId, setCategoriaId] = useState('')
+  const [cultoId, setCultoId] = useState('')
+  const [dataString, setDataString] = useState(new Date().toISOString().split('T')[0])
   const [valorRaw, setValorRaw] = useState<number>(0)
   const [valorDisplay, setValorDisplay] = useState<string>('')
   const valorInputRef = useRef<HTMLInputElement>(null)
 
+  // Load initial data if editing, or reset if creating
+  useEffect(() => {
+    if (isOpen) {
+      if (transaction) {
+        setTipo(transaction.tipo as 'ENTRADA' | 'SAIDA')
+        setValorRaw(transaction.valor)
+        setValorDisplay(formatCurrency(transaction.valor))
+        setDescricao(transaction.descricao)
+        setCategoriaId(transaction.categoria_id || '')
+        setCultoId(transaction.culto_id || '')
+        setDataString(transaction.data)
+      } else {
+        setTipo('ENTRADA')
+        setValorRaw(0)
+        setValorDisplay('')
+        setDescricao('')
+        setCategoriaId('')
+        setCultoId('')
+        setQuickEntry('')
+        setDataString(new Date().toISOString().split('T')[0])
+      }
+      setSuccessMsg('')
+      setError('')
+    }
+  }, [isOpen, transaction])
+
   const handleQuickEntry = (text: string) => {
     if (!text.trim()) return
 
-    // Extract first number (can have comma or dot) and the remainder as description
-    const match = text.trim().match(/^(\d+(?:[.,]\d+)?)\s+(.+)$/i)
-    if (match) {
-      const rawVal = match[1].replace(',', '.')
+    const tokens = text.trim().split(/\s+/)
+    if (tokens.length === 0) return
+
+    // Extract first number
+    const numericTokenIndex = tokens.findIndex(t => /^\d+(?:[.,]\d+)?$/.test(t))
+    
+    if (numericTokenIndex !== -1) {
+      const rawVal = tokens[numericTokenIndex].replace(',', '.')
       const numericValue = parseFloat(rawVal)
       if (!isNaN(numericValue) && numericValue > 0) {
         setValorRaw(numericValue)
         setValorDisplay(formatCurrency(numericValue))
       }
+
+      const remainingTokens = tokens.filter((_, idx) => idx !== numericTokenIndex)
       
-      const desc = match[2].trim()
-      setDescricao(desc)
-      
-      // Try to find matching category (case insensitive, contains wording)
-      const partialCat = lookups.categorias.find(c => 
-         c.nome.toLowerCase().includes(desc.toLowerCase()) && 
-         (c.tipo === tipo || c.tipo === 'AMBOS')
-      )
-      
-      if (partialCat) {
-         setCategoriaId(partialCat.id)
-      } else {
-         setCategoriaId('')
+      if (remainingTokens.length > 0) {
+        const catToken = remainingTokens[0]
+        if (catToken) {
+          const partialCat = lookups.categorias.find(c => 
+            c.nome.toLowerCase().includes(catToken.toLowerCase()) && 
+            (c.tipo === tipo || c.tipo === 'AMBOS')
+          )
+          setCategoriaId(partialCat ? partialCat.id : '')
+        }
+
+        let matchedCultoId = ''
+        let cultoTokenMatched = ''
+
+        // Search for culto in the tokens after the category token
+        const potentialCultoTokens = remainingTokens.slice(1)
+        for (const token of potentialCultoTokens) {
+          const partialCulto = lookups.cultos.find(c =>
+             c.nome.toLowerCase().includes(token.toLowerCase())
+          )
+          if (partialCulto) {
+            matchedCultoId = partialCulto.id
+            cultoTokenMatched = token
+            break
+          }
+        }
+        
+        setCultoId(matchedCultoId)
+
+        // Description becomes the remaining text, minus the matched Culto token to keep it clean
+        let descTokens = [...remainingTokens]
+        if (cultoTokenMatched) {
+          descTokens = descTokens.filter(t => t !== cultoTokenMatched)
+        }
+        setDescricao(descTokens.join(' '))
       }
     }
   }
@@ -111,26 +178,26 @@ export default function NewTransactionModal({
     const formData = new FormData(e.currentTarget)
     
     try {
-      await createTransaction({
+      const payload = {
         descricao: formData.get('descricao') as string,
         valor: valorRaw,
         data: formData.get('data') as string,
         tipo: tipo,
         categoria_id: formData.get('categoria_id') as string || null,
         culto_id: (tipo === 'ENTRADA') ? (formData.get('culto_id') as string || null) : null,
-      })
-      setSuccessMsg('✓ Lançamento salvo com sucesso')
+      }
+      
+      if (transaction) {
+        await updateTransaction(transaction.id, payload)
+        setSuccessMsg('✓ Lançamento atualizado com sucesso')
+      } else {
+        await createTransaction(payload)
+        setSuccessMsg('✓ Lançamento salvo com sucesso')
+      }
+
       setTimeout(() => {
         onSuccess()
         onClose()
-        // reset form state
-        setTipo('ENTRADA')
-        setValorRaw(0)
-        setValorDisplay('')
-        setDescricao('')
-        setCategoriaId('')
-        setQuickEntry('')
-        setSuccessMsg('')
       }, 1000)
     } catch (err: any) {
       setError(err.message || 'Erro ao registrar lançamentos')
@@ -168,7 +235,9 @@ export default function NewTransactionModal({
   return (
     <div style={modalOverlayStyle} onClick={(e) => { if (e.target === e.currentTarget) onClose() }}>
       <div style={modalContentStyle}>
-        <h2 style={{ marginBottom: 'var(--spacing-lg)', marginTop: 0, color: 'var(--text-primary)' }}>Novo lançamento</h2>
+        <h2 style={{ marginBottom: 'var(--spacing-lg)', marginTop: 0, color: 'var(--text-primary)' }}>
+          {transaction ? 'Editar lançamento' : 'Novo lançamento'}
+        </h2>
         
         {error && <div style={{ color: 'var(--danger)', marginBottom: 'var(--spacing-sm)', padding: 'var(--spacing-xs)', backgroundColor: 'rgba(239, 68, 68, 0.1)', borderRadius: 'var(--radius-sm)' }}>{error}</div>}
         {successMsg && <div style={{ color: 'var(--success)', marginBottom: 'var(--spacing-sm)', padding: 'var(--spacing-xs)', backgroundColor: 'rgba(16, 185, 129, 0.1)', borderRadius: 'var(--radius-sm)', fontWeight: 600 }}>{successMsg}</div>}
@@ -214,7 +283,7 @@ export default function NewTransactionModal({
           <div className="grid grid-cols-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--spacing-md)' }}>
             <div className="input-group col-span-1" style={{ gridColumn: 'span 1 / span 1' }}>
               <label className="input-label">Data</label>
-              <input type="date" name="data" required className="input-field w-full" style={{ width: '100%' }} defaultValue={new Date().toISOString().split('T')[0]} />
+              <input type="date" name="data" required className="input-field w-full" style={{ width: '100%' }} value={dataString} onChange={e => setDataString(e.target.value)} />
             </div>
             
             <div className="input-group col-span-2" style={{ gridColumn: 'span 2 / span 2' }}>
@@ -259,7 +328,7 @@ export default function NewTransactionModal({
             {tipo === 'ENTRADA' && (
               <div className="input-group">
                 <label className="input-label">Culto (Opcional)</label>
-                <select name="culto_id" className="input-field">
+                <select name="culto_id" className="input-field" value={cultoId} onChange={e => setCultoId(e.target.value)}>
                   <option value="">Nenhum</option>
                   {lookups.cultos.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
                 </select>
@@ -297,7 +366,7 @@ export default function NewTransactionModal({
           <div style={{ display: 'flex', gap: 'var(--spacing-md)', justifyContent: 'flex-end', marginTop: 'var(--spacing-md)', paddingTop: 'var(--spacing-md)', borderTop: '1px solid var(--border-color)' }}>
             <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
             <button type="submit" className="btn btn-primary" disabled={loading} style={{ backgroundColor: tipo === 'ENTRADA' ? 'var(--success)' : 'var(--danger)', borderColor: tipo === 'ENTRADA' ? 'var(--success)' : 'var(--danger)' }}>
-              {loading ? 'Salvando...' : 'Salvar lançamento'}
+              {loading ? 'Salvando...' : (transaction ? 'Salvar alterações' : 'Salvar lançamento')}
             </button>
           </div>
         </form>

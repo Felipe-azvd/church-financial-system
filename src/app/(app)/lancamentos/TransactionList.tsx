@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { deleteTransaction } from '@/app/actions/finance'
-import TransactionForm from '@/components/TransactionForm'
+import NewTransactionModal from '@/components/NewTransactionModal'
 
 type Lookup = { id: string; nome: string; tipo?: string }
 
@@ -116,31 +116,27 @@ export default function TransactionList({
     )
   }
 
-  if (editingTx) {
-    return (
-      <div style={{ marginBottom: 'var(--spacing-xl)' }}>
-        <TransactionForm 
-          lookups={lookups} 
-          tipo={editingTx.tipo as 'ENTRADA' | 'SAIDA'}
-          onSuccess={() => setEditingTx(null)}
-          onCancel={() => setEditingTx(null)}
-          initialData={{
-            id: editingTx.id,
-            descricao: editingTx.descricao,
-            data: new Date(editingTx.data).toISOString().split('T')[0],
-            valor: editingTx.valor,
-            categoria_id: editingTx.categoria_id,
-            culto_id: editingTx.culto_id || ''
-          }}
-        />
-      </div>
-    )
-  }
-
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: 'var(--spacing-xl)', alignItems: 'start' }}>
-      {renderTable(entradas, 'ENTRADA')}
-      {renderTable(saidas, 'SAIDA')}
-    </div>
+    <>
+      <NewTransactionModal 
+        isOpen={!!editingTx}
+        onClose={() => setEditingTx(null)}
+        onSuccess={() => setEditingTx(null)}
+        lookups={lookups} 
+        transaction={editingTx ? {
+          id: editingTx.id,
+          descricao: editingTx.descricao,
+          data: new Date(editingTx.data).toISOString().split('T')[0],
+          valor: editingTx.valor,
+          tipo: editingTx.tipo,
+          categoria_id: editingTx.categoria_id,
+          culto_id: editingTx.culto_id || ''
+        } : null}
+      />
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: 'var(--spacing-xl)', alignItems: 'start' }}>
+        {renderTable(entradas, 'ENTRADA')}
+        {renderTable(saidas, 'SAIDA')}
+      </div>
+    </>
   )
 }
