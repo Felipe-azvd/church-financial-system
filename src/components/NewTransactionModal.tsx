@@ -19,6 +19,7 @@ export default function NewTransactionModal({
   const [tipo, setTipo] = useState<'ENTRADA' | 'SAIDA'>('ENTRADA')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [successMsg, setSuccessMsg] = useState('')
   const [valorRaw, setValorRaw] = useState<number>(0)
   const [valorDisplay, setValorDisplay] = useState<string>('')
   const valorInputRef = useRef<HTMLInputElement>(null)
@@ -85,12 +86,16 @@ export default function NewTransactionModal({
         categoria_id: formData.get('categoria_id') as string || null,
         culto_id: (tipo === 'ENTRADA') ? (formData.get('culto_id') as string || null) : null,
       })
-      onSuccess()
-      onClose()
-      // reset form state maybe? 
-      setTipo('ENTRADA')
-      setValorRaw(0)
-      setValorDisplay('')
+      setSuccessMsg('✓ Lançamento salvo com sucesso')
+      setTimeout(() => {
+        onSuccess()
+        onClose()
+        // reset form state maybe? 
+        setTipo('ENTRADA')
+        setValorRaw(0)
+        setValorDisplay('')
+        setSuccessMsg('')
+      }, 1000)
     } catch (err: any) {
       setError(err.message || 'Erro ao registrar lançamentos')
     } finally {
@@ -130,6 +135,7 @@ export default function NewTransactionModal({
         <h2 style={{ marginBottom: 'var(--spacing-lg)', marginTop: 0, color: 'var(--text-primary)' }}>Novo lançamento</h2>
         
         {error && <div style={{ color: 'var(--danger)', marginBottom: 'var(--spacing-sm)', padding: 'var(--spacing-xs)', backgroundColor: 'rgba(239, 68, 68, 0.1)', borderRadius: 'var(--radius-sm)' }}>{error}</div>}
+        {successMsg && <div style={{ color: 'var(--success)', marginBottom: 'var(--spacing-sm)', padding: 'var(--spacing-xs)', backgroundColor: 'rgba(16, 185, 129, 0.1)', borderRadius: 'var(--radius-sm)', fontWeight: 600 }}>{successMsg}</div>}
 
         <div style={{ display: 'flex', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-xl)' }}>
           <button 
@@ -157,7 +163,7 @@ export default function NewTransactionModal({
             </div>
             
             <div className="input-group col-span-2" style={{ gridColumn: 'span 2 / span 2' }}>
-              <label className="input-label">Valor (R$)</label>
+              <label className="input-label" style={{ fontWeight: 600, color: 'var(--text-primary)' }}>Valor (R$)</label>
               <input 
                 ref={valorInputRef}
                 type="text" 
@@ -166,7 +172,15 @@ export default function NewTransactionModal({
                 required 
                 className="input-field" 
                 placeholder="R$ 0,00" 
-                style={{ fontSize: '1.2rem', fontWeight: 600 }}
+                style={{ 
+                  fontSize: '1.5rem', 
+                  fontWeight: 700, 
+                  backgroundColor: 'var(--bg-tertiary)',
+                  color: 'var(--text-primary)',
+                  borderColor: tipo === 'ENTRADA' ? 'rgba(16, 185, 129, 0.5)' : 'rgba(239, 68, 68, 0.5)',
+                  borderWidth: '2px',
+                  transition: 'border-color 0.2s'
+                }}
               />
             </div>
           </div>
