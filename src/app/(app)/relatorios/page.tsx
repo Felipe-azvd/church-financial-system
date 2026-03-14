@@ -5,7 +5,7 @@ import IncomeByCategory from "@/components/reports/IncomeByCategory"
 import ExpensesByCategory from "@/components/reports/ExpensesByCategory"
 import IncomeByCulto from "@/components/reports/IncomeByCulto"
 import MonthlyEvolutionReport from "@/components/reports/MonthlyEvolutionReport"
-import { getFinancialSummary, getIncomeByCategory, getExpensesByCategory, getIncomeByCulto, getMonthlyEvolution } from "@/app/actions/finance"
+import { getFinancialSummary, getIncomeByCategory, getExpensesByCategory, getIncomeByCulto, getMonthlyEvolution, getMonthlyTotals } from "@/app/actions/finance"
 
 export default async function RelatoriosPage({
   searchParams,
@@ -20,15 +20,37 @@ export default async function RelatoriosPage({
 
   const currentYear = searchParams.ano ? parseInt(searchParams.ano) : new Date().getFullYear()
 
-  const [summary, incomeByCategory, expensesByCategory, incomeByCulto, evolutionData] = await Promise.all([
+  const [summary, incomeByCategory, expensesByCategory, incomeByCulto, evolutionData, monthlyTotals] = await Promise.all([
     getFinancialSummary(currentYear),
     getIncomeByCategory(currentYear),
     getExpensesByCategory(currentYear),
     getIncomeByCulto(currentYear),
-    getMonthlyEvolution()
+    getMonthlyEvolution(),
+    getMonthlyTotals(currentYear)
   ])
 
   const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+
+  let bestRevenueMonthIdx = 0
+  let maxRevenue = -1
+  let worstExpenseMonthIdx = 0
+  let maxExpense = -1
+
+  monthlyTotals.forEach((m, idx) => {
+    if (m.entradas > maxRevenue) {
+      maxRevenue = m.entradas
+      bestRevenueMonthIdx = idx
+    }
+    if (m.saidas > maxExpense) {
+      maxExpense = m.saidas
+      worstExpenseMonthIdx = idx
+    }
+  })
+
+  // Avoid saying January is best month if all months are 0
+  const melhorMes = maxRevenue > 0 ? months[bestRevenueMonthIdx] : '-'
+  const maiorDespesa = maxExpense > 0 ? months[worstExpenseMonthIdx] : '-'
+  const mediaMensal = summary.entradas / 12
 
   return (
     <div>
@@ -48,7 +70,15 @@ export default async function RelatoriosPage({
         </form>
       </div>
 
-      <FinancialSummary entradas={summary.entradas} saidas={summary.saidas} saldo={summary.saldo} />
+      <FinancialSummary 
+        ano={currentYear}
+        entradas={summary.entradas} 
+        saidas={summary.saidas} 
+        saldo={summary.saldo} 
+        melhorMes={melhorMes}
+        maiorDespesa={maiorDespesa}
+        mediaMensal={mediaMensal}
+      />
 
       <IncomeByCategory data={incomeByCategory} />
       
