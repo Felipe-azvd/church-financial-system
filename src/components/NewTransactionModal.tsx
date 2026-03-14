@@ -19,15 +19,28 @@ export default function NewTransactionModal({
   const [tipo, setTipo] = useState<'ENTRADA' | 'SAIDA'>('ENTRADA')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [valorRaw, setValorRaw] = useState<number>(0)
+  const [valorDisplay, setValorDisplay] = useState<string>('')
   const valorInputRef = useRef<HTMLInputElement>(null)
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(value)
+  }
 
   // Format value as local currency when typing
   const handleValorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.replace(/\D/g, '')
-    if (value) {
-      value = (parseInt(value, 10) / 100).toFixed(2)
+    const value = e.target.value.replace(/\D/g, '')
+    if (!value) {
+      setValorRaw(0)
+      setValorDisplay('')
+      return
     }
-    e.target.value = value
+    const numericValue = parseInt(value, 10) / 100
+    setValorRaw(numericValue)
+    setValorDisplay(formatCurrency(numericValue))
   }
 
   // Handle ESC key to close
@@ -52,6 +65,12 @@ export default function NewTransactionModal({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    
+    if (valorRaw <= 0) {
+      setError('O valor deve ser maior que zero')
+      return
+    }
+
     setLoading(true)
     setError('')
 
@@ -60,7 +79,7 @@ export default function NewTransactionModal({
     try {
       await createTransaction({
         descricao: formData.get('descricao') as string,
-        valor: parseFloat(formData.get('valor') as string),
+        valor: valorRaw,
         data: formData.get('data') as string,
         tipo: tipo,
         categoria_id: formData.get('categoria_id') as string || null,
@@ -70,6 +89,8 @@ export default function NewTransactionModal({
       onClose()
       // reset form state maybe? 
       setTipo('ENTRADA')
+      setValorRaw(0)
+      setValorDisplay('')
     } catch (err: any) {
       setError(err.message || 'Erro ao registrar lançamentos')
     } finally {
@@ -139,13 +160,12 @@ export default function NewTransactionModal({
               <label className="input-label">Valor (R$)</label>
               <input 
                 ref={valorInputRef}
-                type="number" 
-                step="0.01" 
-                min="0.01" 
-                name="valor" 
+                type="text" 
+                value={valorDisplay}
+                onChange={handleValorChange}
                 required 
                 className="input-field" 
-                placeholder="0.00" 
+                placeholder="R$ 0,00" 
                 style={{ fontSize: '1.2rem', fontWeight: 600 }}
               />
             </div>
