@@ -2,7 +2,8 @@ import { getTenantPrisma } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import FinancialSummary from "@/components/reports/FinancialSummary"
 import CategoryReport from "@/components/reports/CategoryReport"
-import { getFinancialSummary, getCategoryTotals, getMonthlyTotals } from "@/app/actions/finance"
+import MonthlyEvolutionReport from "@/components/reports/MonthlyEvolutionReport"
+import { getFinancialSummary, getCategoryTotals, getMonthlyTotals, getMonthlyEvolution } from "@/app/actions/finance"
 
 export default async function RelatoriosPage({
   searchParams,
@@ -17,10 +18,11 @@ export default async function RelatoriosPage({
 
   const currentYear = searchParams.ano ? parseInt(searchParams.ano) : new Date().getFullYear()
 
-  const [summary, transactionsByCategory, grouped] = await Promise.all([
+  const [summary, transactionsByCategory, grouped, evolutionData] = await Promise.all([
     getFinancialSummary(currentYear),
     getCategoryTotals(currentYear),
-    getMonthlyTotals(currentYear)
+    getMonthlyTotals(currentYear),
+    getMonthlyEvolution()
   ])
 
   const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
@@ -46,6 +48,8 @@ export default async function RelatoriosPage({
       <FinancialSummary entradas={summary.entradas} saidas={summary.saidas} saldo={summary.saldo} />
 
       <CategoryReport data={transactionsByCategory} />
+
+      <MonthlyEvolutionReport data={evolutionData} />
 
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
         <table className="data-table">

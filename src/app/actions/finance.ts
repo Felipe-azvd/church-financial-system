@@ -194,3 +194,25 @@ export async function getMonthlyTotals(ano: number) {
 
   return monthlyTotals
 }
+
+export async function getMonthlyEvolution() {
+  const { db, tenantId } = await getTenantPrisma()
+  
+  const results = await db.$queryRaw`
+    SELECT 
+      EXTRACT(YEAR FROM data) as year,
+      EXTRACT(MONTH FROM data) as month,
+      SUM(valor) as total
+    FROM transacoes
+    WHERE igreja_id = ${tenantId} AND tipo = 'ENTRADA'
+    GROUP BY year, month
+    ORDER BY year ASC, month ASC
+  `
+  
+  const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+  
+  return (results as any[]).map(r => ({
+    month: `${monthNames[r.month - 1]}/${r.year}`,
+    total: Number(r.total || 0)
+  }))
+}
