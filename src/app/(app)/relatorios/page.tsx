@@ -2,6 +2,7 @@ import { getTenantPrisma } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import FinancialSummary from "@/components/reports/FinancialSummary"
 import CategoryReport from "@/components/reports/CategoryReport"
+import { getFinancialSummary, getCategoryTotals, getMonthlyTotals } from "@/app/actions/finance"
 
 export default async function RelatoriosPage({
   searchParams,
@@ -16,55 +17,11 @@ export default async function RelatoriosPage({
 
   const currentYear = searchParams.ano ? parseInt(searchParams.ano) : new Date().getFullYear()
 
-  // Get all transactions for the year to build the table
-  const transacoes = await db.transacao.findMany({
-    where: { 
-      igreja_id: tenantId,
-      data: {
-        gte: new Date(`${currentYear}-01-01`),
-        lte: new Date(`${currentYear}-12-31`)
-      }
-    },
-    include: {
-      categoria: true
-    }
-  })
-
-  // Group by category
-  const categoryMap = new Map<string, number>()
-  transacoes.forEach((t: any) => {
-    if (t.categoria_id && t.categoria?.nome) {
-      const current = categoryMap.get(t.categoria.nome) || 0
-      categoryMap.set(t.categoria.nome, current + t.valor)
-    }
-  })
-
-  const transactionsByCategory = Array.from(categoryMap.entries())
-    .map(([category, total]) => ({ category, total }))
-    .sort((a, b) => b.total - a.total)
-
-  // Group by month
-  const grouped = transacoes.reduce((acc: any, t: any) => {
-    const month = t.data.getMonth() // 0-11
-    if (!acc[month]) acc[month] = { entradas: 0, saidas: 0 }
-    
-    if (t.tipo === 'SAIDA') {
-      acc[month].saidas += t.valor
-    } else {
-      acc[month].entradas += t.valor
-    }
-    return acc
-  }, {} as Record<number, { entradas: number, saidas: number }>)
-
-  const totalEntradas = transacoes
-    .filter((t: any) => t.tipo === 'ENTRADA')
-    .reduce((sum: number, t: any) => sum + t.valor, 0)
-  
-  const totalSaidas = transacoes
-    .filter((t: any) => t.tipo === 'SAIDA')
-    .reduce((sum: number, t: any) => sum + t.valor, 0)
-
-  const saldoTotal = totalEntradas - totalSaidas
+  const [summary, transactionsByCategory, grouped] = await Promise.all([
+    getFinancialSummary(currentYear),
+    getCategoryTotals(currentYear),
+    getMonthlyTotals(currentYear)
+  ])
 
   const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
 
@@ -86,7 +43,7 @@ export default async function RelatoriosPage({
         </form>
       </div>
 
-      <FinancialSummary entradas={totalEntradas} saidas={totalSaidas} saldo={saldoTotal} />
+      <FinancialSummary entradas={summary.entradas} saidas={summary.saidas} saldo={summary.saldo} />
 
       <CategoryReport data={transactionsByCategory} />
 
