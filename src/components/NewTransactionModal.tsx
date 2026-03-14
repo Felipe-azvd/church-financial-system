@@ -67,6 +67,13 @@ export default function NewTransactionModal({
     }
   }, [isOpen, transaction])
 
+  const normalize = (text: string) => {
+    return text
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+  }
+
   const handleQuickEntry = (text: string) => {
     if (!text.trim()) return
 
@@ -89,19 +96,13 @@ export default function NewTransactionModal({
       if (remainingTokens.length > 0) {
         const catToken = remainingTokens[0]
         if (catToken) {
+          const normalizedToken = normalize(catToken)
           const validCats = lookups.categorias.filter(c => c.tipo === tipo || c.tipo === 'AMBOS')
           
-          // Try to find a category that starts with the inputted token (best autocomplete match)
-          let partialCat = validCats.find(c => 
-            c.nome.toLowerCase().startsWith(catToken.toLowerCase())
-          )
-          
-          // Fallback to testing if the string just includes it
-          if (!partialCat) {
-            partialCat = validCats.find(c =>
-              c.nome.toLowerCase().includes(catToken.toLowerCase())
-            )
-          }
+          const partialCat = validCats.find(c => {
+             const normalizedName = normalize(c.nome)
+             return normalizedName.includes(normalizedToken)
+          })
 
           setCategoriaId(partialCat ? partialCat.id : '')
         }
@@ -112,9 +113,11 @@ export default function NewTransactionModal({
         // Search for culto in the tokens after the category token
         const potentialCultoTokens = remainingTokens.slice(1)
         for (const token of potentialCultoTokens) {
-          const partialCulto = lookups.cultos.find(c =>
-             c.nome.toLowerCase().includes(token.toLowerCase())
-          )
+          const normalizedCultoToken = normalize(token)
+          const partialCulto = lookups.cultos.find(c => {
+             const normalizedName = normalize(c.nome)
+             return normalizedName.includes(normalizedCultoToken)
+          })
           if (partialCulto) {
             matchedCultoId = partialCulto.id
             cultoTokenMatched = token
