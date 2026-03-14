@@ -94,18 +94,25 @@ export default function NewTransactionModal({
       const remainingTokens = tokens.filter((_, idx) => idx !== numericTokenIndex)
       
       if (remainingTokens.length > 0) {
+        let matchedCatId = ''
+        let catTokenMatched = ''
+        
         const catToken = remainingTokens[0]
         if (catToken) {
           const normalizedToken = normalize(catToken)
           const validCats = lookups.categorias.filter(c => c.tipo === tipo || c.tipo === 'AMBOS')
           
-          const partialCat = validCats.find(c => {
-             const normalizedName = normalize(c.nome)
-             return normalizedName.includes(normalizedToken)
-          })
+          let partialCat = validCats.find(c => normalize(c.nome).startsWith(normalizedToken))
+          if (!partialCat) {
+            partialCat = validCats.find(c => normalize(c.nome).includes(normalizedToken))
+          }
 
-          setCategoriaId(partialCat ? partialCat.id : '')
+          if (partialCat) {
+            matchedCatId = partialCat.id
+            catTokenMatched = catToken
+          }
         }
+        setCategoriaId(matchedCatId)
 
         let matchedCultoId = ''
         let cultoTokenMatched = ''
@@ -114,21 +121,24 @@ export default function NewTransactionModal({
         const potentialCultoTokens = remainingTokens.slice(1)
         for (const token of potentialCultoTokens) {
           const normalizedCultoToken = normalize(token)
-          const partialCulto = lookups.cultos.find(c => {
-             const normalizedName = normalize(c.nome)
-             return normalizedName.includes(normalizedCultoToken)
-          })
+          let partialCulto = lookups.cultos.find(c => normalize(c.nome).startsWith(normalizedCultoToken))
+          if (!partialCulto) {
+            partialCulto = lookups.cultos.find(c => normalize(c.nome).includes(normalizedCultoToken))
+          }
+          
           if (partialCulto) {
             matchedCultoId = partialCulto.id
             cultoTokenMatched = token
             break
           }
         }
-        
         setCultoId(matchedCultoId)
 
-        // Description becomes the remaining text, minus the matched Culto token to keep it clean
+        // Description becomes the remaining text, minus the matched tokens to keep it clean
         let descTokens = [...remainingTokens]
+        if (catTokenMatched) {
+          descTokens = descTokens.filter(t => t !== catTokenMatched)
+        }
         if (cultoTokenMatched) {
           descTokens = descTokens.filter(t => t !== cultoTokenMatched)
         }
