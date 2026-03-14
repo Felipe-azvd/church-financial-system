@@ -129,13 +129,13 @@ export default function NewTransactionModal({
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
           
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-md)' }}>
-            <div className="input-group">
+          <div className="grid grid-cols-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--spacing-md)' }}>
+            <div className="input-group col-span-1" style={{ gridColumn: 'span 1 / span 1' }}>
               <label className="input-label">Data</label>
-              <input type="date" name="data" required className="input-field" defaultValue={new Date().toISOString().split('T')[0]} />
+              <input type="date" name="data" required className="input-field w-full" style={{ width: '100%' }} defaultValue={new Date().toISOString().split('T')[0]} />
             </div>
             
-            <div className="input-group">
+            <div className="input-group col-span-2" style={{ gridColumn: 'span 2 / span 2' }}>
               <label className="input-label">Valor (R$)</label>
               <input 
                 ref={valorInputRef}
