@@ -1,6 +1,7 @@
 import { getTenantPrisma } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import FinancialSummary from "@/components/reports/FinancialSummary"
+import CategoryReport from "@/components/reports/CategoryReport"
 
 export default async function RelatoriosPage({
   searchParams,
@@ -23,8 +24,24 @@ export default async function RelatoriosPage({
         gte: new Date(`${currentYear}-01-01`),
         lte: new Date(`${currentYear}-12-31`)
       }
+    },
+    include: {
+      categoria: true
     }
   })
+
+  // Group by category
+  const categoryMap = new Map<string, number>()
+  transacoes.forEach((t: any) => {
+    if (t.categoria_id && t.categoria?.nome) {
+      const current = categoryMap.get(t.categoria.nome) || 0
+      categoryMap.set(t.categoria.nome, current + t.valor)
+    }
+  })
+
+  const transactionsByCategory = Array.from(categoryMap.entries())
+    .map(([category, total]) => ({ category, total }))
+    .sort((a, b) => b.total - a.total)
 
   // Group by month
   const grouped = transacoes.reduce((acc: any, t: any) => {
@@ -70,6 +87,8 @@ export default async function RelatoriosPage({
       </div>
 
       <FinancialSummary entradas={totalEntradas} saidas={totalSaidas} saldo={saldoTotal} />
+
+      <CategoryReport data={transactionsByCategory} />
 
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
         <table className="data-table">
