@@ -20,9 +20,42 @@ export default function NewTransactionModal({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
+  const [quickEntry, setQuickEntry] = useState('')
+  const [descricao, setDescricao] = useState('')
+  const [categoriaId, setCategoriaId] = useState('')
   const [valorRaw, setValorRaw] = useState<number>(0)
   const [valorDisplay, setValorDisplay] = useState<string>('')
   const valorInputRef = useRef<HTMLInputElement>(null)
+
+  const handleQuickEntry = (text: string) => {
+    if (!text.trim()) return
+
+    // Extract first number (can have comma or dot) and the remainder as description
+    const match = text.trim().match(/^(\d+(?:[.,]\d+)?)\s+(.+)$/i)
+    if (match) {
+      const rawVal = match[1].replace(',', '.')
+      const numericValue = parseFloat(rawVal)
+      if (!isNaN(numericValue) && numericValue > 0) {
+        setValorRaw(numericValue)
+        setValorDisplay(formatCurrency(numericValue))
+      }
+      
+      const desc = match[2].trim()
+      setDescricao(desc)
+      
+      // Try to find matching category (case insensitive, contains wording)
+      const partialCat = lookups.categorias.find(c => 
+         c.nome.toLowerCase().includes(desc.toLowerCase()) && 
+         (c.tipo === tipo || c.tipo === 'AMBOS')
+      )
+      
+      if (partialCat) {
+         setCategoriaId(partialCat.id)
+      } else {
+         setCategoriaId('')
+      }
+    }
+  }
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -90,10 +123,13 @@ export default function NewTransactionModal({
       setTimeout(() => {
         onSuccess()
         onClose()
-        // reset form state maybe? 
+        // reset form state
         setTipo('ENTRADA')
         setValorRaw(0)
         setValorDisplay('')
+        setDescricao('')
+        setCategoriaId('')
+        setQuickEntry('')
         setSuccessMsg('')
       }, 1000)
     } catch (err: any) {
@@ -136,6 +172,25 @@ export default function NewTransactionModal({
         
         {error && <div style={{ color: 'var(--danger)', marginBottom: 'var(--spacing-sm)', padding: 'var(--spacing-xs)', backgroundColor: 'rgba(239, 68, 68, 0.1)', borderRadius: 'var(--radius-sm)' }}>{error}</div>}
         {successMsg && <div style={{ color: 'var(--success)', marginBottom: 'var(--spacing-sm)', padding: 'var(--spacing-xs)', backgroundColor: 'rgba(16, 185, 129, 0.1)', borderRadius: 'var(--radius-sm)', fontWeight: 600 }}>{successMsg}</div>}
+
+        <div className="input-group" style={{ marginBottom: 'var(--spacing-md)' }}>
+          <label className="input-label" style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Entrada rápida</label>
+          <input 
+            type="text" 
+            className="input-field" 
+            placeholder="Ex: 50 oferta" 
+            value={quickEntry}
+            onChange={(e) => setQuickEntry(e.target.value)}
+            onBlur={() => handleQuickEntry(quickEntry)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                handleQuickEntry(quickEntry)
+              }
+            }}
+            style={{ backgroundColor: 'rgba(59, 130, 246, 0.05)', borderColor: 'rgba(59, 130, 246, 0.3)' }}
+          />
+        </div>
 
         <div style={{ display: 'flex', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-xl)' }}>
           <button 
@@ -187,13 +242,13 @@ export default function NewTransactionModal({
 
           <div className="input-group">
             <label className="input-label">Descrição</label>
-            <input name="descricao" required className="input-field" placeholder="Ex: Oferta de Domingo, Conta de Luz..." />
+            <input name="descricao" required className="input-field" placeholder="Ex: Oferta de Domingo, Conta de Luz..." value={descricao} onChange={e => setDescricao(e.target.value)} />
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-md)' }}>
             <div className="input-group">
               <label className="input-label">Categoria</label>
-              <select name="categoria_id" className="input-field">
+              <select name="categoria_id" className="input-field" value={categoriaId} onChange={e => setCategoriaId(e.target.value)}>
                 <option value="">Nenhuma</option>
                 {lookups.categorias
                   .filter(c => c.tipo === tipo || c.tipo === 'AMBOS')
