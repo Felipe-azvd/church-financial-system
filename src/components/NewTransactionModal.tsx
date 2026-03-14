@@ -177,6 +177,15 @@ export default function NewTransactionModal({
     }
   }, [parseQuickEntry])
 
+  const handleQuickEntrySubmit = () => {
+    if (!valorRaw || valorRaw <= 0) return
+
+    const form = document.getElementById('transaction-form') as HTMLFormElement
+    if (form) {
+      form.requestSubmit()
+    }
+  }
+
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -314,7 +323,10 @@ export default function NewTransactionModal({
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 e.preventDefault()
-                handleQuickEntry(quickEntry)
+                parseQuickEntry(quickEntry)
+                setTimeout(() => {
+                  handleQuickEntrySubmit()
+                }, 100)
               }
             }}
             style={{ backgroundColor: 'rgba(59, 130, 246, 0.05)', borderColor: 'rgba(59, 130, 246, 0.3)' }}
@@ -338,7 +350,7 @@ export default function NewTransactionModal({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
+        <form id="transaction-form" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
           
           <div className="grid grid-cols-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--spacing-md)' }}>
             <div className="input-group col-span-1" style={{ gridColumn: 'span 1 / span 1' }}>
