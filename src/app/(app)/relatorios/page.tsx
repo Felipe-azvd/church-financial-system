@@ -1,5 +1,6 @@
 import { getTenantPrisma } from "@/lib/auth"
 import { redirect } from "next/navigation"
+import FinancialSummary from "@/components/reports/FinancialSummary"
 
 export default async function RelatoriosPage({
   searchParams,
@@ -38,12 +39,22 @@ export default async function RelatoriosPage({
     return acc
   }, {} as Record<number, { entradas: number, saidas: number }>)
 
+  const totalEntradas = transacoes
+    .filter((t: any) => t.tipo === 'ENTRADA')
+    .reduce((sum: number, t: any) => sum + t.valor, 0)
+  
+  const totalSaidas = transacoes
+    .filter((t: any) => t.tipo === 'SAIDA')
+    .reduce((sum: number, t: any) => sum + t.valor, 0)
+
+  const saldoTotal = totalEntradas - totalSaidas
+
   const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
 
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-xl)' }}>
-        <h1>Relatórios Mensais</h1>
+        <h1>Relatórios</h1>
         
         <form className="card" style={{ padding: 'var(--spacing-xs) var(--spacing-sm)', display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'center' }}>
           <label className="input-label">Ano:</label>
@@ -57,6 +68,8 @@ export default async function RelatoriosPage({
           <button type="submit" className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem' }}>Ver</button>
         </form>
       </div>
+
+      <FinancialSummary entradas={totalEntradas} saidas={totalSaidas} saldo={saldoTotal} />
 
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
         <table className="data-table">
