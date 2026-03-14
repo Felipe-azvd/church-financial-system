@@ -1,0 +1,118 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Igreja {
+  id           String      @id @default(cuid())
+  nome         String
+  cidade       String?
+  data_criacao DateTime    @default(now())
+  
+  usuarios     Usuario[]
+  cultos       Culto[]
+  categorias   Categoria[]
+  transacoes   Transacao[]
+  roles        Role[]
+
+  @@map("igrejas")
+}
+
+model Usuario {
+  id        String   @id @default(cuid())
+  nome      String
+  email     String   @unique
+  senha     String
+  role_id   String
+  igreja_id String
+  
+  igreja    Igreja   @relation(fields: [igreja_id], references: [id], onDelete: Cascade)
+  role      Role     @relation(fields: [role_id], references: [id], onDelete: Restrict)
+  transacoes Transacao[]
+
+  @@map("usuarios")
+}
+
+model Role {
+  id               String           @id @default(cuid())
+  nome             String
+  igreja_id        String
+  createdAt        DateTime         @default(now())
+
+  igreja           Igreja           @relation(fields: [igreja_id], references: [id], onDelete: Cascade)
+  usuarios         Usuario[]
+  role_permissions RolePermission[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id               String           @id @default(cuid())
+  key              String           @unique // e.g. "dashboard.visualizar"
+  description      String
+
+  role_permissions RolePermission[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  id            String     @id @default(cuid())
+  role_id       String
+  permission_id String
+
+  role          Role       @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  permission    Permission @relation(fields: [permission_id], references: [id], onDelete: Cascade)
+
+  @@unique([role_id, permission_id])
+  @@map("role_permissions")
+}
+
+model Culto {
+  id        String   @id @default(cuid())
+  nome      String
+  igreja_id String
+
+  igreja    Igreja   @relation(fields: [igreja_id], references: [id], onDelete: Cascade)
+  transacoes Transacao[]
+
+  @@map("cultos")
+}
+
+
+model Categoria {
+  id        String   @id @default(cuid())
+  nome      String
+  tipo      String   @default("AMBOS") // ENTRADA, SAIDA, AMBOS
+  igreja_id String
+
+  igreja    Igreja   @relation(fields: [igreja_id], references: [id], onDelete: Cascade)
+  transacoes Transacao[]
+
+  @@map("categorias")
+}
+
+model Transacao {
+  id           String   @id @default(cuid())
+  data         DateTime
+  descricao    String
+  valor        Float
+  criado_em    DateTime @default(now())
+  
+  culto_id     String?
+  tipo         String   // ENTRADA | SAIDA
+  categoria_id String?
+  igreja_id    String
+  usuario_id   String
+
+  culto        Culto?     @relation(fields: [culto_id], references: [id], onDelete: SetNull)
+  categoria    Categoria? @relation(fields: [categoria_id], references: [id], onDelete: SetNull)
+  igreja       Igreja     @relation(fields: [igreja_id], references: [id], onDelete: Cascade)
+  usuario      Usuario    @relation(fields: [usuario_id], references: [id], onDelete: Restrict)
+
+  @@map("transacoes")
+}

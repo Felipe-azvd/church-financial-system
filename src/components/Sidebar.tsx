@@ -1,0 +1,164 @@
+'use client'
+
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { LayoutDashboard, ReceiptText, PieChart, Settings, Users, LogOut, Key } from 'lucide-react'
+import { signOut } from 'next-auth/react'
+
+const navItems = [
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/lancamentos', label: 'Lançamentos', icon: ReceiptText },
+  { href: '/relatorios', label: 'Relatórios', icon: PieChart },
+  { href: '/usuarios', label: 'Usuários', icon: Users },
+  { href: '/funcoes', label: 'Funções', icon: Key },
+  { href: '/configuracoes', label: 'Configurações', icon: Settings },
+]
+
+export default function Sidebar({ userPermissions = [] }: { userPermissions?: string[] }) {
+  const pathname = usePathname()
+
+  return (
+    <aside className="sidebar">
+      <div className="sidebar-header">
+        <div className="logo-placeholder">CF</div>
+        <span className="logo-text">ChurchFin</span>
+      </div>
+
+      <nav className="sidebar-nav">
+        {navItems.map((item) => {
+          if (item.label === 'Dashboard' && !userPermissions.includes('dashboard.visualizar')) return null
+          if (item.label === 'Lançamentos' && !userPermissions.includes('lancamentos.visualizar')) return null
+          if (item.label === 'Relatórios' && !userPermissions.includes('relatorios.visualizar')) return null
+          if (item.label === 'Usuários' && !userPermissions.includes('usuarios.visualizar')) return null
+          if (item.label === 'Funções' && !userPermissions.includes('funcoes.visualizar')) return null
+          if (item.label === 'Configurações' && !userPermissions.includes('configuracoes.visualizar')) return null
+
+          const isActive = pathname.startsWith(item.href)
+          const Icon = item.icon
+          
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`nav-item ${isActive ? 'active' : ''}`}
+            >
+              <Icon size={20} className="nav-icon" />
+              <span>{item.label}</span>
+            </Link>
+          )
+        })}
+      </nav>
+
+      <div className="sidebar-footer">
+        <button className="nav-item logout-btn" onClick={() => signOut({ callbackUrl: '/login' })}>
+          <LogOut size={20} className="nav-icon" />
+          <span>Sair</span>
+        </button>
+      </div>
+
+      <style jsx>{`
+        .sidebar {
+          width: 260px;
+          height: 100vh;
+          background-color: var(--bg-secondary);
+          border-right: 1px solid var(--border-color);
+          display: flex;
+          flex-direction: column;
+          position: fixed;
+          left: 0;
+          top: 0;
+        }
+
+        .sidebar-header {
+          padding: var(--spacing-lg);
+          display: flex;
+          align-items: center;
+          gap: var(--spacing-sm);
+          border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo-placeholder {
+          width: 36px;
+          height: 36px;
+          background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+          border-radius: var(--radius-md);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-weight: bold;
+          font-size: 1.125rem;
+        }
+
+        .logo-text {
+          font-weight: 600;
+          font-size: 1.25rem;
+          color: var(--text-primary);
+        }
+
+        .sidebar-nav {
+          padding: var(--spacing-md);
+          display: flex;
+          flex-direction: column;
+          gap: var(--spacing-xs);
+          flex: 1;
+        }
+
+        .nav-item {
+          display: flex;
+          align-items: center;
+          gap: var(--spacing-md);
+          padding: var(--spacing-sm) var(--spacing-md);
+          border-radius: var(--radius-md);
+          color: var(--text-secondary);
+          transition: all 0.2s;
+          text-decoration: none;
+          font-weight: 500;
+          background: transparent;
+          border: none;
+          width: 100%;
+          cursor: pointer;
+          font-family: inherit;
+          font-size: 1rem;
+        }
+
+        .nav-item:hover {
+          background-color: var(--bg-tertiary);
+          color: var(--text-primary);
+        }
+
+        .nav-item.active {
+          background-color: rgba(59, 130, 246, 0.1);
+          color: var(--accent-primary);
+        }
+
+        .nav-item.active .nav-icon {
+          color: var(--accent-primary);
+        }
+
+        .nav-icon {
+          color: var(--text-muted);
+          transition: color 0.2s;
+        }
+
+        .sidebar-footer {
+          padding: var(--spacing-md);
+          border-top: 1px solid var(--border-color);
+        }
+
+        .logout-btn {
+          color: var(--danger);
+        }
+
+        .logout-btn .nav-icon {
+          color: var(--danger);
+        }
+
+        .logout-btn:hover {
+          background-color: rgba(239, 68, 68, 0.1);
+          color: var(--danger);
+        }
+      `}</style>
+    </aside>
+  )
+}
