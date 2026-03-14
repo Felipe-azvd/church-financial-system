@@ -54,8 +54,6 @@ export default async function LancamentosPage({
         <MonthSelector />
       </div>
 
-      <LaunchContainer lookups={lookups} userPermissions={user.permissions} />
-
       <TransactionList 
         entradas={entradas} 
         saidas={saidas} 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { createTransaction, updateTransaction } from '@/app/actions/finance'
 
 type Lookup = { id: string; nome: string; tipo?: string }
@@ -20,13 +20,17 @@ export default function NewTransactionModal({
   onClose,
   onSuccess,
   lookups,
-  transaction
+  transaction,
+  onSaveOptimistic,
+  onErrorRevert
 }: {
   isOpen: boolean
   onClose: () => void
   onSuccess: () => void
   lookups: { categorias: Lookup[]; cultos: Lookup[] }
   transaction?: TransactionEditData | null
+  onSaveOptimistic?: (tx: any) => void
+  onErrorRevert?: () => void
 }) {
   const [tipo, setTipo] = useState<'ENTRADA' | 'SAIDA'>('ENTRADA')
   const [loading, setLoading] = useState(false)
@@ -74,14 +78,29 @@ export default function NewTransactionModal({
       .replace(/[\u0300-\u036f]/g, '')
   }
 
-  const handleQuickEntry = (text: string) => {
+  // 1. Cache/Precompute normalized categories and cultos
+  const normalizedCategorias = useMemo(() => {
+    return lookups.categorias.map((c: any) => ({
+      ...c,
+      normalized: normalize(c.nome)
+    }))
+  }, [lookups.categorias])
+
+  const normalizedCultos = useMemo(() => {
+    return lookups.cultos.map((c: any) => ({
+      ...c,
+      normalized: normalize(c.nome)
+    }))
+  }, [lookups.cultos])
+
+  const parseQuickEntry = useCallback((text: string) => {
     if (!text.trim()) return
 
     const tokens = text.trim().split(/\s+/)
     if (tokens.length === 0) return
 
     // Extract first number
-    const numericTokenIndex = tokens.findIndex(t => /^\d+(?:[.,]\d+)?$/.test(t))
+    const numericTokenIndex = tokens.findIndex((t: string) => /^\d+(?:[.,]\d+)?$/.test(t))
     
     if (numericTokenIndex !== -1) {
       const rawVal = tokens[numericTokenIndex].replace(',', '.')
@@ -91,7 +110,7 @@ export default function NewTransactionModal({
         setValorDisplay(formatCurrency(numericValue))
       }
 
-      const remainingTokens = tokens.filter((_, idx) => idx !== numericTokenIndex)
+      const remainingTokens = tokens.filter((_: any, idx: number) => idx !== numericTokenIndex)
       
       if (remainingTokens.length > 0) {
         let matchedCatId = ''
@@ -100,11 +119,11 @@ export default function NewTransactionModal({
         const catToken = remainingTokens[0]
         if (catToken) {
           const normalizedToken = normalize(catToken)
-          const validCats = lookups.categorias.filter(c => c.tipo === tipo || c.tipo === 'AMBOS')
+          const validCats = normalizedCategorias.filter((c: any) => c.tipo === tipo || c.tipo === 'AMBOS')
           
-          let partialCat = validCats.find(c => normalize(c.nome).startsWith(normalizedToken))
+          let partialCat = validCats.find((c: any) => c.normalized.startsWith(normalizedToken))
           if (!partialCat) {
-            partialCat = validCats.find(c => normalize(c.nome).includes(normalizedToken))
+            partialCat = validCats.find((c: any) => c.normalized.includes(normalizedToken))
           }
 
           if (partialCat) {
@@ -121,9 +140,9 @@ export default function NewTransactionModal({
         const potentialCultoTokens = remainingTokens.slice(1)
         for (const token of potentialCultoTokens) {
           const normalizedCultoToken = normalize(token)
-          let partialCulto = lookups.cultos.find(c => normalize(c.nome).startsWith(normalizedCultoToken))
+          let partialCulto = normalizedCultos.find((c: any) => c.normalized.startsWith(normalizedCultoToken))
           if (!partialCulto) {
-            partialCulto = lookups.cultos.find(c => normalize(c.nome).includes(normalizedCultoToken))
+            partialCulto = normalizedCultos.find((c: any) => c.normalized.includes(normalizedCultoToken))
           }
           
           if (partialCulto) {
@@ -137,15 +156,26 @@ export default function NewTransactionModal({
         // Description becomes the remaining text, minus the matched tokens to keep it clean
         let descTokens = [...remainingTokens]
         if (catTokenMatched) {
-          descTokens = descTokens.filter(t => t !== catTokenMatched)
+          descTokens = descTokens.filter((t: string) => t !== catTokenMatched)
         }
         if (cultoTokenMatched) {
-          descTokens = descTokens.filter(t => t !== cultoTokenMatched)
+          descTokens = descTokens.filter((t: string) => t !== cultoTokenMatched)
         }
         setDescricao(descTokens.join(' '))
       }
     }
-  }
+  }, [normalizedCategorias, normalizedCultos, tipo])
+
+  // 2. Parse Quick Entry instantly with debounce
+  const handleQuickEntry = useMemo(() => {
+    let timeout: NodeJS.Timeout
+    return (text: string) => {
+      clearTimeout(timeout)
+      timeout = setTimeout(() => {
+        parseQuickEntry(text)
+      }, 120)
+    }
+  }, [parseQuickEntry])
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -210,6 +240,10 @@ export default function NewTransactionModal({
         culto_id: (tipo === 'ENTRADA') ? (formData.get('culto_id') as string || null) : null,
       }
       
+      if (onSaveOptimistic) {
+        onSaveOptimistic({ ...payload, id: transaction?.id })
+      }
+
       if (transaction) {
         await updateTransaction(transaction.id, payload)
         setSuccessMsg('✓ Lançamento atualizado com sucesso')
@@ -223,6 +257,9 @@ export default function NewTransactionModal({
         onClose()
       }, 1000)
     } catch (err: any) {
+      if (onErrorRevert) {
+        onErrorRevert()
+      }
       setError(err.message || 'Erro ao registrar lançamentos')
     } finally {
       setLoading(false)

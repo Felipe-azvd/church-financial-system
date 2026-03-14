@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { deleteTransaction } from '@/app/actions/finance'
 import NewTransactionModal from '@/components/NewTransactionModal'
+import { Plus } from 'lucide-react'
 
 type Lookup = { id: string; nome: string; tipo?: string }
 
@@ -30,28 +31,76 @@ export default function TransactionList({
   userPermissions: string[]
 }) {
   const [editingTx, setEditingTx] = useState<TransactionData | null>(null)
+  const [isNewModalOpen, setIsNewModalOpen] = useState(false)
 
   const canEdit = userPermissions.includes('lancamentos.editar')
   const canDelete = userPermissions.includes('lancamentos.excluir')
+  const canCreate = userPermissions.includes('lancamentos.criar')
   const canAct = canEdit || canDelete
+
+  // Combine and sort transactions chronologically mapping directly from db props
+  const allDbTransactions = [...entradas, ...saidas].sort(
+    (a, b) => new Date(a.data).getTime() - new Date(b.data).getTime()
+  )
+
+  const [optimisticTxs, setOptimisticTxs] = useState<TransactionData[]>(allDbTransactions)
+
+  // Sync to database reality when props strictly change
+  useEffect(() => {
+    setOptimisticTxs(allDbTransactions)
+  }, [entradas, saidas])
 
   const handleDelete = async (id: string) => {
     if (confirm('Tem certeza que deseja excluir este lançamento?')) {
+      // Optimistic delete
+      setOptimisticTxs((prev) => prev.filter(t => t.id !== id))
       try {
         await deleteTransaction(id)
       } catch (err) {
         alert('Erro ao excluir lançamento')
+        setOptimisticTxs(allDbTransactions) // Revert on fail
       }
     }
   }
 
-  // Combine and sort transactions chronologically (oldest first for running balance)
-  const allTransactions = [...entradas, ...saidas].sort(
-    (a, b) => new Date(a.data).getTime() - new Date(b.data).getTime()
-  )
+  const handleUpdateOptimistic = (tx: Partial<TransactionData>, isNew = false) => {
+    if (isNew) {
+      const dummy: TransactionData = {
+          id: 'temp-' + Date.now(),
+          data: new Date(tx.data as any),
+          descricao: tx.descricao!,
+          valor: tx.valor!,
+          tipo: tx.tipo!,
+          categoria_id: tx.categoria_id,
+          culto_id: tx.culto_id,
+          categoria: lookups.categorias.find(c => c.id === tx.categoria_id) || null,
+          culto: lookups.cultos.find(c => c.id === tx.culto_id) || null
+      }
+      setOptimisticTxs(prev => [...prev, dummy].sort(
+          (a, b) => new Date(a.data).getTime() - new Date(b.data).getTime()
+      ))
+    } else {
+      setOptimisticTxs(prev => prev.map(t => {
+          if (t.id === tx.id) {
+              return {
+                  ...t,
+                  descricao: tx.descricao!,
+                  valor: tx.valor!,
+                  data: new Date(tx.data as any),
+                  tipo: tx.tipo!,
+                  categoria_id: tx.categoria_id,
+                  culto_id: tx.culto_id,
+                  categoria: lookups.categorias.find(c => c.id === tx.categoria_id) || null,
+                  culto: lookups.cultos.find(c => c.id === tx.culto_id) || null
+              }
+          }
+          return t
+      }).sort((a, b) => new Date(a.data).getTime() - new Date(b.data).getTime()))
+    }
+  }
 
   let currentBalance = 0
-  const transactionsWithBalance = allTransactions.map((t) => {
+  const transactionsWithBalance = optimisticTxs.map((t) => {
     if (t.tipo === 'ENTRADA') {
       currentBalance += t.valor
     } else {
@@ -60,8 +109,7 @@ export default function TransactionList({
     return { ...t, balance: currentBalance }
   })
 
-  // Optionally, you might want to show them newest first for the user, 
-  // so we reverse the array after calculating the running balance.
+  // Optionally show newest first after cumulative processing
   const displayTransactions = [...transactionsWithBalance].reverse()
 
   const renderTimeline = () => {
@@ -151,6 +199,23 @@ export default function TransactionList({
 
   return (
     <>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 'var(--spacing-xl)' }}>
+        {canCreate && (
+          <button className="btn btn-primary" onClick={() => setIsNewModalOpen(true)}>
+            <Plus size={20} /> Novo lançamento
+          </button>
+        )}
+      </div>
+
+      <NewTransactionModal 
+        isOpen={isNewModalOpen} 
+        onClose={() => setIsNewModalOpen(false)} 
+        onSuccess={() => setIsNewModalOpen(false)} 
+        lookups={lookups} 
+        onSaveOptimistic={(tx) => handleUpdateOptimistic(tx, true)}
+        onErrorRevert={() => setOptimisticTxs(allDbTransactions)}
+      />
+
       <NewTransactionModal 
         isOpen={!!editingTx}
         onClose={() => setEditingTx(null)}
@@ -165,6 +230,8 @@ export default function TransactionList({
           categoria_id: editingTx.categoria_id,
           culto_id: editingTx.culto_id || ''
         } : null}
+        onSaveOptimistic={(tx) => handleUpdateOptimistic(tx, false)}
+        onErrorRevert={() => setOptimisticTxs(allDbTransactions)}
       />
       <div style={{ paddingBottom: 'var(--spacing-2xl)' }}>
         {renderTimeline()}
