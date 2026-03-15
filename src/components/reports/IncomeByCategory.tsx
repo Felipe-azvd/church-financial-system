@@ -18,7 +18,7 @@ export default function IncomeByCategory({
           </tr>
         </thead>
         <tbody>
-          {data.length === 0 ? (
+          {!data || data.length === 0 ? (
             <tr>
               <td colSpan={2} style={{ textAlign: 'center', padding: 'var(--spacing-xl)', color: 'var(--text-muted)' }}>
                 Nenhuma entrada por categoria registrada.
