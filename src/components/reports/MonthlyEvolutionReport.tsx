@@ -7,10 +7,10 @@ export default function MonthlyEvolutionReport({
 }) {
   return (
     <div className="card" style={{ padding: 0, overflow: 'hidden', marginBottom: 'var(--spacing-xl)' }}>
-      <h2 style={{ padding: 'var(--spacing-md)', margin: 0, borderBottom: '1px solid var(--border-color)', fontSize: '1.25rem', color: 'var(--text-primary)' }}>
-        Evolução Financeira Mensal
-      </h2>
-      <table className="data-table">
+      <div className="card-body" style={{ padding: 'var(--spacing-md)', borderBottom: '1px solid var(--border-color)' }}>
+        <h2 className="card-title" style={{ fontSize: '1.125rem' }}>Evolução Financeira Mensal</h2>
+      </div>
+      <table className="table table-hover data-table">
         <thead>
           <tr>
             <th>Mês</th>
@@ -20,8 +20,10 @@ export default function MonthlyEvolutionReport({
         <tbody>
           {!data || data.length === 0 ? (
             <tr>
-              <td colSpan={2} style={{ textAlign: 'center', padding: 'var(--spacing-xl)', color: 'var(--text-muted)' }}>
-                Nenhuma entrada registrada.
+              <td colSpan={2}>
+                <div className="alert alert-soft alert-info" style={{ margin: 'var(--spacing-md)' }}>
+                  Sem dados para exibir neste período.
+                </div>
               </td>
             </tr>
           ) : (

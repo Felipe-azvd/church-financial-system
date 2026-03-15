@@ -76,22 +76,22 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-md)' }}>
             <div className="input-group">
               <label className="input-label">Nome</label>
-              <input name="nome" required className="input-field" defaultValue={editingUser?.nome} />
+              <input name="nome" required className="input input-field" defaultValue={editingUser?.nome} />
             </div>
 
             <div className="input-group">
               <label className="input-label">E-mail</label>
-              <input type="email" name="email" required className="input-field" defaultValue={editingUser?.email} />
+              <input type="email" name="email" required className="input input-field" defaultValue={editingUser?.email} />
             </div>
 
             <div className="input-group">
               <label className="input-label">Senha {editingUser && '(Deixe em branco para manter)'}</label>
-              <input type="password" name="senha" required={!editingUser} className="input-field" />
+              <input type="password" name="senha" required={!editingUser} className="input input-field" />
             </div>
 
             <div className="input-group">
               <label className="input-label">Cargo / Função</label>
-              <select name="role_id" className="input-field" defaultValue={editingUser?.role_id || initialRoles[0]?.id}>
+              <select name="role_id" className="select input-field" defaultValue={editingUser?.role_id || initialRoles[0]?.id}>
                 {initialRoles.map((r) => (
                   <option key={r.id} value={r.id}>{r.nome}</option>
                 ))}
@@ -111,7 +111,7 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
       {(!isAdding && !editingUser) && (
         <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
           <div className="table-responsive">
-            <table className="data-table">
+            <table className="table table-hover data-table">
               <thead>
                 <tr>
                   <th>Nome</th>
@@ -133,14 +133,14 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
                       <td style={{ fontWeight: 500 }}>{u.nome}</td>
                       <td style={{ color: 'var(--text-secondary)' }}>{u.email}</td>
                       <td>
-                        <span className="badge" style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-primary)' }}>
+                        <span className="badge badge-soft badge-info">
                           {u.role_nome.toUpperCase()}
                         </span>
                       </td>
                       <td style={{ textAlign: 'right' }}>
                         <div style={{ display: 'flex', gap: 'var(--spacing-sm)', justifyContent: 'flex-end' }}>
-                          <button onClick={() => setEditingUser(u)} className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }}>Editar</button>
-                          <button onClick={() => handleDelete(u.id)} className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', color: 'var(--danger)', borderColor: 'transparent', background: 'transparent' }}>Excluir</button>
+                          <button onClick={() => setEditingUser(u)} className="btn btn-soft btn-primary btn-sm">Editar</button>
+                          <button onClick={() => handleDelete(u.id)} className="btn btn-soft btn-error btn-sm">Excluir</button>
                         </div>
                       </td>
                     </tr>

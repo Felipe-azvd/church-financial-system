@@ -103,30 +103,48 @@ export default async function DashboardPage({
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-xl)' }}>
-        <h1 style={{ margin: 0 }}>Dashboard</h1>
+        <div>
+          <h1 style={{ margin: 0 }}>Dashboard</h1>
+          <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Visão geral das finanças da igreja</p>
+        </div>
       </div>
 
       <DashboardFilter />
 
       <div className="stats-grid">
-        <div className="card stat-card">
-          <div className="stat-label">Total Entradas</div>
-          <div className="stat-value success">
-            R$ {totalEntradas.toFixed(2).replace('.', ',')}
+        <div className="card">
+          <div className="card-body gap-2">
+            <div className="flex items-center justify-between">
+              <span className="stat-label">Total Entradas</span>
+              <span className="badge badge-soft badge-success text-xs">Entradas</span>
+            </div>
+            <div className="stat-value success">
+              R$ {totalEntradas.toFixed(2).replace('.', ',')}
+            </div>
           </div>
         </div>
 
-        <div className="card stat-card">
-          <div className="stat-label">Total Saídas</div>
-          <div className="stat-value danger">
-            R$ {totalSaidas.toFixed(2).replace('.', ',')}
+        <div className="card">
+          <div className="card-body gap-2">
+            <div className="flex items-center justify-between">
+              <span className="stat-label">Total Saídas</span>
+              <span className="badge badge-soft badge-error text-xs">Saídas</span>
+            </div>
+            <div className="stat-value danger">
+              R$ {totalSaidas.toFixed(2).replace('.', ',')}
+            </div>
           </div>
         </div>
 
-        <div className="card stat-card">
-          <div className="stat-label">Saldo Atual</div>
-          <div className="stat-value">
-            R$ {saldo.toFixed(2).replace('.', ',')}
+        <div className="card">
+          <div className="card-body gap-2">
+            <div className="flex items-center justify-between">
+              <span className="stat-label">Saldo Atual</span>
+              <span className={`badge badge-soft text-xs ${saldo >= 0 ? 'badge-info' : 'badge-error'}`}>Saldo</span>
+            </div>
+            <div className={`stat-value ${saldo >= 0 ? 'success' : 'danger'}`}>
+              R$ {saldo.toFixed(2).replace('.', ',')}
+            </div>
           </div>
         </div>
       </div>

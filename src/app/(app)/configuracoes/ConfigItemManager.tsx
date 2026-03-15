@@ -61,8 +61,8 @@ export default function ConfigItemManager({
           <input 
             name="nome" 
             required 
-            className="input-field" 
-            style={{ flex: 1, minWidth: '200px', padding: '0.25rem 0.5rem' }} 
+            className="input input-field" 
+            style={{ flex: 1, minWidth: '200px' }} 
             placeholder="Nome..." 
             defaultValue={editingItem?.nome}
             autoFocus 
@@ -71,8 +71,8 @@ export default function ConfigItemManager({
             <select 
               name="itemTipo" 
               required 
-              className="input-field" 
-              style={{ width: '150px', padding: '0.25rem 0.5rem' }}
+              className="select input-field" 
+              style={{ width: '150px' }}
               defaultValue={editingItem?.tipo || 'AMBOS'}
             >
               <option value="AMBOS">Ambos</option>
@@ -80,16 +80,16 @@ export default function ConfigItemManager({
               <option value="SAIDA">Saída</option>
             </select>
           )}
-          <button type="submit" className="btn btn-primary" style={{ padding: '0.25rem 0.5rem' }} disabled={loading}>
+          <button type="submit" className="btn btn-primary" disabled={loading}>
             {loading ? '...' : 'Salvar'}
           </button>
-          <button type="button" className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem' }} onClick={cancelAction}>Cancelar</button>
+          <button type="button" className="btn btn-secondary" onClick={cancelAction}>Cancelar</button>
         </form>
       )}
 
       {(!isAdding && !editingItem) && (
         <div style={{ overflowX: 'auto' }}>
-          <table className="data-table" style={{ width: '100%' }}>
+          <table className="table table-hover data-table" style={{ width: '100%' }}>
             <thead>
               <tr>
                 <th>{type === 'categoria' ? 'Categoria' : 'Nome'}</th>
@@ -117,7 +117,7 @@ export default function ConfigItemManager({
                       {type === 'categoria' && (
                         <td>
                           {item.tipo ? (
-                            <span className="badge" style={{ backgroundColor: badgeData.bg, color: 'white', fontSize: '0.75rem' }}>
+                            <span className={`badge badge-soft ${item.tipo === 'ENTRADA' ? 'badge-success' : item.tipo === 'SAIDA' ? 'badge-error' : 'badge-info'}`}>
                               {badgeData.label}
                             </span>
                           ) : '-'}
@@ -125,10 +125,10 @@ export default function ConfigItemManager({
                       )}
                       <td style={{ textAlign: 'right' }}>
                         <div style={{ display: 'flex', gap: 'var(--spacing-sm)', justifyContent: 'flex-end' }}>
-                          <button onClick={() => setEditingItem(item)} className="btn btn-secondary" style={{ padding: '0.125rem 0.5rem', fontSize: '0.75rem' }}>
+                          <button onClick={() => setEditingItem(item)} className="btn btn-soft btn-primary btn-sm">
                             Editar
                           </button>
-                          <button onClick={() => handleDelete(item.id)} className="btn btn-secondary" style={{ padding: '0.125rem 0.5rem', fontSize: '0.75rem', color: 'var(--danger)', borderColor: 'transparent', background: 'transparent' }}>
+                          <button onClick={() => handleDelete(item.id)} className="btn btn-soft btn-error btn-sm">
                             Excluir
                           </button>
                         </div>

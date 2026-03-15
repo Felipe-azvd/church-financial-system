@@ -120,7 +120,7 @@ export default function TransactionList({
         </h2>
         <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
           <div className="table-responsive">
-            <table className="data-table">
+            <table className="table table-hover data-table">
               <thead>
                 <tr>
                   <th>Data</th>
@@ -152,7 +152,7 @@ export default function TransactionList({
                         <td>{t.culto?.nome || '-'}</td>
                         <td style={{ textAlign: 'center' }}>
                           <span 
-                            className={`badge ${isEntrada ? 'badge-success' : 'badge-danger'}`}
+                            className={`badge badge-soft ${isEntrada ? 'badge-success' : 'badge-error'}`}
                           >
                             {isEntrada ? 'Entrada' : 'Saída'}
                           </span>
@@ -167,8 +167,7 @@ export default function TransactionList({
                           <td style={{ textAlign: 'center' }}>
                             {canEdit && (
                               <button 
-                                className="btn btn-secondary" 
-                                style={{ padding: '0.125rem 0.5rem', fontSize: '0.75rem', marginRight: '0.25rem' }}
+                                className="btn btn-soft btn-primary btn-sm" 
                                 onClick={() => setEditingTx(t)}
                               >
                                 Editar
@@ -176,8 +175,7 @@ export default function TransactionList({
                             )}
                             {canDelete && (
                               <button 
-                                className="btn btn-secondary" 
-                                style={{ padding: '0.125rem 0.5rem', fontSize: '0.75rem', color: 'var(--danger)', borderColor: 'transparent', background: 'transparent' }}
+                                className="btn btn-soft btn-error btn-sm"
                                 onClick={() => handleDelete(t.id)}
                               >
                                 Excluir
