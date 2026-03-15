@@ -1,6 +1,8 @@
 import { getTenantPrisma } from "@/lib/auth"
 import DashboardCharts from "./DashboardCharts"
 import DashboardFilter from "./DashboardFilter"
+import FinancialInsights from "@/components/dashboard/FinancialInsights"
+import { getMonthlyTotals } from "@/app/actions/finance"
 
 export default async function DashboardPage({
   searchParams,
@@ -99,6 +101,8 @@ export default async function DashboardPage({
   const barCultoData = Object.entries(cultoEntradasMap).map(([name, value]) => ({ name, value })).filter(d => d.value > 0).sort((a,b) => b.value - a.value)
 
   const saldo = totalEntradas - totalSaidas
+  const currentYear = now.getFullYear()
+  const monthlyTotals = await getMonthlyTotals(currentYear)
 
   return (
     <div>
@@ -147,6 +151,10 @@ export default async function DashboardPage({
             </div>
           </div>
         </div>
+      </div>
+
+      <div style={{ marginTop: 'var(--spacing-xl)' }}>
+        <FinancialInsights monthlyTotals={monthlyTotals} />
       </div>
 
       <div style={{ marginTop: 'var(--spacing-xl)' }}>
