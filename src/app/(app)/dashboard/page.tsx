@@ -187,6 +187,29 @@ export default async function DashboardPage({
         </div>
       </div>
 
+      {/* Financial Health Indicator */}
+      {(() => {
+        const expenseRatio = totalEntradas > 0 ? totalSaidas / totalEntradas : 1
+        const health =
+          saldo < 0
+            ? { label: 'Saúde Financeira: Crítica', badge: 'badge-error', icon: '🔴' }
+            : expenseRatio > 0.8
+            ? { label: 'Saúde Financeira: Atenção', badge: 'badge-warning', icon: '🟡' }
+            : { label: 'Saúde Financeira: Estável', badge: 'badge-success', icon: '🟢' }
+        return (
+          <div className="flex items-center gap-2">
+            <span className={`badge badge-soft ${health.badge}`} style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}>
+              {health.icon} {health.label}
+            </span>
+            {totalEntradas > 0 && (
+              <span className="text-xs" style={{ opacity: 0.6 }}>
+                Despesas representam {(expenseRatio * 100).toFixed(0)}% das receitas
+              </span>
+            )}
+          </div>
+        )
+      })()}
+
       <FinancialInsights monthlyTotals={monthlyTotals} />
 
       <DashboardCharts 
