@@ -85,46 +85,54 @@ export default async function RelatoriosPage({
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
           gap: 'var(--spacing-md)'
         }}>
-          <div className="card" style={{ padding: 'var(--spacing-lg)' }}>
-            <h3 style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Entradas Totais</h3>
-            <p style={{ margin: 'var(--spacing-sm) 0 0 0', fontSize: '1.5rem', fontWeight: 700, color: 'var(--success)' }}>
-              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(summary.entradas)}
-            </p>
+          <div className="card" style={{ padding: 0 }}>
+            <div className="card-body gap-2">
+              <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Entradas Totais</span>
+              <p className="text-2xl font-bold" style={{ color: 'var(--success)', margin: 0 }}>
+                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(summary.entradas)}
+              </p>
+            </div>
           </div>
 
-          <div className="card" style={{ padding: 'var(--spacing-lg)' }}>
-            <h3 style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Saídas Totais</h3>
-            <p style={{ margin: 'var(--spacing-sm) 0 0 0', fontSize: '1.5rem', fontWeight: 700, color: 'var(--danger)' }}>
-              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(summary.saidas)}
-            </p>
+          <div className="card" style={{ padding: 0 }}>
+            <div className="card-body gap-2">
+              <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Saídas Totais</span>
+              <p className="text-2xl font-bold" style={{ color: 'var(--danger)', margin: 0 }}>
+                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(summary.saidas)}
+              </p>
+            </div>
           </div>
 
-          <div className="card" style={{ padding: 'var(--spacing-lg)' }}>
-            <h3 style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Saldo Anual</h3>
-            <p style={{ margin: 'var(--spacing-sm) 0 0 0', fontSize: '1.5rem', fontWeight: 700, color: summary.saldo >= 0 ? 'var(--success)' : 'var(--danger)' }}>
-              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(summary.saldo)}
-            </p>
+          <div className="card" style={{ padding: 0 }}>
+            <div className="card-body gap-2">
+              <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Saldo Anual</span>
+              <p className="text-2xl font-bold" style={{ color: summary.saldo >= 0 ? 'var(--success)' : 'var(--danger)', margin: 0 }}>
+                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(summary.saldo)}
+              </p>
+            </div>
           </div>
 
-          <div className="card" style={{ padding: 'var(--spacing-lg)' }}>
-            <h3 style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Média Mensal</h3>
-            <p style={{ margin: 'var(--spacing-sm) 0 0 0', fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(mediaMensal)}
-            </p>
+          <div className="card" style={{ padding: 0 }}>
+            <div className="card-body gap-2">
+              <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Média Mensal</span>
+              <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)', margin: 0 }}>
+                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(mediaMensal)}
+              </p>
+            </div>
           </div>
 
-          <div className="card" style={{ padding: 'var(--spacing-lg)' }}>
-            <h3 style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Melhor Mês</h3>
-            <p style={{ margin: 'var(--spacing-sm) 0 0 0', fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-              {melhorMes}
-            </p>
+          <div className="card" style={{ padding: 0 }}>
+            <div className="card-body gap-2">
+              <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Melhor Mês</span>
+              <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)', margin: 0 }}>{melhorMes}</p>
+            </div>
           </div>
 
-          <div className="card" style={{ padding: 'var(--spacing-lg)' }}>
-            <h3 style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Maior Despesa</h3>
-            <p style={{ margin: 'var(--spacing-sm) 0 0 0', fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-              {maiorDespesa}
-            </p>
+          <div className="card" style={{ padding: 0 }}>
+            <div className="card-body gap-2">
+              <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Maior Despesa</span>
+              <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)', margin: 0 }}>{maiorDespesa}</p>
+            </div>
           </div>
         </div>
       </div>
