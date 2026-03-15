@@ -104,10 +104,13 @@ export default function RoleManager({
         className="card-body"
         style={{ borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
       >
-        <h2 className="card-title">Gerenciar Funções</h2>
+        <div>
+          <h2 className="card-title text-xl font-semibold">Gerenciar Funções</h2>
+          <p className="text-sm" style={{ margin: '0.25rem 0 0 0', opacity: 0.7 }}>Defina funções e controle o acesso de cada usuário</p>
+        </div>
         {!isAdding && !editingRole && (
           <button className="btn btn-primary btn-sm" onClick={() => setIsAdding(true)}>
-            Adicionar Função
+            + Adicionar Função
           </button>
         )}
       </div>
