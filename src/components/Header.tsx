@@ -1,6 +1,8 @@
 'use client'
 
+import { Suspense } from 'react'
 import { Menu, User } from 'lucide-react'
+import PeriodSelector from '@/components/PeriodSelector'
 
 export default function Header({ userName }: { userName: string }) {
   return (
@@ -13,8 +15,10 @@ export default function Header({ userName }: { userName: string }) {
       </div>
 
       <div className="header-right">
+        <Suspense fallback={null}>
+          <PeriodSelector />
+        </Suspense>
 
-        
         <div className="user-profile">
           <div className="avatar">
             <User size={18} />

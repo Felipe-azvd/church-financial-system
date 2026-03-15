@@ -38,34 +38,18 @@ export default function DashboardFilter() {
     router.push(`/dashboard?${params.toString()}`)
   }
 
+  if (!customRange) return null
+
   return (
     <div className="card" style={{ marginBottom: 'var(--spacing-xl)', padding: 'var(--spacing-sm) var(--spacing-md)' }}>
-      <div style={{ display: 'flex', gap: 'var(--spacing-md)', alignItems: 'center', flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'center' }}>
-          <label className="input-label" style={{ marginBottom: 0 }}>Período:</label>
-          <select 
-            className="input-field" 
-            style={{ padding: '0.25rem 0.5rem', width: 'auto' }}
-            value={currentFilter}
-            onChange={(e) => handleFilterChange(e.target.value)}
-          >
-            <option value="hoje">Hoje</option>
-            <option value="7dias">Últimos 7 dias</option>
-            <option value="30dias">Últimos 30 dias</option>
-            <option value="mes">Este mês</option>
-            <option value="custom">Personalizado</option>
-          </select>
-        </div>
-
-        {customRange && (
-          <form onSubmit={handleCustomSubmit} style={{ display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'center' }}>
-            <input type="date" name="inicio" defaultValue={inicio} required className="input-field" style={{ padding: '0.25rem 0.5rem', width: 'auto' }} />
-            <span style={{ color: 'var(--text-secondary)' }}>até</span>
-            <input type="date" name="fim" defaultValue={fim} required className="input-field" style={{ padding: '0.25rem 0.5rem', width: 'auto' }} />
-            <button type="submit" className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }}>Aplicar</button>
-          </form>
-        )}
-      </div>
+      <form onSubmit={handleCustomSubmit} style={{ display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'center', flexWrap: 'wrap' }}>
+        <label className="input-label" style={{ marginBottom: 0 }}>De:</label>
+        <input type="date" name="inicio" defaultValue={inicio} required className="input-field" style={{ padding: '0.25rem 0.5rem', width: 'auto' }} />
+        <span style={{ color: 'var(--text-secondary)' }}>até</span>
+        <input type="date" name="fim" defaultValue={fim} required className="input-field" style={{ padding: '0.25rem 0.5rem', width: 'auto' }} />
+        <button type="submit" className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }}>Aplicar</button>
+        <button type="button" className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }} onClick={() => setCustomRange(false)}>Cancelar</button>
+      </form>
     </div>
   )
 }
