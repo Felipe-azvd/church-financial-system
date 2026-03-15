@@ -19,6 +19,8 @@ const MONTH_NAMES: Record<string, string> = {
 type ChartData = { name: string, value: number }
 type EvolutionData = { date: string, entradas: number, saidas: number }
 
+const CHART_HEIGHT = 320
+
 export default function DashboardCharts({ 
   evolutionData,
   pieEntradasData,
@@ -39,25 +41,31 @@ export default function DashboardCharts({
     color: 'var(--text-primary)' 
   }
 
-  // Aggregate daily evolution data to monthly for the line chart
+  // Aggregate daily evolution data to monthly
   const monthlyMap: Record<string, { month: string; entradas: number; saidas: number }> = {}
   evolutionData.forEach((d) => {
-    // date format is "DD/MM"
     const parts = d.date.split('/')
-    const monthKey = parts[1] // MM
+    const monthKey = parts[1]
     if (!monthlyMap[monthKey]) {
       monthlyMap[monthKey] = { month: MONTH_NAMES[monthKey] || monthKey, entradas: 0, saidas: 0 }
     }
     monthlyMap[monthKey].entradas += d.entradas
     monthlyMap[monthKey].saidas += d.saidas
   })
-  const monthlyEvolutionData = Object.keys(monthlyMap)
-    .sort()
-    .map((k) => monthlyMap[k])
+  const monthlyEvolutionData = Object.keys(monthlyMap).sort().map((k) => monthlyMap[k])
 
   const emptyState = (
-    <div className="alert alert-soft alert-info" style={{ margin: 'var(--spacing-md)' }}>
-      Sem dados suficientes para gerar gráfico.
+    <div className="card card-compact" style={{ margin: 'var(--spacing-md)', opacity: 0.7 }}>
+      <div className="card-body flex-row items-center gap-2">
+        <span>📭</span>
+        <p style={{ margin: 0, fontSize: '0.875rem' }}>Sem dados suficientes para exibir neste período.</p>
+      </div>
+    </div>
+  )
+
+  const chartHeader = (title: string) => (
+    <div className="card-body" style={{ borderBottom: '1px solid var(--border-color)' }}>
+      <h2 className="card-title" style={{ fontSize: '1.125rem' }}>{title}</h2>
     </div>
   )
 
@@ -66,12 +74,10 @@ export default function DashboardCharts({
       
       {/* Financial Evolution Line Chart */}
       <div className="card" style={{ padding: 0 }}>
-        <div className="card-body" style={{ borderBottom: '1px solid var(--border-color)' }}>
-          <h2 className="card-title" style={{ fontSize: '1.125rem' }}>Evolução Financeira</h2>
-        </div>
+        {chartHeader('Evolução Financeira')}
         <div style={{ padding: 'var(--spacing-md)' }}>
           {monthlyEvolutionData.length === 0 ? emptyState : (
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
               <LineChart data={monthlyEvolutionData} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
                 <XAxis dataKey="month" stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
@@ -94,80 +100,38 @@ export default function DashboardCharts({
       {/* Pie Charts Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: 'var(--spacing-xl)' }}>
 
-        {/* Income by Category */}
         <div className="card" style={{ padding: 0 }}>
-          <div className="card-body" style={{ borderBottom: '1px solid var(--border-color)' }}>
-            <h2 className="card-title" style={{ fontSize: '1.125rem' }}>Entradas por Categoria</h2>
-          </div>
+          {chartHeader('Entradas por Categoria')}
           <div style={{ padding: 'var(--spacing-md)' }}>
             {pieEntradasData.length === 0 ? emptyState : (
-              <ResponsiveContainer width="100%" height={360}>
+              <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
                 <PieChart>
-                  <Pie
-                    data={pieEntradasData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={75}
-                    outerRadius={115}
-                    paddingAngle={2}
-                    dataKey="value"
-                  >
-                    {pieEntradasData.map((entry, index) => (
+                  <Pie data={pieEntradasData} cx="50%" cy="50%" innerRadius={70} outerRadius={110} paddingAngle={2} dataKey="value">
+                    {pieEntradasData.map((_, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS_ENTRADA[index % COLORS_ENTRADA.length]} />
                     ))}
                   </Pie>
-                  <Tooltip 
-                    formatter={(value: any) => formatCurrency(Number(value))}
-                    contentStyle={{ ...tooltipStyle, color: '#fff' }}
-                    itemStyle={{ color: '#fff' }}
-                    labelStyle={{ color: '#fff' }}
-                  />
-                  <Legend 
-                    layout="vertical" 
-                    verticalAlign="middle" 
-                    align="right"
-                    formatter={(value, entry: any) => `${value} — ${formatCurrency(entry.payload.value)}`} 
-                  />
+                  <Tooltip formatter={(value: any) => formatCurrency(Number(value))} contentStyle={{ ...tooltipStyle, color: '#fff' }} itemStyle={{ color: '#fff' }} labelStyle={{ color: '#fff' }} />
+                  <Legend layout="vertical" verticalAlign="middle" align="right" formatter={(value, entry: any) => `${value} — ${formatCurrency(entry.payload.value)}`} />
                 </PieChart>
               </ResponsiveContainer>
             )}
           </div>
         </div>
 
-        {/* Expenses by Category */}
         <div className="card" style={{ padding: 0 }}>
-          <div className="card-body" style={{ borderBottom: '1px solid var(--border-color)' }}>
-            <h2 className="card-title" style={{ fontSize: '1.125rem' }}>Despesas por Categoria</h2>
-          </div>
+          {chartHeader('Despesas por Categoria')}
           <div style={{ padding: 'var(--spacing-md)' }}>
             {pieSaidasData.length === 0 ? emptyState : (
-              <ResponsiveContainer width="100%" height={360}>
+              <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
                 <PieChart>
-                  <Pie
-                    data={pieSaidasData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={75}
-                    outerRadius={115}
-                    paddingAngle={2}
-                    dataKey="value"
-                  >
-                    {pieSaidasData.map((entry, index) => (
+                  <Pie data={pieSaidasData} cx="50%" cy="50%" innerRadius={70} outerRadius={110} paddingAngle={2} dataKey="value">
+                    {pieSaidasData.map((_, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS_SAIDA[index % COLORS_SAIDA.length]} />
                     ))}
                   </Pie>
-                  <Tooltip 
-                    formatter={(value: any) => formatCurrency(Number(value))}
-                    contentStyle={{ ...tooltipStyle, color: '#fff' }}
-                    itemStyle={{ color: '#fff' }}
-                    labelStyle={{ color: '#fff' }}
-                  />
-                  <Legend 
-                    layout="vertical" 
-                    verticalAlign="middle" 
-                    align="right"
-                    formatter={(value, entry: any) => `${value} — ${formatCurrency(entry.payload.value)}`} 
-                  />
+                  <Tooltip formatter={(value: any) => formatCurrency(Number(value))} contentStyle={{ ...tooltipStyle, color: '#fff' }} itemStyle={{ color: '#fff' }} labelStyle={{ color: '#fff' }} />
+                  <Legend layout="vertical" verticalAlign="middle" align="right" formatter={(value, entry: any) => `${value} — ${formatCurrency(entry.payload.value)}`} />
                 </PieChart>
               </ResponsiveContainer>
             )}
@@ -176,32 +140,19 @@ export default function DashboardCharts({
 
       </div>
 
-      {/* Entradas by Culto Bar Chart */}
+      {/* Bar Chart — Entradas por Culto */}
       <div className="card" style={{ padding: 0 }}>
-        <div className="card-body" style={{ borderBottom: '1px solid var(--border-color)' }}>
-          <h2 className="card-title" style={{ fontSize: '1.125rem' }}>Entradas por Culto</h2>
-        </div>
+        {chartHeader('Entradas por Culto')}
         <div style={{ padding: 'var(--spacing-md)' }}>
           {barCultoData.length === 0 ? emptyState : (
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
               <BarChart data={barCultoData} margin={{ top: 30, right: 30, left: 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
                 <XAxis dataKey="name" stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
                 <YAxis stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `R$${val}`} width={80} />
-                <Tooltip 
-                  formatter={(value: any) => formatCurrency(Number(value))} 
-                  contentStyle={{ ...tooltipStyle, borderColor: 'var(--border-color)', color: '#fff' }} 
-                  itemStyle={{ color: '#fff' }}
-                  labelStyle={{ color: '#fff' }}
-                  cursor={{ fill: 'var(--bg-tertiary)' }} 
-                />
-                <Bar 
-                  dataKey="value" 
-                  name="Entradas" 
-                  radius={[4, 4, 0, 0]}
-                  label={{ position: 'top', fill: '#E2E8F0', fontWeight: 500, formatter: (val: any) => formatCurrency(Number(val)) }}
-                >
-                  {barCultoData.map((entry, index) => (
+                <Tooltip formatter={(value: any) => formatCurrency(Number(value))} contentStyle={{ ...tooltipStyle, color: '#fff' }} itemStyle={{ color: '#fff' }} labelStyle={{ color: '#fff' }} cursor={{ fill: 'var(--bg-tertiary)' }} />
+                <Bar dataKey="value" name="Entradas" radius={[4, 4, 0, 0]} label={{ position: 'top', fill: '#E2E8F0', fontWeight: 500, formatter: (val: any) => formatCurrency(Number(val)) }}>
+                  {barCultoData.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS_CULTO[index % COLORS_CULTO.length]} />
                   ))}
                 </Bar>

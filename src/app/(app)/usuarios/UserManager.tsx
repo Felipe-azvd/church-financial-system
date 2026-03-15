@@ -58,11 +58,17 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
 
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-xl)' }}>
-        <h1>Usuários</h1>
-        {(!isAdding && !editingUser) && (
-          <button className="btn btn-primary" onClick={() => setIsAdding(true)}>Novo Usuário</button>
-        )}
+      {/* Page Header */}
+      <div className="flex items-center justify-between" style={{ marginBottom: 'var(--spacing-xl)' }}>
+        <div>
+          <h1 className="text-xl font-semibold" style={{ margin: 0 }}>Usuários</h1>
+          <p className="text-sm" style={{ margin: '0.25rem 0 0 0', opacity: 0.7 }}>Gerencie os usuários e seus acessos</p>
+        </div>
+        <div className="flex items-center gap-3">
+          {(!isAdding && !editingUser) && (
+            <button className="btn btn-primary" onClick={() => setIsAdding(true)}>Novo Usuário</button>
+          )}
+        </div>
       </div>
 
       {(isAdding || editingUser) && (

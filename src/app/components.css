@@ -12,8 +12,11 @@
 }
 
 .page-content {
-  padding: var(--spacing-xl);
+  padding: var(--spacing-xl) var(--spacing-xl);
   flex: 1;
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 @media (max-width: 768px) {

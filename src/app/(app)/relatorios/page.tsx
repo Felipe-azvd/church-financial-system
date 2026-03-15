@@ -53,21 +53,26 @@ export default async function RelatoriosPage({
   const mediaMensal = summary.entradas / 12
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-xl)' }}>
-        <h1>Relatórios</h1>
-        
-        <form className="card" style={{ padding: 'var(--spacing-xs) var(--spacing-sm)', display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'center' }}>
-          <label className="input-label">Ano:</label>
-          <input 
-            type="number" 
-            name="ano" 
-            defaultValue={currentYear} 
-            className="input-field" 
-            style={{ padding: '0.25rem' }} 
-          />
-          <button type="submit" className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem' }}>Ver</button>
-        </form>
+    <div className="space-y-8">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-semibold" style={{ margin: 0 }}>Relatórios</h1>
+          <p className="text-sm" style={{ margin: '0.25rem 0 0 0', opacity: 0.7 }}>Análise e resumo das finanças por período</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <form className="card" style={{ padding: 'var(--spacing-xs) var(--spacing-sm)', display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'center' }}>
+            <label className="input-label">Ano:</label>
+            <input 
+              type="number" 
+              name="ano" 
+              defaultValue={currentYear} 
+              className="input-field" 
+              style={{ padding: '0.25rem', width: '80px' }} 
+            />
+            <button type="submit" className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem' }}>Ver</button>
+          </form>
+        </div>
       </div>
 
       {/* Executive Summary */}

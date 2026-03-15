@@ -10,7 +10,22 @@ type RoleData = {
   permissions: PermissionData[]
 }
 
-export default function RoleManager({ initialRoles, availablePermissions }: { initialRoles: RoleData[], availablePermissions: PermissionData[] }) {
+const MODULE_LABELS: Record<string, string> = {
+  dashboard:     'Dashboard',
+  lancamentos:   'Lançamentos',
+  relatorios:    'Relatórios',
+  usuarios:      'Usuários',
+  configuracoes: 'Configurações',
+  funcoes:       'Funções',
+}
+
+export default function RoleManager({
+  initialRoles,
+  availablePermissions
+}: {
+  initialRoles: RoleData[]
+  availablePermissions: PermissionData[]
+}) {
   const [isAdding, setIsAdding] = useState(false)
   const [editingRole, setEditingRole] = useState<RoleData | null>(null)
   const [selectedPermissions, setSelectedPermissions] = useState<string[]>([])
@@ -19,10 +34,8 @@ export default function RoleManager({ initialRoles, availablePermissions }: { in
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
-    
     const formData = new FormData(e.currentTarget)
     const nome = formData.get('nome') as string
-    
     try {
       if (editingRole) {
         await updateRole(editingRole.id, nome, selectedPermissions)
@@ -32,10 +45,9 @@ export default function RoleManager({ initialRoles, availablePermissions }: { in
         setIsAdding(false)
       }
       setSelectedPermissions([])
-    } catch(err) {
-      alert("Erro ao salvar função.")
+    } catch (err) {
+      alert('Erro ao salvar função.')
     }
-
     setLoading(false)
   }
 
@@ -44,12 +56,11 @@ export default function RoleManager({ initialRoles, availablePermissions }: { in
       alert('Não é possível excluir as funções pré-definidas do sistema.')
       return
     }
-
     if (confirm('Tem certeza que deseja excluir esta função? Usuários vinculados poderão ser afetados.')) {
       try {
         await deleteRole(id)
-      } catch(err) {
-        alert("Erro ao remover função.")
+      } catch (err) {
+        alert('Erro ao remover função.')
       }
     }
   }
@@ -72,120 +83,192 @@ export default function RoleManager({ initialRoles, availablePermissions }: { in
     return acc
   }, {} as Record<string, PermissionData[]>)
 
+  const togglePermission = (id: string, checked: boolean) => {
+    if (checked) setSelectedPermissions(prev => [...prev, id])
+    else setSelectedPermissions(prev => prev.filter(x => x !== id))
+  }
+
+  const toggleModule = (perms: PermissionData[], allSelected: boolean) => {
+    if (allSelected) {
+      setSelectedPermissions(prev => prev.filter(id => !perms.map(p => p.id).includes(id)))
+    } else {
+      const toAdd = perms.map(p => p.id).filter(id => !selectedPermissions.includes(id))
+      setSelectedPermissions(prev => [...prev, ...toAdd])
+    }
+  }
+
   return (
     <div className="card">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-xl)' }}>
-        <h2 style={{ fontSize: '1.25rem', margin: 0 }}>Gerenciar Funções</h2>
+      {/* Card header */}
+      <div
+        className="card-body"
+        style={{ borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+      >
+        <h2 className="card-title">Gerenciar Funções</h2>
         {!isAdding && !editingRole && (
-          <button className="btn btn-primary" onClick={() => setIsAdding(true)}>
+          <button className="btn btn-primary btn-sm" onClick={() => setIsAdding(true)}>
             Adicionar Função
           </button>
         )}
       </div>
 
-      {(isAdding || editingRole) && (
-        <form onSubmit={handleSave} className="card" style={{ marginBottom: 'var(--spacing-xl)', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
-          <h3 style={{ marginBottom: 'var(--spacing-md)' }}>
-            {editingRole ? 'Editar Função' : 'Nova Função'}
-          </h3>
-          
-          <div className="input-group">
-            <label className="input-label">Nome da Função</label>
-            <input 
-              name="nome" 
-              required 
-              className="input-field" 
-              placeholder="Ex: Auxiliar Administrativo" 
-              defaultValue={editingRole?.nome}
-              autoFocus 
-            />
-          </div>
+      <div style={{ padding: 'var(--spacing-lg)' }}>
 
-          <div style={{ marginTop: 'var(--spacing-md)' }}>
-            <label className="input-label" style={{ marginBottom: 'var(--spacing-sm)' }}>Permissões do Sistema</label>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
-              {Object.entries(groupedPermissions).map(([module, perms]) => (
-                <div key={module} style={{ backgroundColor: 'var(--bg-primary)', padding: 'var(--spacing-sm)', borderRadius: 'var(--radius-md)' }}>
-                  <h4 style={{ textTransform: 'capitalize', marginBottom: 'var(--spacing-sm)', color: 'var(--text-secondary)' }}>
-                    Módulo: {module}
-                  </h4>
-                  <div style={{ display: 'flex', gap: 'var(--spacing-md)', flexWrap: 'wrap' }}>
-                    {perms.map(p => (
-                      <label key={p.id} style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)', cursor: 'pointer', fontSize: '0.875rem' }}>
-                        <input 
-                          type="checkbox" 
-                          style={{ accentColor: 'var(--primary)' }}
-                          checked={selectedPermissions.includes(p.id)}
-                          onChange={(e) => {
-                            if (e.target.checked) setSelectedPermissions([...selectedPermissions, p.id])
-                            else setSelectedPermissions(selectedPermissions.filter(id => id !== p.id))
+        {/* Add / Edit form */}
+        {(isAdding || editingRole) && (
+          <form onSubmit={handleSave} style={{ marginBottom: 'var(--spacing-xl)' }}>
+            <div className="card" style={{ padding: 'var(--spacing-lg)' }}>
+              <h3 style={{ marginBottom: 'var(--spacing-md)', fontSize: '1rem' }}>
+                {editingRole ? 'Editar Função' : 'Nova Função'}
+              </h3>
+
+              <div className="input-group">
+                <label className="input-label">Nome da Função</label>
+                <input
+                  name="nome"
+                  required
+                  className="input input-field"
+                  placeholder="Ex: Auxiliar Administrativo"
+                  defaultValue={editingRole?.nome}
+                  autoFocus
+                />
+              </div>
+
+              {/* Permissions Accordion */}
+              <div style={{ marginTop: 'var(--spacing-lg)' }}>
+                <p className="input-label" style={{ marginBottom: 'var(--spacing-sm)' }}>Permissões do Sistema</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
+                  {Object.entries(groupedPermissions).map(([module, perms]) => {
+                    const allSelected = perms.every(p => selectedPermissions.includes(p.id))
+                    const someSelected = perms.some(p => selectedPermissions.includes(p.id))
+                    const selectedCount = perms.filter(p => selectedPermissions.includes(p.id)).length
+                    const label = MODULE_LABELS[module] || module.charAt(0).toUpperCase() + module.slice(1)
+
+                    return (
+                      <details key={module} className="card" style={{ padding: 0 }} open={someSelected}>
+                        {/* Summary is the accordion header */}
+                        <summary
+                          style={{
+                            padding: 'var(--spacing-sm) var(--spacing-md)',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            listStyle: 'none',
+                            userSelect: 'none',
+                            borderRadius: 'var(--radius-lg)',
                           }}
-                        />
-                        {p.description}
-                      </label>
-                    ))}
-                  </div>
+                        >
+                          <div className="flex items-center gap-2">
+                            <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{label}</span>
+                            {selectedCount > 0 && (
+                              <span className="badge badge-soft badge-primary text-xs">
+                                {selectedCount}/{perms.length}
+                              </span>
+                            )}
+                          </div>
+                          <button
+                            type="button"
+                            className={`btn btn-xs btn-soft ${allSelected ? 'btn-error' : 'btn-success'}`}
+                            style={{ fontSize: '0.7rem' }}
+                            onClick={(e) => { e.preventDefault(); toggleModule(perms, allSelected) }}
+                          >
+                            {allSelected ? 'Remover todos' : 'Selecionar todos'}
+                          </button>
+                        </summary>
+
+                        {/* Checkbox list */}
+                        <div
+                          style={{
+                            padding: 'var(--spacing-sm) var(--spacing-md) var(--spacing-md)',
+                            borderTop: '1px solid var(--border-color)',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 'var(--spacing-sm)',
+                          }}
+                        >
+                          {perms.map(p => (
+                            <label
+                              key={p.id}
+                              style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)', cursor: 'pointer', fontSize: '0.875rem' }}
+                            >
+                              <input
+                                type="checkbox"
+                                className="checkbox checkbox-sm"
+                                checked={selectedPermissions.includes(p.id)}
+                                onChange={(e) => togglePermission(p.id, e.target.checked)}
+                              />
+                              <span style={{ color: 'var(--text-primary)' }}>{p.description}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </details>
+                    )
+                  })}
                 </div>
-              ))}
+              </div>
+
+              <div className="flex items-center gap-2" style={{ marginTop: 'var(--spacing-lg)' }}>
+                <button type="submit" className="btn btn-primary" disabled={loading}>
+                  {loading ? 'Salvando...' : 'Salvar'}
+                </button>
+                <button type="button" className="btn btn-secondary" onClick={cancelAction}>
+                  Cancelar
+                </button>
+              </div>
             </div>
-          </div>
+          </form>
+        )}
 
-          <div style={{ display: 'flex', gap: 'var(--spacing-sm)', marginTop: 'var(--spacing-md)' }}>
-            <button type="submit" className="btn btn-primary" disabled={loading}>
-              {loading ? 'Salvando...' : 'Salvar'}
-            </button>
-            <button type="button" className="btn btn-secondary" onClick={cancelAction}>
-              Cancelar
-            </button>
+        {/* Roles table */}
+        {!isAdding && !editingRole && (
+          <div className="table-responsive">
+            <table className="table table-hover data-table">
+              <thead>
+                <tr>
+                  <th>Função</th>
+                  <th style={{ textAlign: 'center' }}>Permissões</th>
+                  <th style={{ textAlign: 'right' }}>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {initialRoles.map((r) => {
+                  const isDefault = ['ADMINISTRADOR', 'TESOUREIRO', 'VISUALIZADOR'].includes(r.nome)
+                  return (
+                    <tr key={r.id}>
+                      <td style={{ fontWeight: 600 }}>{r.nome}</td>
+                      <td style={{ textAlign: 'center' }}>
+                        {isDefault ? (
+                          <span className="badge badge-soft badge-info text-xs">Acesso Padrão</span>
+                        ) : (
+                          <span className="badge badge-soft badge-primary text-xs">
+                            {r.permissions?.length || 0} permissão(ões)
+                          </span>
+                        )}
+                      </td>
+                      <td style={{ textAlign: 'right' }}>
+                        <div className="flex items-center gap-2 justify-end">
+                          <button className="btn btn-soft btn-primary btn-sm" onClick={() => handleEdit(r)}>
+                            Editar
+                          </button>
+                          <button
+                            className="btn btn-soft btn-error btn-sm"
+                            onClick={() => handleDelete(r.id, r.nome)}
+                            disabled={isDefault}
+                          >
+                            Excluir
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
           </div>
-        </form>
-      )}
+        )}
 
-      {(!isAdding && !editingRole) && (
-        <div className="table-responsive">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Função</th>
-                <th style={{ textAlign: 'center' }}>Permissões</th>
-                <th style={{ textAlign: 'right' }}>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {initialRoles.map((r) => {
-                const isDefault = ['ADMINISTRADOR', 'TESOUREIRO', 'VISUALIZADOR'].includes(r.nome)
-                return (
-                  <tr key={r.id}>
-                    <td style={{ fontWeight: 600 }}>{r.nome}</td>
-                    <td style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
-                      {isDefault ? 'Acesso Padrão' : `${r.permissions?.length || 0} permissão(ões)`} 
-                    </td>
-                    <td style={{ textAlign: 'right' }}>
-                      <div style={{ display: 'flex', gap: 'var(--spacing-sm)', justifyItems: 'flex-end', justifyContent: 'flex-end' }}>
-                        <button 
-                          className="btn btn-secondary" 
-                          style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }}
-                          onClick={() => handleEdit(r)}
-                        >
-                          Editar
-                        </button>
-                        <button 
-                          onClick={() => handleDelete(r.id, r.nome)}
-                          className="btn btn-secondary" 
-                          style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', color: isDefault ? 'var(--text-muted)' : 'var(--danger)', borderColor: 'transparent', background: 'transparent' }}
-                          disabled={isDefault}
-                        >
-                          Excluir
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
+      </div>
     </div>
   )
 }

@@ -105,66 +105,64 @@ export default async function DashboardPage({
   const monthlyTotals = await getMonthlyTotals(currentYear)
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-xl)' }}>
+    <div className="space-y-8">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
         <div>
-          <h1 style={{ margin: 0 }}>Dashboard</h1>
-          <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Visão geral das finanças da igreja</p>
+          <h1 className="text-xl font-semibold" style={{ margin: 0 }}>Dashboard</h1>
+          <p className="text-sm" style={{ margin: '0.25rem 0 0 0', opacity: 0.7 }}>Visão geral das finanças da igreja</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <DashboardFilter />
         </div>
       </div>
-
-      <DashboardFilter />
 
       <div className="stats-grid">
         <div className="card">
-          <div className="card-body gap-2">
+          <div className="card-body gap-3">
             <div className="flex items-center justify-between">
-              <span className="stat-label">Total Entradas</span>
+              <span className="card-title text-sm font-medium" style={{ opacity: 0.7 }}>Total Entradas</span>
               <span className="badge badge-soft badge-success text-xs">Entradas</span>
             </div>
-            <div className="stat-value success">
-              R$ {totalEntradas.toFixed(2).replace('.', ',')}
-            </div>
+            <p className="text-3xl font-semibold" style={{ color: 'var(--success)', margin: 0 }}>
+              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalEntradas)}
+            </p>
           </div>
         </div>
 
         <div className="card">
-          <div className="card-body gap-2">
+          <div className="card-body gap-3">
             <div className="flex items-center justify-between">
-              <span className="stat-label">Total Saídas</span>
+              <span className="card-title text-sm font-medium" style={{ opacity: 0.7 }}>Total Saídas</span>
               <span className="badge badge-soft badge-error text-xs">Saídas</span>
             </div>
-            <div className="stat-value danger">
-              R$ {totalSaidas.toFixed(2).replace('.', ',')}
-            </div>
+            <p className="text-3xl font-semibold" style={{ color: 'var(--danger)', margin: 0 }}>
+              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalSaidas)}
+            </p>
           </div>
         </div>
 
         <div className="card">
-          <div className="card-body gap-2">
+          <div className="card-body gap-3">
             <div className="flex items-center justify-between">
-              <span className="stat-label">Saldo Atual</span>
+              <span className="card-title text-sm font-medium" style={{ opacity: 0.7 }}>Saldo Atual</span>
               <span className={`badge badge-soft text-xs ${saldo >= 0 ? 'badge-info' : 'badge-error'}`}>Saldo</span>
             </div>
-            <div className={`stat-value ${saldo >= 0 ? 'success' : 'danger'}`}>
-              R$ {saldo.toFixed(2).replace('.', ',')}
-            </div>
+            <p className="text-3xl font-semibold" style={{ color: saldo >= 0 ? 'var(--success)' : 'var(--danger)', margin: 0 }}>
+              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(saldo)}
+            </p>
           </div>
         </div>
       </div>
 
-      <div style={{ marginTop: 'var(--spacing-xl)' }}>
-        <FinancialInsights monthlyTotals={monthlyTotals} />
-      </div>
+      <FinancialInsights monthlyTotals={monthlyTotals} />
 
-      <div style={{ marginTop: 'var(--spacing-xl)' }}>
-        <DashboardCharts 
-          evolutionData={evolutionData}
-          pieEntradasData={pieEntradasData}
-          pieSaidasData={pieSaidasData}
-          barCultoData={barCultoData}
-        />
-      </div>
+      <DashboardCharts 
+        evolutionData={evolutionData}
+        pieEntradasData={pieEntradasData}
+        pieSaidasData={pieSaidasData}
+        barCultoData={barCultoData}
+      />
     </div>
   )
 }

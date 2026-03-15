@@ -15,8 +15,14 @@ export default async function ConfiguracoesPage() {
   ])
 
   return (
-    <div>
-      <h1 style={{ marginBottom: 'var(--spacing-xl)' }}>Configurações</h1>
+    <div className="space-y-8">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-semibold" style={{ margin: 0 }}>Configurações</h1>
+          <p className="text-sm" style={{ margin: '0.25rem 0 0 0', opacity: 0.7 }}>Gerencie categorias e cultos da igreja</p>
+        </div>
+      </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 'var(--spacing-lg)' }}>
         

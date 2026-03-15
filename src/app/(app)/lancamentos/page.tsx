@@ -47,10 +47,16 @@ export default async function LancamentosPage({
   const saidas = transacoes.filter((t: any) => t.tipo === 'SAIDA')
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-xl)', flexWrap: 'wrap', gap: 'var(--spacing-md)' }}>
-        <h1 style={{ margin: 0 }}>Lançamentos</h1>
-        <MonthSelector />
+    <div className="space-y-8">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-semibold" style={{ margin: 0 }}>Lançamentos</h1>
+          <p className="text-sm" style={{ margin: '0.25rem 0 0 0', opacity: 0.7 }}>Registro e acompanhamento de transações financeiras</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <MonthSelector />
+        </div>
       </div>
 
       <TransactionList 

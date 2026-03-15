@@ -22,17 +22,16 @@ export default function FinancialInsights({
   monthlyTotals: MonthTotals[]
 }) {
   const now = new Date()
-  const currentMonthIdx = now.getMonth()   // 0-based
+  const currentMonthIdx = now.getMonth()
   const prevMonthIdx = currentMonthIdx > 0 ? currentMonthIdx - 1 : null
 
   const current = monthlyTotals[currentMonthIdx] ?? { entradas: 0, saidas: 0 }
   const prev = prevMonthIdx !== null ? monthlyTotals[prevMonthIdx] : null
 
-  // Check if there's any real data at all
   const hasAnyData = monthlyTotals.some(m => m.entradas > 0 || m.saidas > 0)
 
   type Insight = {
-    type: 'success' | 'warning' | 'info'
+    color: string
     icon: string
     message: string
   }
@@ -40,111 +39,73 @@ export default function FinancialInsights({
   const insights: Insight[] = []
 
   if (hasAnyData) {
-    // 1. Revenue trend
+    // Revenue trend
     if (prev !== null) {
-      const revPct = pct(current.entradas, prev.entradas)
+      const revPct = prev.entradas === 0 ? null : ((current.entradas - prev.entradas) / prev.entradas) * 100
       if (revPct !== null) {
         if (revPct >= 0) {
-          insights.push({
-            type: 'success',
-            icon: '📈',
-            message: `Entradas cresceram ${revPct.toFixed(1)}% em relação ao mês anterior (${MONTH_NAMES[prevMonthIdx!]}).`
-          })
+          insights.push({ color: 'var(--success)', icon: '📈', message: `Entradas cresceram ${revPct.toFixed(1)}% em relação ao mês anterior (${MONTH_NAMES[prevMonthIdx!]}).` })
         } else {
-          insights.push({
-            type: 'warning',
-            icon: '📉',
-            message: `Entradas caíram ${Math.abs(revPct).toFixed(1)}% em relação ao mês anterior (${MONTH_NAMES[prevMonthIdx!]}).`
-          })
-        }
-      } else if (current.entradas > 0) {
-        insights.push({
-          type: 'success',
-          icon: '🎉',
-          message: `Primeiro registro de entradas em ${MONTH_NAMES[currentMonthIdx]}: ${fmt(current.entradas)}.`
-        })
-      }
-    }
-
-    // 2. Expense trend
-    if (prev !== null) {
-      const expPct = pct(current.saidas, prev.saidas)
-      if (expPct !== null) {
-        if (expPct > 10) {
-          insights.push({
-            type: 'warning',
-            icon: '⚠️',
-            message: `Despesas aumentaram ${expPct.toFixed(1)}% em relação ao mês anterior. Atenção ao orçamento.`
-          })
-        } else if (expPct < -5) {
-          insights.push({
-            type: 'success',
-            icon: '✅',
-            message: `Despesas reduziram ${Math.abs(expPct).toFixed(1)}% em relação ao mês anterior.`
-          })
-        } else {
-          insights.push({
-            type: 'info',
-            icon: '📊',
-            message: `Despesas estáveis em relação ao mês anterior.`
-          })
+          insights.push({ color: 'var(--warning)', icon: '📉', message: `Entradas caíram ${Math.abs(revPct).toFixed(1)}% em relação ao mês anterior (${MONTH_NAMES[prevMonthIdx!]}).` })
         }
       }
     }
 
-    // 3. Financial health — current month
+    // Expense trend
+    if (prev !== null && prev.saidas > 0) {
+      const expPct = ((current.saidas - prev.saidas) / prev.saidas) * 100
+      if (expPct > 10) {
+        insights.push({ color: 'var(--warning)', icon: '⚠️', message: `Despesas aumentaram ${expPct.toFixed(1)}% em relação ao mês anterior.` })
+      } else if (expPct < -5) {
+        insights.push({ color: 'var(--success)', icon: '✅', message: `Despesas reduziram ${Math.abs(expPct).toFixed(1)}% em relação ao mês anterior.` })
+      } else {
+        insights.push({ color: 'var(--text-secondary)', icon: '📊', message: `Despesas estáveis em relação ao mês anterior.` })
+      }
+    }
+
+    // Financial health — current month
     const saldoMes = current.entradas - current.saidas
     if (current.entradas > 0 || current.saidas > 0) {
       if (saldoMes < 0) {
-        insights.push({
-          type: 'warning',
-          icon: '🚨',
-          message: `Atenção: despesas superaram receitas em ${MONTH_NAMES[currentMonthIdx]}. Saldo negativo de ${fmt(Math.abs(saldoMes))}.`
-        })
+        insights.push({ color: 'var(--danger)', icon: '🚨', message: `Atenção: despesas superaram receitas em ${MONTH_NAMES[currentMonthIdx]}. Saldo: ${fmt(saldoMes)}.` })
       } else if (saldoMes > 0) {
-        insights.push({
-          type: 'success',
-          icon: '💚',
-          message: `Saldo positivo em ${MONTH_NAMES[currentMonthIdx]}: ${fmt(saldoMes)}.`
-        })
+        insights.push({ color: 'var(--success)', icon: '💚', message: `Saldo positivo em ${MONTH_NAMES[currentMonthIdx]}: ${fmt(saldoMes)}.` })
       }
     }
 
-    // 4. Consecutive positive months (last 3)
+    // 3-month positive streak
     const last3 = monthlyTotals.slice(Math.max(0, currentMonthIdx - 2), currentMonthIdx + 1)
-    const allPositive = last3.length === 3 && last3.every(m => m.entradas > m.saidas)
-    if (allPositive) {
-      insights.push({
-        type: 'success',
-        icon: '🏆',
-        message: `Saldo positivo nos últimos 3 meses consecutivos. Excelente saúde financeira!`
-      })
+    if (last3.length === 3 && last3.every(m => m.entradas > m.saidas)) {
+      insights.push({ color: 'var(--success)', icon: '🏆', message: `Saldo positivo nos últimos 3 meses consecutivos!` })
     }
   }
 
-  const alertClass = {
-    success: 'alert alert-soft alert-success',
-    warning: 'alert alert-soft alert-warning',
-    info:    'alert alert-soft alert-info'
-  }
-
   return (
-    <div className="card" style={{ padding: 0, marginBottom: 'var(--spacing-xl)' }}>
+    <div className="card" style={{ padding: 0 }}>
       <div className="card-body" style={{ borderBottom: '1px solid var(--border-color)' }}>
         <h2 className="card-title" style={{ fontSize: '1.125rem' }}>Insights Financeiros</h2>
       </div>
-      <div style={{ padding: 'var(--spacing-md)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
+      <div style={{ padding: 'var(--spacing-md)' }}>
         {insights.length === 0 ? (
-          <div className="alert alert-soft alert-info">
-            Dados insuficientes para gerar insights.
+          <div className="card card-compact" style={{ opacity: 0.7 }}>
+            <div className="card-body flex-row items-center gap-3">
+              <span style={{ fontSize: '1.25rem' }}>📭</span>
+              <p style={{ margin: 0, fontSize: '0.9rem' }}>Dados insuficientes para gerar insights neste período.</p>
+            </div>
           </div>
         ) : (
-          insights.map((insight, i) => (
-            <div key={i} className={alertClass[insight.type]} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-              <span style={{ fontSize: '1.1rem', flexShrink: 0 }}>{insight.icon}</span>
-              <span>{insight.message}</span>
-            </div>
-          ))
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
+            {insights.map((insight, i) => (
+              <div key={i} className="card card-compact">
+                <div className="card-body flex-row items-center gap-3">
+                  <span style={{ fontSize: '1.25rem', flexShrink: 0 }}>{insight.icon}</span>
+                  <p style={{ margin: 0, fontSize: '0.875rem', color: insight.color, fontWeight: 500 }}>
+                    {insight.message}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </div>
