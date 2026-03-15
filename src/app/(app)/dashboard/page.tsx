@@ -104,6 +104,23 @@ export default async function DashboardPage({
   const currentYear = now.getFullYear()
   const monthlyTotals = await getMonthlyTotals(currentYear)
 
+  // Comparison indicators — compare current month vs previous month from monthlyTotals
+  const currentMonthIdx = now.getMonth()  // 0-based
+  const prevMonthIdx = currentMonthIdx > 0 ? currentMonthIdx - 1 : null
+  const currM = monthlyTotals[currentMonthIdx] ?? { entradas: 0, saidas: 0 }
+  const prevM = prevMonthIdx !== null ? monthlyTotals[prevMonthIdx] : null
+
+  const pctChange = (curr: number, prev: number | null): number | null => {
+    if (prev === null || prev === 0) return null
+    return ((curr - prev) / prev) * 100
+  }
+
+  const entradasPct  = pctChange(currM.entradas, prevM?.entradas ?? null)
+  const saidasPct    = pctChange(currM.saidas,   prevM?.saidas   ?? null)
+  const saldoCurrM   = currM.entradas - currM.saidas
+  const saldoPrevM   = prevM ? prevM.entradas - prevM.saidas : null
+  const saldoPct     = pctChange(saldoCurrM, saldoPrevM)
+
   return (
     <div className="space-y-8">
       {/* Page Header */}
@@ -127,6 +144,11 @@ export default async function DashboardPage({
             <p className="text-3xl font-semibold" style={{ color: 'var(--success)', margin: 0 }}>
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalEntradas)}
             </p>
+            {entradasPct !== null && (
+              <span className={`text-xs font-medium ${entradasPct >= 0 ? 'text-success' : 'text-error'}`}>
+                {entradasPct >= 0 ? '↑' : '↓'} {entradasPct >= 0 ? '+' : ''}{entradasPct.toFixed(1)}% vs mês anterior
+              </span>
+            )}
           </div>
         </div>
 
@@ -139,6 +161,11 @@ export default async function DashboardPage({
             <p className="text-3xl font-semibold" style={{ color: 'var(--danger)', margin: 0 }}>
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalSaidas)}
             </p>
+            {saidasPct !== null && (
+              <span className={`text-xs font-medium ${saidasPct <= 0 ? 'text-success' : 'text-error'}`}>
+                {saidasPct >= 0 ? '↑' : '↓'} {saidasPct >= 0 ? '+' : ''}{saidasPct.toFixed(1)}% vs mês anterior
+              </span>
+            )}
           </div>
         </div>
 
@@ -151,6 +178,11 @@ export default async function DashboardPage({
             <p className="text-3xl font-semibold" style={{ color: saldo >= 0 ? 'var(--success)' : 'var(--danger)', margin: 0 }}>
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(saldo)}
             </p>
+            {saldoPct !== null && (
+              <span className={`text-xs font-medium ${saldoPct >= 0 ? 'text-success' : 'text-error'}`}>
+                {saldoPct >= 0 ? '↑' : '↓'} {saldoPct >= 0 ? '+' : ''}{saldoPct.toFixed(1)}% vs mês anterior
+              </span>
+            )}
           </div>
         </div>
       </div>
