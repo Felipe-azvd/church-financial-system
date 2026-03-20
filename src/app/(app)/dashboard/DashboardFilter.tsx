@@ -41,7 +41,7 @@ export default function DashboardFilter() {
   if (!customRange) return null
 
   return (
-    <div className="card" style={{ marginBottom: 'var(--spacing-xl)', padding: 'var(--spacing-sm) var(--spacing-md)' }}>
+    <div className="card mb-8" style={{ padding: 'var(--spacing-sm) var(--spacing-md)' }}>
       <form onSubmit={handleCustomSubmit} style={{ display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'center', flexWrap: 'wrap' }}>
         <label className="input-label" style={{ marginBottom: 0 }}>De:</label>
         <input type="date" name="inicio" defaultValue={inicio} required className="input-field" style={{ padding: 'var(--space-1) var(--space-2)', width: 'auto' }} />

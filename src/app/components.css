@@ -25,35 +25,7 @@
   }
 }
 
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-2xl);
-}
-
-/* Layout utilities */
-.page-container {
-  max-width: var(--container-width);
-  margin: 0 auto;
-  padding: var(--space-4);
-}
-
-.section {
-  margin-bottom: var(--space-5);
-}
-
-.grid-metrics {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-4);
-}
-
-.grid-charts {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-4);
-}
+/* Layout utilities removed in favor of standard Tailwind utilites */
 
 .stat-card {
   display: flex;

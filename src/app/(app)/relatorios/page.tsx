@@ -77,7 +77,7 @@ export default async function RelatoriosPage({
 
       {/* Executive Summary */}
       <div style={{ marginBottom: 'var(--spacing-2xl)' }}>
-        <h2 style={{ marginBottom: 'var(--spacing-md)', fontSize: 'var(--text-lg)', color: 'var(--text-primary)', fontWeight: 600 }}>
+        <h2 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
           Resumo Financeiro
         </h2>
         <div style={{

@@ -115,7 +115,7 @@ export default function TransactionList({
   const renderTimeline = () => {
     return (
       <div>
-        <h2 style={{ marginBottom: 'var(--spacing-md)', color: 'var(--text-primary)', fontSize: 'var(--text-xl)' }}>
+        <h2 className="text-xl mb-3" style={{ color: 'var(--text-primary)' }}>
           Extrato Financeiro
         </h2>
         <div className="card" style={{ padding: 0, overflow: 'hidden' }}>

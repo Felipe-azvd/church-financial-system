@@ -6,9 +6,9 @@ export default function IncomeByCulto({
   data: { culto: string; total: number }[]
 }) {
   return (
-    <div className="card" style={{ padding: 0, overflow: 'hidden', marginBottom: 'var(--spacing-xl)' }}>
-      <div className="card-body" style={{ padding: 'var(--spacing-md)', borderBottom: '1px solid var(--border-color)' }}>
-        <h2 className="card-title" style={{ fontSize: 'var(--text-lg)' }}>Entradas por Culto</h2>
+    <div className="card p-0 mb-8 overflow-hidden">
+      <div className="p-6 border-b border-[var(--border-color)]">
+        <h2 className="text-lg font-semibold mb-3">Entradas por Culto</h2>
       </div>
       <div style={{ maxHeight: '420px', overflowY: 'auto' }}>
       <table className="table table-hover data-table">
@@ -22,7 +22,7 @@ export default function IncomeByCulto({
           {!data || data.length === 0 ? (
             <tr>
               <td colSpan={2}>
-                <div className="alert alert-soft alert-info" style={{ margin: 'var(--spacing-md)' }}>
+                <div className="alert alert-soft alert-info m-4">
                   Sem dados para exibir neste período.
                 </div>
               </td>

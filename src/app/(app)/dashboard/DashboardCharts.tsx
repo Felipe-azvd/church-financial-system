@@ -62,8 +62,8 @@ export default function DashboardCharts({
   )
 
   const chartHeader = (title: string) => (
-    <div className="card-body" style={{ borderBottom: '1px solid var(--border-color)' }}>
-      <h2 className="card-title" style={{ fontSize: 'var(--text-lg)' }}>{title}</h2>
+    <div className="pb-4 mb-4" style={{ borderBottom: '1px solid var(--border-color)' }}>
+      <h2 className="text-lg font-semibold">{title}</h2>
     </div>
   )
 
@@ -71,9 +71,9 @@ export default function DashboardCharts({
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xl)' }}>
       
       {/* Financial Evolution Line Chart */}
-      <div className="card" style={{ padding: 0 }}>
+      <div className="card p-6">
         {chartHeader('Evolução Financeira')}
-        <div className="card-body">
+        <div>
           {monthlyEvolutionData.length === 0 ? emptyState : (
             <div className="w-full" style={{ height: '320px' }}>
               <ResponsiveContainer width="100%" height="100%">
@@ -98,11 +98,11 @@ export default function DashboardCharts({
       </div>
 
       {/* Pie Charts Grid */}
-      <div className="grid-charts">
+      <div className="grid grid-cols-2 gap-6 mb-8">
 
-        <div className="card" style={{ padding: 0 }}>
+        <div className="card p-6">
           {chartHeader('Entradas por Categoria')}
-          <div className="card-body">
+          <div>
             {pieEntradasData.length === 0 ? emptyState : (
               <div className="w-full" style={{ height: '320px' }}>
                 <ResponsiveContainer width="100%" height="100%">
@@ -121,9 +121,9 @@ export default function DashboardCharts({
           </div>
         </div>
 
-        <div className="card" style={{ padding: 0 }}>
+        <div className="card p-6">
           {chartHeader('Despesas por Categoria')}
-          <div className="card-body">
+          <div>
             {pieSaidasData.length === 0 ? emptyState : (
               <div className="w-full" style={{ height: '320px' }}>
                 <ResponsiveContainer width="100%" height="100%">
@@ -145,9 +145,9 @@ export default function DashboardCharts({
       </div>
 
       {/* Bar Chart — Entradas por Culto */}
-      <div className="card" style={{ padding: 0 }}>
+      <div className="card p-6 col-span-2">
         {chartHeader('Entradas por Culto')}
-        <div className="card-body">
+        <div>
           {barCultoData.length === 0 ? emptyState : (
             <div className="w-full" style={{ height: '320px' }}>
               <ResponsiveContainer width="100%" height="100%">
