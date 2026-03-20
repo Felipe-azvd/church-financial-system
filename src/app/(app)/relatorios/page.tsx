@@ -57,8 +57,8 @@ export default async function RelatoriosPage({
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold" style={{ margin: 0 }}>Relatórios</h1>
-          <p className="text-sm" style={{ margin: 'var(--space-1) 0 0 0', opacity: 0.7 }}>Análise e resumo das finanças por período</p>
+          <h1 className="text-2xl font-semibold" style={{ margin: 0 }}>Relatórios</h1>
+          <p className="text-xs opacity-70" style={{ margin: 'var(--space-1) 0 0 0' }}>Análise e resumo das finanças por período</p>
         </div>
         <div className="flex items-center gap-3">
           <form className="card" style={{ padding: 'var(--spacing-xs) var(--spacing-sm)', display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'center' }}>
@@ -88,7 +88,7 @@ export default async function RelatoriosPage({
           <div className="card">
             <div className="card-body gap-2">
               <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Entradas Totais</span>
-              <p className="text-2xl font-bold" style={{ color: 'var(--success)', margin: 0 }}>
+              <p className="text-xl font-semibold" style={{ color: 'var(--success)', margin: 0 }}>
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(summary.entradas)}
               </p>
             </div>
@@ -97,7 +97,7 @@ export default async function RelatoriosPage({
           <div className="card">
             <div className="card-body gap-2">
               <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Saídas Totais</span>
-              <p className="text-2xl font-bold" style={{ color: 'var(--danger)', margin: 0 }}>
+              <p className="text-xl font-semibold" style={{ color: 'var(--danger)', margin: 0 }}>
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(summary.saidas)}
               </p>
             </div>
@@ -106,7 +106,7 @@ export default async function RelatoriosPage({
           <div className="card">
             <div className="card-body gap-2">
               <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Saldo Anual</span>
-              <p className="text-2xl font-bold" style={{ color: summary.saldo >= 0 ? 'var(--success)' : 'var(--danger)', margin: 0 }}>
+              <p className="text-xl font-semibold" style={{ color: summary.saldo >= 0 ? 'var(--success)' : 'var(--danger)', margin: 0 }}>
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(summary.saldo)}
               </p>
             </div>
@@ -115,7 +115,7 @@ export default async function RelatoriosPage({
           <div className="card">
             <div className="card-body gap-2">
               <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Média Mensal</span>
-              <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)', margin: 0 }}>
+              <p className="text-xl font-semibold" style={{ color: 'var(--text-primary)', margin: 0 }}>
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(mediaMensal)}
               </p>
             </div>
@@ -124,14 +124,14 @@ export default async function RelatoriosPage({
           <div className="card">
             <div className="card-body gap-2">
               <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Melhor Mês</span>
-              <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)', margin: 0 }}>{melhorMes}</p>
+              <p className="text-xl font-semibold" style={{ color: 'var(--text-primary)', margin: 0 }}>{melhorMes}</p>
             </div>
           </div>
 
           <div className="card">
             <div className="card-body gap-2">
               <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Maior Despesa</span>
-              <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)', margin: 0 }}>{maiorDespesa}</p>
+              <p className="text-xl font-semibold" style={{ color: 'var(--text-primary)', margin: 0 }}>{maiorDespesa}</p>
             </div>
           </div>
         </div>

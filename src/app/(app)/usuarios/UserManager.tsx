@@ -61,8 +61,8 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
       {/* Page Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-xl font-semibold" style={{ margin: 0 }}>Usuários</h1>
-          <p className="text-sm" style={{ margin: 'var(--space-1) 0 0 0', opacity: 0.7 }}>Gerencie os usuários e seus acessos</p>
+          <h1 className="text-2xl font-semibold" style={{ margin: 0 }}>Usuários</h1>
+          <p className="text-xs opacity-70" style={{ margin: 'var(--space-1) 0 0 0' }}>Gerencie os usuários e seus acessos</p>
         </div>
         <div className="flex items-center gap-3">
           {(!isAdding && !editingUser) && (
@@ -73,7 +73,7 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
 
       {(isAdding || editingUser) && (
         <form onSubmit={handleSave} className="card" style={{ marginBottom: 'var(--spacing-md)' }}>
-          <h3 style={{ marginBottom: 'var(--spacing-md)' }}>
+          <h3 className="text-sm font-medium mb-3">
             {editingUser ? 'Editar Usuário' : 'Criar Usuário'}
           </h3>
           

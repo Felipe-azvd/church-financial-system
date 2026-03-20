@@ -34,7 +34,7 @@ export default function PeriodSelector() {
 
   return (
     <div className="flex items-center gap-2">
-      <label className="text-sm" style={{ opacity: 0.7, whiteSpace: 'nowrap' }}>Período:</label>
+      <label className="text-xs opacity-70 whitespace-nowrap">Período:</label>
       <select
         className="select select-sm"
         style={{ padding: 'var(--space-1) var(--space-2)', fontSize: 'var(--text-xs)', minWidth: '130px' }}

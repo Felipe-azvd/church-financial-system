@@ -34,8 +34,8 @@ export default function FinancialSummary({
       }}>
         <div className="card">
           <div className="card-body gap-2">
-            <h3 style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Entradas totais</h3>
-            <p style={{ margin: 'var(--spacing-sm) 0 0 0', fontSize: '1.5rem', fontWeight: 700, color: 'var(--success)' }}>
+            <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">Entradas totais</h3>
+            <p className="text-xl font-semibold" style={{ color: 'var(--success)' }}>
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(entradas)}
             </p>
           </div>
@@ -43,8 +43,8 @@ export default function FinancialSummary({
         
         <div className="card">
           <div className="card-body gap-2">
-            <h3 style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Saídas totais</h3>
-            <p style={{ margin: 'var(--spacing-sm) 0 0 0', fontSize: '1.5rem', fontWeight: 700, color: 'var(--danger)' }}>
+            <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">Saídas totais</h3>
+            <p className="text-xl font-semibold" style={{ color: 'var(--danger)' }}>
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(saidas)}
             </p>
           </div>
@@ -52,8 +52,8 @@ export default function FinancialSummary({
 
         <div className="card">
           <div className="card-body gap-2">
-            <h3 style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Saldo anual</h3>
-            <p style={{ margin: 'var(--spacing-sm) 0 0 0', fontSize: '1.5rem', fontWeight: 700, color: saldo >= 0 ? 'var(--primary)' : 'var(--danger)' }}>
+            <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">Saldo anual</h3>
+            <p className="text-xl font-semibold" style={{ color: saldo >= 0 ? 'var(--primary)' : 'var(--danger)' }}>
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(saldo)}
             </p>
           </div>
@@ -61,8 +61,8 @@ export default function FinancialSummary({
 
         <div className="card">
           <div className="card-body gap-2">
-            <h3 style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Melhor mês</h3>
-            <p style={{ margin: 'var(--spacing-sm) 0 0 0', fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+            <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">Melhor mês</h3>
+            <p className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>
               {melhorMes}
             </p>
           </div>
@@ -70,8 +70,8 @@ export default function FinancialSummary({
 
         <div className="card">
           <div className="card-body gap-2">
-            <h3 style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Maior despesa</h3>
-            <p style={{ margin: 'var(--spacing-sm) 0 0 0', fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+            <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">Maior despesa</h3>
+            <p className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>
               {maiorDespesa}
             </p>
           </div>
@@ -79,8 +79,8 @@ export default function FinancialSummary({
 
         <div className="card">
           <div className="card-body gap-2">
-            <h3 style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Média mensal</h3>
-            <p style={{ margin: 'var(--spacing-sm) 0 0 0', fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+            <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">Média mensal</h3>
+            <p className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(mediaMensal)}
             </p>
           </div>

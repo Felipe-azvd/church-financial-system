@@ -126,8 +126,8 @@ export default async function DashboardPage({
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold" style={{ margin: 0 }}>Dashboard</h1>
-          <p className="text-sm" style={{ margin: 'var(--space-1) 0 0 0', opacity: 0.7 }}>Visão geral das finanças da igreja</p>
+          <h1 className="text-2xl font-semibold" style={{ margin: 0 }}>Dashboard</h1>
+          <p className="text-xs opacity-70" style={{ margin: 'var(--space-1) 0 0 0' }}>Visão geral das finanças da igreja</p>
         </div>
         <div className="flex items-center gap-3">
           <DashboardFilter />
@@ -139,7 +139,7 @@ export default async function DashboardPage({
         <div className="card">
           <div className="card-body gap-3">
             <div className="flex items-center justify-between">
-              <span className="card-title text-sm font-medium" style={{ opacity: 0.7 }}>Total Entradas</span>
+              <span className="text-sm font-medium text-[var(--text-secondary)]">Total Entradas</span>
               <span className="badge badge-soft badge-success text-xs">Entradas</span>
             </div>
             <p className="text-xl font-semibold" style={{ color: 'var(--success)', margin: 0 }}>
@@ -156,7 +156,7 @@ export default async function DashboardPage({
         <div className="card">
           <div className="card-body gap-3">
             <div className="flex items-center justify-between">
-              <span className="card-title text-sm font-medium" style={{ opacity: 0.7 }}>Total Saídas</span>
+              <span className="text-sm font-medium text-[var(--text-secondary)]">Total Saídas</span>
               <span className="badge badge-soft badge-error text-xs">Saídas</span>
             </div>
             <p className="text-xl font-semibold" style={{ color: 'var(--danger)', margin: 0 }}>
@@ -173,7 +173,7 @@ export default async function DashboardPage({
         <div className="card">
           <div className="card-body gap-3">
             <div className="flex items-center justify-between">
-              <span className="card-title text-sm font-medium" style={{ opacity: 0.7 }}>Saldo Atual</span>
+              <span className="text-sm font-medium text-[var(--text-secondary)]">Saldo Atual</span>
               <span className={`badge badge-soft text-xs ${saldo >= 0 ? 'badge-info' : 'badge-error'}`}>Saldo</span>
             </div>
             <p className="text-xl font-semibold" style={{ color: saldo >= 0 ? 'var(--success)' : 'var(--danger)', margin: 0 }}>

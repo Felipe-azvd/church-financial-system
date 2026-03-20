@@ -184,8 +184,8 @@ button {
 }
 
 .input-label {
-  font-size: var(--text-sm);
-  font-weight: 500;
+  @apply text-xs opacity-70;
+  font-weight: 400;
   color: var(--text-secondary);
 }
 

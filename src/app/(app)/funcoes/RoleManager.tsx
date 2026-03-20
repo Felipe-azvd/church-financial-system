@@ -105,8 +105,8 @@ export default function RoleManager({
         style={{ borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
       >
         <div>
-          <h2 className="card-title text-xl font-semibold">Gerenciar Funções</h2>
-          <p className="text-sm" style={{ margin: 'var(--space-1) 0 0 0', opacity: 0.7 }}>Defina funções e controle o acesso de cada usuário</p>
+          <h2 className="text-lg font-semibold">Gerenciar Funções</h2>
+          <p className="text-xs opacity-70" style={{ margin: 'var(--space-1) 0 0 0' }}>Defina funções e controle o acesso de cada usuário</p>
         </div>
         {!isAdding && !editingRole && (
           <button className="btn btn-primary btn-sm" onClick={() => setIsAdding(true)}>
@@ -122,7 +122,7 @@ export default function RoleManager({
           <form onSubmit={handleSave} style={{ marginBottom: 'var(--spacing-xl)' }}>
             <div className="card">
               <div className="card-body">
-              <h3 style={{ marginBottom: 'var(--spacing-md)', fontSize: 'var(--text-base)' }}>
+              <h3 className="text-sm font-medium mb-3">
                 {editingRole ? 'Editar Função' : 'Nova Função'}
               </h3>
 

@@ -50,7 +50,7 @@ export default function ConfigItemManager({
   return (
     <div className="card">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-md)' }}>
-        <h2 style={{ fontSize: 'var(--text-xl)' }}>{title}</h2>
+        <h2 className="text-lg font-semibold">{title}</h2>
         {!isAdding && !editingItem && (
           <button className="btn btn-secondary" style={{ padding: 'var(--space-1) var(--space-2)', fontSize: 'var(--text-xs)' }} onClick={() => setIsAdding(true)}>Adicionar</button>
         )}

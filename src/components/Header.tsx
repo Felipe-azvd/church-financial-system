@@ -11,7 +11,7 @@ export default function Header({ userName }: { userName: string }) {
         <button className="mobile-menu-btn">
           <Menu size={24} />
         </button>
-        <h2 className="page-title">Sistema Financeiro</h2>
+        <h2 className="text-lg font-semibold">Sistema Financeiro</h2>
       </div>
 
       <div className="header-right">
