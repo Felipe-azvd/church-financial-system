@@ -2,6 +2,7 @@
 
 import { getTenantPrisma } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
+import * as lancamentoService from "@/services/lancamentos.service"
 
 export async function createTransaction(data: {
   descricao: string
@@ -11,26 +12,21 @@ export async function createTransaction(data: {
   categoria_id?: string | null
   culto_id?: string | null
 }) {
-  const { db, tenantId, user } = await getTenantPrisma()
+  const { tenantId, user } = await getTenantPrisma()
 
   if (!user.permissions.includes('lancamentos.criar')) {
     throw new Error('Acesso negado. Permissão necessária para criar lançamentos.')
   }
 
-  await db.transacao.create({
-    data: {
-      descricao: data.descricao,
-      valor: data.valor,
-      data: new Date(data.data),
-      tipo: data.tipo,
-      categoria_id: data.categoria_id || null,
-      culto_id: data.culto_id || null,
-      igreja_id: tenantId,
-      usuario_id: user.id
-    }
+  await lancamentoService.criarLancamento(tenantId, user.id, {
+    descricao: data.descricao,
+    valor: data.valor,
+    data: new Date(data.data),
+    tipo: data.tipo,
+    categoria_id: data.categoria_id || null,
+    culto_id: data.culto_id || null
   })
 
-  revalidatePath('/lancamentos')
   revalidatePath('/lancamentos')
   revalidatePath('/dashboard')
 }
@@ -43,28 +39,19 @@ export async function updateTransaction(id: string, data: {
   categoria_id?: string | null
   culto_id?: string | null
 }) {
-  const { db, tenantId, user } = await getTenantPrisma()
+  const { tenantId, user } = await getTenantPrisma()
 
   if (!user.permissions.includes('lancamentos.editar')) {
     throw new Error('Acesso negado. Permissão necessária para editar lançamentos.')
   }
 
-  // Verify ownership before updating
-  const tx = await db.transacao.findUnique({ where: { id } })
-  if (!tx || tx.igreja_id !== tenantId) {
-    throw new Error('Unauthorized or not found')
-  }
-
-  await db.transacao.update({
-    where: { id },
-    data: {
-      descricao: data.descricao,
-      valor: data.valor,
-      data: new Date(data.data),
-      tipo: data.tipo,
-      categoria_id: data.categoria_id || null,
-      culto_id: data.culto_id || null,
-    }
+  await lancamentoService.atualizarLancamento(tenantId, id, {
+    descricao: data.descricao,
+    valor: data.valor,
+    data: new Date(data.data),
+    tipo: data.tipo,
+    categoria_id: data.categoria_id || null,
+    culto_id: data.culto_id || null
   })
 
   revalidatePath('/lancamentos')
@@ -72,21 +59,13 @@ export async function updateTransaction(id: string, data: {
 }
 
 export async function deleteTransaction(id: string) {
-  const { db, tenantId, user } = await getTenantPrisma()
+  const { tenantId, user } = await getTenantPrisma()
 
   if (!user.permissions.includes('lancamentos.excluir')) {
     throw new Error('Acesso negado. Permissão necessária para excluir lançamentos.')
   }
 
-  // Verify ownership before deleting
-  const tx = await db.transacao.findUnique({ where: { id } })
-  if (!tx || tx.igreja_id !== tenantId) {
-    throw new Error('Unauthorized or not found')
-  }
-
-  await db.transacao.delete({
-    where: { id }
-  })
+  await lancamentoService.deletarLancamento(tenantId, id)
 
   revalidatePath('/lancamentos')
   revalidatePath('/dashboard')
@@ -104,176 +83,43 @@ export async function getLookups() {
 }
 
 export async function getFinancialSummary(ano: number) {
-  const { db, tenantId } = await getTenantPrisma()
+  const { tenantId } = await getTenantPrisma()
   const startDate = new Date(`${ano}-01-01T00:00:00.000Z`)
   const endDate = new Date(`${ano}-12-31T23:59:59.999Z`)
 
-  const entradas = await db.transacao.aggregate({
-    _sum: { valor: true },
-    where: { 
-      igreja_id: tenantId, 
-      tipo: "ENTRADA",
-      data: { gte: startDate, lte: endDate }
-    }
-  })
-
-  const saidas = await db.transacao.aggregate({
-    _sum: { valor: true },
-    where: { 
-      igreja_id: tenantId, 
-      tipo: "SAIDA",
-      data: { gte: startDate, lte: endDate }
-    }
-  })
-
-  return {
-    entradas: entradas._sum.valor || 0,
-    saidas: saidas._sum.valor || 0,
-    saldo: (entradas._sum.valor || 0) - (saidas._sum.valor || 0)
-  }
+  return await lancamentoService.obterResumoFinanceiro(tenantId, startDate, endDate)
 }
 
 export async function getIncomeByCategory(ano: number) {
-  const { db, tenantId } = await getTenantPrisma()
+  const { tenantId } = await getTenantPrisma()
   const startDate = new Date(`${ano}-01-01T00:00:00.000Z`)
   const endDate = new Date(`${ano}-12-31T23:59:59.999Z`)
 
-  const grouped = await db.transacao.groupBy({
-    by: ["categoria_id"],
-    _sum: { valor: true },
-    where: {
-      igreja_id: tenantId,
-      tipo: "ENTRADA",
-      categoria_id: { not: null },
-      data: { gte: startDate, lte: endDate }
-    }
-  })
-
-  const categoryIds = grouped.map((g) => g.categoria_id as string)
-  const categories = await db.categoria.findMany({
-    where: { id: { in: categoryIds } }
-  })
-
-  return grouped.map(g => {
-    const cat = categories.find(c => c.id === g.categoria_id)
-    return {
-      category: cat ? cat.nome : "Desconhecida",
-      total: g._sum.valor || 0
-    }
-  }).sort((a, b) => b.total - a.total)
+  return await lancamentoService.listarEntradasPorCategoria(tenantId, startDate, endDate)
 }
 
 export async function getExpensesByCategory(ano: number) {
-  const { db, tenantId } = await getTenantPrisma()
+  const { tenantId } = await getTenantPrisma()
   const startDate = new Date(`${ano}-01-01T00:00:00.000Z`)
   const endDate = new Date(`${ano}-12-31T23:59:59.999Z`)
 
-  const grouped = await db.transacao.groupBy({
-    by: ["categoria_id"],
-    _sum: { valor: true },
-    where: {
-      igreja_id: tenantId,
-      tipo: "SAIDA",
-      categoria_id: { not: null },
-      data: { gte: startDate, lte: endDate }
-    }
-  })
-
-  const categoryIds = grouped.map((g) => g.categoria_id as string)
-  const categories = await db.categoria.findMany({
-    where: { id: { in: categoryIds } }
-  })
-
-  return grouped.map(g => {
-    const cat = categories.find(c => c.id === g.categoria_id)
-    return {
-      category: cat ? cat.nome : "Desconhecida",
-      total: g._sum.valor || 0
-    }
-  }).sort((a, b) => b.total - a.total)
+  return await lancamentoService.listarSaidasPorCategoria(tenantId, startDate, endDate)
 }
 
 export async function getIncomeByCulto(ano: number) {
-  const { db, tenantId } = await getTenantPrisma()
+  const { tenantId } = await getTenantPrisma()
   const startDate = new Date(`${ano}-01-01T00:00:00.000Z`)
   const endDate = new Date(`${ano}-12-31T23:59:59.999Z`)
 
-  const grouped = await db.transacao.groupBy({
-    by: ["culto_id"],
-    _sum: { valor: true },
-    where: {
-      igreja_id: tenantId,
-      tipo: "ENTRADA",
-      culto_id: { not: null },
-      data: { gte: startDate, lte: endDate }
-    }
-  })
-
-  const cultoIds = grouped.map((g) => g.culto_id as string)
-  const cultos = await db.culto.findMany({
-    where: { id: { in: cultoIds } }
-  })
-
-  return grouped.map(g => {
-    const cultoObj = cultos.find(c => c.id === g.culto_id)
-    return {
-      culto: cultoObj ? cultoObj.nome : "Desconhecido",
-      total: g._sum.valor || 0
-    }
-  }).sort((a, b) => b.total - a.total)
+  return await lancamentoService.listarEntradasPorCulto(tenantId, startDate, endDate)
 }
 
 export async function getMonthlyTotals(ano: number) {
-  const { db, tenantId } = await getTenantPrisma()
-  const promises = []
-
-  for (let i = 0; i < 12; i++) {
-    const mStart = new Date(ano, i, 1)
-    const mEnd = new Date(ano, i + 1, 0, 23, 59, 59, 999)
-
-    promises.push(
-      db.transacao.aggregate({
-        _sum: { valor: true },
-        where: { igreja_id: tenantId, tipo: 'ENTRADA', data: { gte: mStart, lte: mEnd } }
-      }),
-      db.transacao.aggregate({
-        _sum: { valor: true },
-        where: { igreja_id: tenantId, tipo: 'SAIDA', data: { gte: mStart, lte: mEnd } }
-      })
-    )
-  }
-
-  const results = await Promise.all(promises)
-  const monthlyTotals = []
-
-  for (let i = 0; i < 12; i++) {
-    monthlyTotals.push({
-      entradas: results[i * 2]._sum.valor || 0,
-      saidas: results[i * 2 + 1]._sum.valor || 0
-    })
-  }
-
-  return monthlyTotals
+  const { tenantId } = await getTenantPrisma()
+  return await lancamentoService.obterTotaisMensais(tenantId, ano)
 }
 
 export async function getMonthlyEvolution() {
-  const { db, tenantId } = await getTenantPrisma()
-  
-  const results = await db.$queryRaw`
-    SELECT 
-      EXTRACT(YEAR FROM data) as year,
-      EXTRACT(MONTH FROM data) as month,
-      SUM(valor) as total
-    FROM transacoes
-    WHERE igreja_id = ${tenantId} AND tipo = 'ENTRADA'
-    GROUP BY year, month
-    ORDER BY year ASC, month ASC
-  `
-  
-  const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
-  
-  return (results as any[]).map(r => ({
-    month: `${monthNames[r.month - 1]}/${r.year}`,
-    total: Number(r.total || 0)
-  }))
+  const { tenantId } = await getTenantPrisma()
+  return await lancamentoService.obterEvolucaoMensal(tenantId)
 }

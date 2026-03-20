@@ -1,6 +1,7 @@
 import { getLookups } from "@/app/actions/finance"
 import { getTenantPrisma } from "@/lib/auth"
 import { redirect } from "next/navigation"
+import { listarLancamentos } from "@/services/lancamentos.service"
 import MonthSelector from "./MonthSelector"
 import TransactionList from "./TransactionList"
 
@@ -27,20 +28,7 @@ export default async function LancamentosPage({
   const startOfMonth = new Date(currentYear, currentMonth, 1)
   const endOfMonth = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59, 999)
 
-  const transacoes = await db.transacao.findMany({
-    where: { 
-      igreja_id: tenantId,
-      data: {
-        gte: startOfMonth,
-        lte: endOfMonth
-      }
-    },
-    orderBy: { data: 'asc' },
-    include: {
-      categoria: true,
-      culto: true,
-    }
-  })
+  const transacoes = await listarLancamentos(tenantId, startOfMonth, endOfMonth)
 
   // Split transactions
   const entradas = transacoes.filter((t: any) => t.tipo === 'ENTRADA')
