@@ -211,13 +211,13 @@ export default async function DashboardPage({
         )
       })()}
 
-      <FinancialInsights monthlyTotals={monthlyTotals} />
-
+      {/* Dashboard Charts Interleaving Insights */}
       <DashboardCharts 
         evolutionData={evolutionData}
         pieEntradasData={pieEntradasData}
         pieSaidasData={pieSaidasData}
         barCultoData={barCultoData}
+        insightsSlot={<FinancialInsights monthlyTotals={monthlyTotals} />}
       />
     </div>
   )

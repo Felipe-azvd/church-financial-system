@@ -23,12 +23,14 @@ export default function DashboardCharts({
   evolutionData,
   pieEntradasData,
   pieSaidasData,
-  barCultoData
+  barCultoData,
+  insightsSlot
 }: { 
   evolutionData: EvolutionData[]
   pieEntradasData: ChartData[]
   pieSaidasData: ChartData[]
   barCultoData: ChartData[]
+  insightsSlot?: React.ReactNode
 }) {
   const formatCurrency = (value: number) => `R$ ${value.toFixed(2).replace('.', ',')}`
   const tooltipStyle = { 
@@ -68,7 +70,7 @@ export default function DashboardCharts({
   )
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xl)' }}>
+    <div className="flex flex-col gap-8">
       
       {/* Financial Evolution Line Chart */}
       <div className="card">
@@ -96,6 +98,8 @@ export default function DashboardCharts({
           )}
         </div>
       </div>
+
+      {insightsSlot}
 
       {/* Pie Charts Grid */}
       <div className="grid grid-cols-2 gap-6 mb-8">
