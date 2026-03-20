@@ -1,8 +1,11 @@
 'use server'
 
-import { getTenantPrisma, checkPermission } from "@/lib/auth"
+import { checkPermission, getTenantPrisma } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
 import * as lancamentoService from "@/services/lancamentos.service"
+import { lancamentoSchema } from "@/schemas/lancamento.schema"
+import { ActionResponse } from "@/types/actions"
+import { z } from "zod"
 
 export async function createTransaction(data: {
   descricao: string
@@ -11,20 +14,36 @@ export async function createTransaction(data: {
   tipo: string
   categoria_id?: string | null
   culto_id?: string | null
-}) {
-  await checkPermission('lancamentos.criar')
+}): Promise<ActionResponse> {
+  try {
+    await checkPermission('lancamentos.criar')
 
-  await lancamentoService.criarLancamento({
-    descricao: data.descricao,
-    valor: data.valor,
-    data: new Date(data.data),
-    tipo: data.tipo,
-    categoria_id: data.categoria_id || null,
-    culto_id: data.culto_id || null
-  })
+    // Optional fields must be handled since schema is typed
+    const parsedData = lancamentoSchema.parse({
+      ...data,
+      categoria_id: data.categoria_id || undefined,
+      culto_id: data.culto_id || undefined
+    })
 
-  revalidatePath('/lancamentos')
-  revalidatePath('/dashboard')
+    await lancamentoService.criarLancamento({
+      descricao: parsedData.descricao,
+      valor: parsedData.valor,
+      data: new Date(parsedData.data),
+      tipo: parsedData.tipo,
+      categoria_id: parsedData.categoria_id,
+      culto_id: parsedData.culto_id
+    })
+
+    revalidatePath('/lancamentos')
+    revalidatePath('/dashboard')
+    
+    return { success: true }
+  } catch (error: any) {
+    if (error instanceof z.ZodError) {
+      return { success: false, error: (error as any).errors[0].message }
+    }
+    return { success: false, error: error.message || 'Erro interno ao criar transação' }
+  }
 }
 
 export async function updateTransaction(id: string, data: {
@@ -34,29 +53,50 @@ export async function updateTransaction(id: string, data: {
   tipo: string
   categoria_id?: string | null
   culto_id?: string | null
-}) {
-  await checkPermission('lancamentos.editar')
+}): Promise<ActionResponse> {
+  try {
+    await checkPermission('lancamentos.editar')
 
-  await lancamentoService.atualizarLancamento(id, {
-    descricao: data.descricao,
-    valor: data.valor,
-    data: new Date(data.data),
-    tipo: data.tipo,
-    categoria_id: data.categoria_id || null,
-    culto_id: data.culto_id || null
-  })
+    const parsedData = lancamentoSchema.parse({
+      ...data,
+      categoria_id: data.categoria_id || undefined,
+      culto_id: data.culto_id || undefined
+    })
 
-  revalidatePath('/lancamentos')
-  revalidatePath('/dashboard')
+    await lancamentoService.atualizarLancamento(id, {
+      descricao: parsedData.descricao,
+      valor: parsedData.valor,
+      data: new Date(parsedData.data),
+      tipo: parsedData.tipo,
+      categoria_id: parsedData.categoria_id,
+      culto_id: parsedData.culto_id
+    })
+
+    revalidatePath('/lancamentos')
+    revalidatePath('/dashboard')
+    
+    return { success: true }
+  } catch (error: any) {
+    if (error instanceof z.ZodError) {
+      return { success: false, error: (error as any).errors[0].message }
+    }
+    return { success: false, error: error.message || 'Erro interno ao atualizar transação' }
+  }
 }
 
-export async function deleteTransaction(id: string) {
-  await checkPermission('lancamentos.excluir')
+export async function deleteTransaction(id: string): Promise<ActionResponse> {
+  try {
+    await checkPermission('lancamentos.excluir')
 
-  await lancamentoService.deletarLancamento(id)
+    await lancamentoService.deletarLancamento(id)
 
-  revalidatePath('/lancamentos')
-  revalidatePath('/dashboard')
+    revalidatePath('/lancamentos')
+    revalidatePath('/dashboard')
+    
+    return { success: true }
+  } catch (error: any) {
+    return { success: false, error: error.message || 'Erro interno ao excluir transação' }
+  }
 }
 
 export async function getLookups() {

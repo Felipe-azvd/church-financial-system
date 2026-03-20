@@ -253,13 +253,16 @@ export default function NewTransactionModal({
         onSaveOptimistic({ ...payload, id: transaction?.id })
       }
 
+      let res;
       if (transaction) {
-        await updateTransaction(transaction.id, payload)
-        setSuccessMsg('✓ Lançamento atualizado com sucesso')
+        res = await updateTransaction(transaction.id, payload)
       } else {
-        await createTransaction(payload)
-        setSuccessMsg('✓ Lançamento salvo com sucesso')
+        res = await createTransaction(payload)
       }
+
+      if (!res.success) throw new Error(res.error || 'Erro ao registrar lançamento')
+      
+      setSuccessMsg(transaction ? '✓ Lançamento atualizado com sucesso' : '✓ Lançamento salvo com sucesso')
 
       setTimeout(() => {
         onSuccess()

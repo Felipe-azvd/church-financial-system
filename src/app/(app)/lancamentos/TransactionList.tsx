@@ -55,9 +55,10 @@ export default function TransactionList({
       // Optimistic delete
       setOptimisticTxs((prev) => prev.filter(t => t.id !== id))
       try {
-        await deleteTransaction(id)
-      } catch (err) {
-        alert('Erro ao excluir lançamento')
+        const res = await deleteTransaction(id)
+        if (!res.success) throw new Error(res.error || 'Erro ao excluir lançamento')
+      } catch (err: any) {
+        alert(err.message || 'Erro ao excluir lançamento')
         setOptimisticTxs(allDbTransactions) // Revert on fail
       }
     }
