@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma"
+import { prismaTenant as prisma } from "@/lib/prisma-tenant"
 import { getSessionUser } from "@/lib/auth"
 
 export type CreateLancamentoDTO = {
@@ -13,10 +13,10 @@ export type CreateLancamentoDTO = {
 export type UpdateLancamentoDTO = Partial<CreateLancamentoDTO>
 
 export async function criarLancamento(data: CreateLancamentoDTO) {
-  const { igrejaId, userId } = await getSessionUser()
+  const { userId } = await getSessionUser()
   return await prisma.transacao.create({
     data: {
-      igreja_id: igrejaId,
+      igreja_id: 'auto', // Overridden by Prisma Tenant extension automatically
       usuario_id: userId,
       descricao: data.descricao,
       valor: data.valor,
@@ -29,10 +29,8 @@ export async function criarLancamento(data: CreateLancamentoDTO) {
 }
 
 export async function listarLancamentos(startDate: Date, endDate: Date) {
-  const { igrejaId } = await getSessionUser()
   return await prisma.transacao.findMany({
     where: { 
-      igreja_id: igrejaId,
       data: {
         gte: startDate,
         lte: endDate
@@ -47,11 +45,9 @@ export async function listarLancamentos(startDate: Date, endDate: Date) {
 }
 
 export async function atualizarLancamento(id: string, data: UpdateLancamentoDTO) {
-  const { igrejaId } = await getSessionUser()
   const result = await prisma.transacao.updateMany({
     where: { 
-      id,
-      igreja_id: igrejaId 
+      id
     },
     data: {
       descricao: data.descricao,
@@ -71,11 +67,9 @@ export async function atualizarLancamento(id: string, data: UpdateLancamentoDTO)
 }
 
 export async function deletarLancamento(id: string) {
-  const { igrejaId } = await getSessionUser()
   const result = await prisma.transacao.deleteMany({
     where: { 
-      id,
-      igreja_id: igrejaId
+      id
     }
   })
   
@@ -87,15 +81,14 @@ export async function deletarLancamento(id: string) {
 }
 
 export async function obterResumoFinanceiro(startDate: Date, endDate: Date) {
-  const { igrejaId } = await getSessionUser()
   const entradas = await prisma.transacao.aggregate({
     _sum: { valor: true },
-    where: { igreja_id: igrejaId, tipo: "ENTRADA", data: { gte: startDate, lte: endDate } }
+    where: { tipo: "ENTRADA", data: { gte: startDate, lte: endDate } }
   })
 
   const saidas = await prisma.transacao.aggregate({
     _sum: { valor: true },
-    where: { igreja_id: igrejaId, tipo: "SAIDA", data: { gte: startDate, lte: endDate } }
+    where: { tipo: "SAIDA", data: { gte: startDate, lte: endDate } }
   })
 
   return {
@@ -106,12 +99,10 @@ export async function obterResumoFinanceiro(startDate: Date, endDate: Date) {
 }
 
 export async function listarEntradasPorCategoria(startDate: Date, endDate: Date) {
-  const { igrejaId } = await getSessionUser()
   const grouped = await prisma.transacao.groupBy({
     by: ["categoria_id"],
     _sum: { valor: true },
     where: {
-      igreja_id: igrejaId,
       tipo: "ENTRADA",
       categoria_id: { not: null },
       data: { gte: startDate, lte: endDate }
@@ -120,7 +111,7 @@ export async function listarEntradasPorCategoria(startDate: Date, endDate: Date)
 
   const categoryIds = grouped.map((g) => g.categoria_id as string)
   const categories = await prisma.categoria.findMany({
-    where: { id: { in: categoryIds }, igreja_id: igrejaId }
+    where: { id: { in: categoryIds } }
   })
 
   return grouped.map(g => {
@@ -133,12 +124,10 @@ export async function listarEntradasPorCategoria(startDate: Date, endDate: Date)
 }
 
 export async function listarSaidasPorCategoria(startDate: Date, endDate: Date) {
-  const { igrejaId } = await getSessionUser()
   const grouped = await prisma.transacao.groupBy({
     by: ["categoria_id"],
     _sum: { valor: true },
     where: {
-      igreja_id: igrejaId,
       tipo: "SAIDA",
       categoria_id: { not: null },
       data: { gte: startDate, lte: endDate }
@@ -147,7 +136,7 @@ export async function listarSaidasPorCategoria(startDate: Date, endDate: Date) {
 
   const categoryIds = grouped.map((g) => g.categoria_id as string)
   const categories = await prisma.categoria.findMany({
-    where: { id: { in: categoryIds }, igreja_id: igrejaId }
+    where: { id: { in: categoryIds } }
   })
 
   return grouped.map(g => {
@@ -160,12 +149,10 @@ export async function listarSaidasPorCategoria(startDate: Date, endDate: Date) {
 }
 
 export async function listarEntradasPorCulto(startDate: Date, endDate: Date) {
-  const { igrejaId } = await getSessionUser()
   const grouped = await prisma.transacao.groupBy({
     by: ["culto_id"],
     _sum: { valor: true },
     where: {
-      igreja_id: igrejaId,
       tipo: "ENTRADA",
       culto_id: { not: null },
       data: { gte: startDate, lte: endDate }
@@ -174,7 +161,7 @@ export async function listarEntradasPorCulto(startDate: Date, endDate: Date) {
 
   const cultoIds = grouped.map((g) => g.culto_id as string)
   const cultos = await prisma.culto.findMany({
-    where: { id: { in: cultoIds }, igreja_id: igrejaId }
+    where: { id: { in: cultoIds } }
   })
 
   return grouped.map(g => {
@@ -187,7 +174,6 @@ export async function listarEntradasPorCulto(startDate: Date, endDate: Date) {
 }
 
 export async function obterTotaisMensais(ano: number) {
-  const { igrejaId } = await getSessionUser()
   const promises = []
   for (let i = 0; i < 12; i++) {
     const mStart = new Date(ano, i, 1)
@@ -196,11 +182,11 @@ export async function obterTotaisMensais(ano: number) {
     promises.push(
       prisma.transacao.aggregate({
         _sum: { valor: true },
-        where: { igreja_id: igrejaId, tipo: 'ENTRADA', data: { gte: mStart, lte: mEnd } }
+        where: { tipo: 'ENTRADA', data: { gte: mStart, lte: mEnd } }
       }),
       prisma.transacao.aggregate({
         _sum: { valor: true },
-        where: { igreja_id: igrejaId, tipo: 'SAIDA', data: { gte: mStart, lte: mEnd } }
+        where: { tipo: 'SAIDA', data: { gte: mStart, lte: mEnd } }
       })
     )
   }
@@ -232,7 +218,7 @@ export async function obterEvolucaoMensal() {
   
   const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
   
-  return (results as any[]).map(r => ({
+  return (results as any[]).map((r: any) => ({
     month: `${monthNames[r.month - 1]}/${r.year}`,
     total: Number(r.total || 0)
   }))
