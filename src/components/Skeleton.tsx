@@ -8,7 +8,7 @@ export function SkeletonLine({ width = 'w-full', height = 'h-4' }: { width?: str
 
 export function SkeletonCard({ children }: { children: React.ReactNode }) {
   return (
-    <div className="card" style={{ padding: 0 }}>
+    <div className="card">
       <div className="card-body gap-4">{children}</div>
     </div>
   )
@@ -28,7 +28,7 @@ export function SkeletonStatCard() {
 
 export function SkeletonChartCard({ title }: { title: string }) {
   return (
-    <div className="card" style={{ padding: 0 }}>
+    <div className="card">
       <div className="card-body" style={{ borderBottom: '1px solid var(--border-color)' }}>
         <SkeletonLine width="w-40" height="h-5" />
       </div>
@@ -41,11 +41,11 @@ export function SkeletonChartCard({ title }: { title: string }) {
 
 export function SkeletonTableCard({ rows = 4 }: { rows?: number }) {
   return (
-    <div className="card" style={{ padding: 0 }}>
+    <div className="card">
       <div className="card-body" style={{ borderBottom: '1px solid var(--border-color)' }}>
         <SkeletonLine width="w-40" height="h-5" />
       </div>
-      <div style={{ padding: 'var(--spacing-md)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
+      <div className="card-body">
         {/* Table header */}
         <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
           <SkeletonLine width="w-1/2" height="h-3" />
@@ -65,13 +65,13 @@ export function SkeletonTableCard({ rows = 4 }: { rows?: number }) {
 
 export function SkeletonInsightCard() {
   return (
-    <div className="card" style={{ padding: 0 }}>
+    <div className="card">
       <div className="card-body" style={{ borderBottom: '1px solid var(--border-color)' }}>
         <SkeletonLine width="w-40" height="h-5" />
       </div>
-      <div style={{ padding: 'var(--spacing-md)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
+      <div className="card-body gap-2">
         {[1, 2, 3].map(i => (
-          <div key={i} className="card card-compact">
+          <div key={i} className="card">
             <div className="card-body flex-row items-center gap-3">
               <div className="animate-pulse" style={{ width: 'var(--text-xl)', height: 'var(--text-xl)', borderRadius: '50%', backgroundColor: 'var(--bg-tertiary)', flexShrink: 0 }} />
               <SkeletonLine width="w-3/4" height="h-4" />

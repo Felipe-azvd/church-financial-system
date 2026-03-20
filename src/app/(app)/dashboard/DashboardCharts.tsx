@@ -71,9 +71,9 @@ export default function DashboardCharts({
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xl)' }}>
       
       {/* Financial Evolution Line Chart */}
-      <div className="card p-6">
-        {chartHeader('Evolução Financeira')}
-        <div>
+      <div className="card">
+        <div className="card-body">
+          {chartHeader('Evolução Financeira')}
           {monthlyEvolutionData.length === 0 ? emptyState : (
             <div className="w-full" style={{ height: '320px' }}>
               <ResponsiveContainer width="100%" height="100%">
@@ -100,9 +100,9 @@ export default function DashboardCharts({
       {/* Pie Charts Grid */}
       <div className="grid grid-cols-2 gap-6 mb-8">
 
-        <div className="card p-6">
-          {chartHeader('Entradas por Categoria')}
-          <div>
+        <div className="card">
+          <div className="card-body">
+            {chartHeader('Entradas por Categoria')}
             {pieEntradasData.length === 0 ? emptyState : (
               <div className="w-full" style={{ height: '320px' }}>
                 <ResponsiveContainer width="100%" height="100%">
@@ -121,9 +121,9 @@ export default function DashboardCharts({
           </div>
         </div>
 
-        <div className="card p-6">
-          {chartHeader('Despesas por Categoria')}
-          <div>
+        <div className="card">
+          <div className="card-body">
+            {chartHeader('Despesas por Categoria')}
             {pieSaidasData.length === 0 ? emptyState : (
               <div className="w-full" style={{ height: '320px' }}>
                 <ResponsiveContainer width="100%" height="100%">
@@ -145,9 +145,9 @@ export default function DashboardCharts({
       </div>
 
       {/* Bar Chart — Entradas por Culto */}
-      <div className="card p-6 col-span-2">
-        {chartHeader('Entradas por Culto')}
-        <div>
+      <div className="card col-span-2">
+        <div className="card-body">
+          {chartHeader('Entradas por Culto')}
           {barCultoData.length === 0 ? emptyState : (
             <div className="w-full" style={{ height: '320px' }}>
               <ResponsiveContainer width="100%" height="100%">

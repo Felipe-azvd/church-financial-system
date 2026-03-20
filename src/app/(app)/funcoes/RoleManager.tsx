@@ -115,12 +115,13 @@ export default function RoleManager({
         )}
       </div>
 
-      <div style={{ padding: 'var(--spacing-lg)' }}>
+      <div className="card-body">
 
         {/* Add / Edit form */}
         {(isAdding || editingRole) && (
           <form onSubmit={handleSave} style={{ marginBottom: 'var(--spacing-xl)' }}>
-            <div className="card" style={{ padding: 'var(--spacing-lg)' }}>
+            <div className="card">
+              <div className="card-body">
               <h3 style={{ marginBottom: 'var(--spacing-md)', fontSize: 'var(--text-base)' }}>
                 {editingRole ? 'Editar Função' : 'Nova Função'}
               </h3>
@@ -148,7 +149,7 @@ export default function RoleManager({
                     const label = MODULE_LABELS[module] || module.charAt(0).toUpperCase() + module.slice(1)
 
                     return (
-                      <details key={module} className="card" style={{ padding: 0 }} open={someSelected}>
+                      <details key={module} className="card" open={someSelected}>
                         {/* Summary is the accordion header */}
                         <summary
                           style={{
@@ -218,6 +219,7 @@ export default function RoleManager({
                 <button type="button" className="btn btn-secondary" onClick={cancelAction}>
                   Cancelar
                 </button>
+              </div>
               </div>
             </div>
           </form>

@@ -32,46 +32,58 @@ export default function FinancialSummary({
         gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
         gap: 'var(--spacing-md)'
       }}>
-        <div className="card" style={{ padding: 'var(--spacing-lg)' }}>
-          <h3 style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Entradas totais</h3>
-          <p style={{ margin: 'var(--spacing-sm) 0 0 0', fontSize: '1.5rem', fontWeight: 700, color: 'var(--success)' }}>
-            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(entradas)}
-          </p>
+        <div className="card">
+          <div className="card-body gap-2">
+            <h3 style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Entradas totais</h3>
+            <p style={{ margin: 'var(--spacing-sm) 0 0 0', fontSize: '1.5rem', fontWeight: 700, color: 'var(--success)' }}>
+              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(entradas)}
+            </p>
+          </div>
         </div>
         
-        <div className="card" style={{ padding: 'var(--spacing-lg)' }}>
-          <h3 style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Saídas totais</h3>
-          <p style={{ margin: 'var(--spacing-sm) 0 0 0', fontSize: '1.5rem', fontWeight: 700, color: 'var(--danger)' }}>
-            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(saidas)}
-          </p>
+        <div className="card">
+          <div className="card-body gap-2">
+            <h3 style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Saídas totais</h3>
+            <p style={{ margin: 'var(--spacing-sm) 0 0 0', fontSize: '1.5rem', fontWeight: 700, color: 'var(--danger)' }}>
+              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(saidas)}
+            </p>
+          </div>
         </div>
 
-        <div className="card" style={{ padding: 'var(--spacing-lg)' }}>
-          <h3 style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Saldo anual</h3>
-          <p style={{ margin: 'var(--spacing-sm) 0 0 0', fontSize: '1.5rem', fontWeight: 700, color: saldo >= 0 ? 'var(--primary)' : 'var(--danger)' }}>
-            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(saldo)}
-          </p>
+        <div className="card">
+          <div className="card-body gap-2">
+            <h3 style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Saldo anual</h3>
+            <p style={{ margin: 'var(--spacing-sm) 0 0 0', fontSize: '1.5rem', fontWeight: 700, color: saldo >= 0 ? 'var(--primary)' : 'var(--danger)' }}>
+              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(saldo)}
+            </p>
+          </div>
         </div>
 
-        <div className="card" style={{ padding: 'var(--spacing-lg)' }}>
-          <h3 style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Melhor mês</h3>
-          <p style={{ margin: 'var(--spacing-sm) 0 0 0', fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-            {melhorMes}
-          </p>
+        <div className="card">
+          <div className="card-body gap-2">
+            <h3 style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Melhor mês</h3>
+            <p style={{ margin: 'var(--spacing-sm) 0 0 0', fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+              {melhorMes}
+            </p>
+          </div>
         </div>
 
-        <div className="card" style={{ padding: 'var(--spacing-lg)' }}>
-          <h3 style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Maior despesa</h3>
-          <p style={{ margin: 'var(--spacing-sm) 0 0 0', fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-            {maiorDespesa}
-          </p>
+        <div className="card">
+          <div className="card-body gap-2">
+            <h3 style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Maior despesa</h3>
+            <p style={{ margin: 'var(--spacing-sm) 0 0 0', fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+              {maiorDespesa}
+            </p>
+          </div>
         </div>
 
-        <div className="card" style={{ padding: 'var(--spacing-lg)' }}>
-          <h3 style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Média mensal</h3>
-          <p style={{ margin: 'var(--spacing-sm) 0 0 0', fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(mediaMensal)}
-          </p>
+        <div className="card">
+          <div className="card-body gap-2">
+            <h3 style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Média mensal</h3>
+            <p style={{ margin: 'var(--spacing-sm) 0 0 0', fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(mediaMensal)}
+            </p>
+          </div>
         </div>
       </div>
     </div>

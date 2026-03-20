@@ -6,8 +6,8 @@ export default function ExpensesByCategory({
   data: { category: string; total: number }[]
 }) {
   return (
-    <div className="card p-0 mb-8 overflow-hidden">
-      <div className="p-6 border-b border-[var(--border-color)]">
+    <div className="card mb-8 overflow-hidden">
+      <div className="card-body border-b border-[var(--border-color)]">
         <h2 className="text-lg font-semibold mb-3">Despesas por Categoria</h2>
       </div>
       <div style={{ maxHeight: '420px', overflowY: 'auto' }}>

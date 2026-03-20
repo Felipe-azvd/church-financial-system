@@ -136,7 +136,8 @@ export default async function DashboardPage({
 
       {/* Key Metrics */}
       <div className="grid grid-cols-3 gap-6 mb-8">
-        <div className="card p-6 flex flex-col gap-3">
+        <div className="card">
+          <div className="card-body gap-3">
             <div className="flex items-center justify-between">
               <span className="card-title text-sm font-medium" style={{ opacity: 0.7 }}>Total Entradas</span>
               <span className="badge badge-soft badge-success text-xs">Entradas</span>
@@ -150,8 +151,10 @@ export default async function DashboardPage({
               </span>
             )}
           </div>
+        </div>
 
-        <div className="card p-6 flex flex-col gap-3">
+        <div className="card">
+          <div className="card-body gap-3">
             <div className="flex items-center justify-between">
               <span className="card-title text-sm font-medium" style={{ opacity: 0.7 }}>Total Saídas</span>
               <span className="badge badge-soft badge-error text-xs">Saídas</span>
@@ -165,8 +168,10 @@ export default async function DashboardPage({
               </span>
             )}
           </div>
+        </div>
 
-        <div className="card p-6 flex flex-col gap-3">
+        <div className="card">
+          <div className="card-body gap-3">
             <div className="flex items-center justify-between">
               <span className="card-title text-sm font-medium" style={{ opacity: 0.7 }}>Saldo Atual</span>
               <span className={`badge badge-soft text-xs ${saldo >= 0 ? 'badge-info' : 'badge-error'}`}>Saldo</span>
@@ -180,6 +185,7 @@ export default async function DashboardPage({
               </span>
             )}
           </div>
+        </div>
       </div>
 
       {/* Financial Health Indicator */}

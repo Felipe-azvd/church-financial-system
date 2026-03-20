@@ -115,7 +115,7 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
       )}
 
       {(!isAdding && !editingUser) && (
-        <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+        <div className="card overflow-hidden">
           <div className="table-responsive">
             <table className="table table-hover data-table">
               <thead>

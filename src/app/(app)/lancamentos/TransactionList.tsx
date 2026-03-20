@@ -118,7 +118,7 @@ export default function TransactionList({
         <h2 className="text-xl mb-3" style={{ color: 'var(--text-primary)' }}>
           Extrato Financeiro
         </h2>
-        <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+        <div className="card overflow-hidden">
           <div className="table-responsive">
             <table className="table table-hover data-table">
               <thead>

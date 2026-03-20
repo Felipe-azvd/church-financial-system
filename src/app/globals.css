@@ -133,15 +133,12 @@ button {
 
 .card {
   background-color: var(--bg-secondary);
-  border-radius: var(--radius-lg);
   border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-sm);
-  padding: var(--spacing-lg);
-  transition: box-shadow 0.2s ease;
+  @apply rounded-xl shadow-sm transition-all duration-200 hover:shadow-md;
 }
 
-.card:hover {
-  box-shadow: var(--shadow-md);
+.card-body {
+  @apply p-6 flex flex-col;
 }
 
 /* Button variants */

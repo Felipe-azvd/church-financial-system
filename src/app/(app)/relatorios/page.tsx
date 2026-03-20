@@ -85,7 +85,7 @@ export default async function RelatoriosPage({
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
           gap: 'var(--spacing-md)'
         }}>
-          <div className="card" style={{ padding: 0 }}>
+          <div className="card">
             <div className="card-body gap-2">
               <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Entradas Totais</span>
               <p className="text-2xl font-bold" style={{ color: 'var(--success)', margin: 0 }}>
@@ -94,7 +94,7 @@ export default async function RelatoriosPage({
             </div>
           </div>
 
-          <div className="card" style={{ padding: 0 }}>
+          <div className="card">
             <div className="card-body gap-2">
               <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Saídas Totais</span>
               <p className="text-2xl font-bold" style={{ color: 'var(--danger)', margin: 0 }}>
@@ -103,7 +103,7 @@ export default async function RelatoriosPage({
             </div>
           </div>
 
-          <div className="card" style={{ padding: 0 }}>
+          <div className="card">
             <div className="card-body gap-2">
               <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Saldo Anual</span>
               <p className="text-2xl font-bold" style={{ color: summary.saldo >= 0 ? 'var(--success)' : 'var(--danger)', margin: 0 }}>
@@ -112,7 +112,7 @@ export default async function RelatoriosPage({
             </div>
           </div>
 
-          <div className="card" style={{ padding: 0 }}>
+          <div className="card">
             <div className="card-body gap-2">
               <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Média Mensal</span>
               <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)', margin: 0 }}>
@@ -121,14 +121,14 @@ export default async function RelatoriosPage({
             </div>
           </div>
 
-          <div className="card" style={{ padding: 0 }}>
+          <div className="card">
             <div className="card-body gap-2">
               <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Melhor Mês</span>
               <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)', margin: 0 }}>{melhorMes}</p>
             </div>
           </div>
 
-          <div className="card" style={{ padding: 0 }}>
+          <div className="card">
             <div className="card-body gap-2">
               <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Maior Despesa</span>
               <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)', margin: 0 }}>{maiorDespesa}</p>
