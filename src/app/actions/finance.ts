@@ -1,6 +1,6 @@
 'use server'
 
-import { getTenantPrisma } from "@/lib/auth"
+import { getTenantPrisma, checkPermission } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
 import * as lancamentoService from "@/services/lancamentos.service"
 
@@ -12,13 +12,9 @@ export async function createTransaction(data: {
   categoria_id?: string | null
   culto_id?: string | null
 }) {
-  const { tenantId, user } = await getTenantPrisma()
+  await checkPermission('lancamentos.criar')
 
-  if (!user.permissions.includes('lancamentos.criar')) {
-    throw new Error('Acesso negado. Permissão necessária para criar lançamentos.')
-  }
-
-  await lancamentoService.criarLancamento(tenantId, user.id, {
+  await lancamentoService.criarLancamento({
     descricao: data.descricao,
     valor: data.valor,
     data: new Date(data.data),
@@ -39,13 +35,9 @@ export async function updateTransaction(id: string, data: {
   categoria_id?: string | null
   culto_id?: string | null
 }) {
-  const { tenantId, user } = await getTenantPrisma()
+  await checkPermission('lancamentos.editar')
 
-  if (!user.permissions.includes('lancamentos.editar')) {
-    throw new Error('Acesso negado. Permissão necessária para editar lançamentos.')
-  }
-
-  await lancamentoService.atualizarLancamento(tenantId, id, {
+  await lancamentoService.atualizarLancamento(id, {
     descricao: data.descricao,
     valor: data.valor,
     data: new Date(data.data),
@@ -59,13 +51,9 @@ export async function updateTransaction(id: string, data: {
 }
 
 export async function deleteTransaction(id: string) {
-  const { tenantId, user } = await getTenantPrisma()
+  await checkPermission('lancamentos.excluir')
 
-  if (!user.permissions.includes('lancamentos.excluir')) {
-    throw new Error('Acesso negado. Permissão necessária para excluir lançamentos.')
-  }
-
-  await lancamentoService.deletarLancamento(tenantId, id)
+  await lancamentoService.deletarLancamento(id)
 
   revalidatePath('/lancamentos')
   revalidatePath('/dashboard')
@@ -83,43 +71,37 @@ export async function getLookups() {
 }
 
 export async function getFinancialSummary(ano: number) {
-  const { tenantId } = await getTenantPrisma()
   const startDate = new Date(`${ano}-01-01T00:00:00.000Z`)
   const endDate = new Date(`${ano}-12-31T23:59:59.999Z`)
 
-  return await lancamentoService.obterResumoFinanceiro(tenantId, startDate, endDate)
+  return await lancamentoService.obterResumoFinanceiro(startDate, endDate)
 }
 
 export async function getIncomeByCategory(ano: number) {
-  const { tenantId } = await getTenantPrisma()
   const startDate = new Date(`${ano}-01-01T00:00:00.000Z`)
   const endDate = new Date(`${ano}-12-31T23:59:59.999Z`)
 
-  return await lancamentoService.listarEntradasPorCategoria(tenantId, startDate, endDate)
+  return await lancamentoService.listarEntradasPorCategoria(startDate, endDate)
 }
 
 export async function getExpensesByCategory(ano: number) {
-  const { tenantId } = await getTenantPrisma()
   const startDate = new Date(`${ano}-01-01T00:00:00.000Z`)
   const endDate = new Date(`${ano}-12-31T23:59:59.999Z`)
 
-  return await lancamentoService.listarSaidasPorCategoria(tenantId, startDate, endDate)
+  return await lancamentoService.listarSaidasPorCategoria(startDate, endDate)
 }
 
 export async function getIncomeByCulto(ano: number) {
-  const { tenantId } = await getTenantPrisma()
   const startDate = new Date(`${ano}-01-01T00:00:00.000Z`)
   const endDate = new Date(`${ano}-12-31T23:59:59.999Z`)
 
-  return await lancamentoService.listarEntradasPorCulto(tenantId, startDate, endDate)
+  return await lancamentoService.listarEntradasPorCulto(startDate, endDate)
 }
 
 export async function getMonthlyTotals(ano: number) {
-  const { tenantId } = await getTenantPrisma()
-  return await lancamentoService.obterTotaisMensais(tenantId, ano)
+  return await lancamentoService.obterTotaisMensais(ano)
 }
 
 export async function getMonthlyEvolution() {
-  const { tenantId } = await getTenantPrisma()
-  return await lancamentoService.obterEvolucaoMensal(tenantId)
+  return await lancamentoService.obterEvolucaoMensal()
 }

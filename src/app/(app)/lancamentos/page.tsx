@@ -28,7 +28,7 @@ export default async function LancamentosPage({
   const startOfMonth = new Date(currentYear, currentMonth, 1)
   const endOfMonth = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59, 999)
 
-  const transacoes = await listarLancamentos(tenantId, startOfMonth, endOfMonth)
+  const transacoes = await listarLancamentos(startOfMonth, endOfMonth)
 
   // Split transactions
   const entradas = transacoes.filter((t: any) => t.tipo === 'ENTRADA')

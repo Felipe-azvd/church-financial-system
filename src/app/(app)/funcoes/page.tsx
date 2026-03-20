@@ -5,7 +5,7 @@ import RoleManager from "./RoleManager"
 export default async function FuncoesPage() {
   const { db, tenantId, user } = await getTenantPrisma()
   
-  if (user.perfil !== 'ADMINISTRADOR') {
+  if (user.role !== 'ADMINISTRADOR') {
     redirect('/dashboard')
   }
   

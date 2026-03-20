@@ -5,7 +5,7 @@ import ConfigItemManager from "./ConfigItemManager"
 export default async function ConfiguracoesPage() {
   const { db, tenantId, user } = await getTenantPrisma()
   
-  if (user.perfil !== 'ADMINISTRADOR') {
+  if (user.role !== 'ADMINISTRADOR') {
     redirect('/dashboard')
   }
   

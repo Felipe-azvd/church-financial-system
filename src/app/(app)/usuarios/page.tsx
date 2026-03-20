@@ -5,7 +5,7 @@ import UserManager from "./UserManager"
 export default async function UsuariosPage() {
   const { db, tenantId, user } = await getTenantPrisma()
   
-  if (user.perfil !== 'ADMINISTRADOR') {
+  if (user.role !== 'ADMINISTRADOR') {
     redirect('/dashboard')
   }
   

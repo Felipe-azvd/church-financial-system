@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+import { getSessionUser } from "@/lib/auth"
 
 export type CreateLancamentoDTO = {
   descricao: string
@@ -11,11 +12,12 @@ export type CreateLancamentoDTO = {
 
 export type UpdateLancamentoDTO = Partial<CreateLancamentoDTO>
 
-export async function criarLancamento(igreja_id: string, usuario_id: string, data: CreateLancamentoDTO) {
+export async function criarLancamento(data: CreateLancamentoDTO) {
+  const { igrejaId, userId } = await getSessionUser()
   return await prisma.transacao.create({
     data: {
-      igreja_id,
-      usuario_id,
+      igreja_id: igrejaId,
+      usuario_id: userId,
       descricao: data.descricao,
       valor: data.valor,
       data: data.data,
@@ -26,10 +28,11 @@ export async function criarLancamento(igreja_id: string, usuario_id: string, dat
   })
 }
 
-export async function listarLancamentos(igreja_id: string, startDate: Date, endDate: Date) {
+export async function listarLancamentos(startDate: Date, endDate: Date) {
+  const { igrejaId } = await getSessionUser()
   return await prisma.transacao.findMany({
     where: { 
-      igreja_id,
+      igreja_id: igrejaId,
       data: {
         gte: startDate,
         lte: endDate
@@ -43,14 +46,12 @@ export async function listarLancamentos(igreja_id: string, startDate: Date, endD
   })
 }
 
-export async function atualizarLancamento(igreja_id: string, id: string, data: UpdateLancamentoDTO) {
-  // Using igreja_id directly in the where clause where possible, 
-  // but since standard findUnique needs unique ID, we verify it through updateMany or just update if we verified earlier.
-  // Using updateMany ensures the tenant check is atomic.
+export async function atualizarLancamento(id: string, data: UpdateLancamentoDTO) {
+  const { igrejaId } = await getSessionUser()
   const result = await prisma.transacao.updateMany({
     where: { 
       id,
-      igreja_id 
+      igreja_id: igrejaId 
     },
     data: {
       descricao: data.descricao,
@@ -69,12 +70,12 @@ export async function atualizarLancamento(igreja_id: string, id: string, data: U
   return true
 }
 
-export async function deletarLancamento(igreja_id: string, id: string) {
-  // Using deleteMany ensures the tenant check is atomic and secure.
+export async function deletarLancamento(id: string) {
+  const { igrejaId } = await getSessionUser()
   const result = await prisma.transacao.deleteMany({
     where: { 
       id,
-      igreja_id
+      igreja_id: igrejaId
     }
   })
   
@@ -85,19 +86,16 @@ export async function deletarLancamento(igreja_id: string, id: string) {
   return true
 }
 
-// -------------------------------------------------------------
-// Additional Reporting/Aggregation Services (also migrated)
-// -------------------------------------------------------------
-
-export async function obterResumoFinanceiro(igreja_id: string, startDate: Date, endDate: Date) {
+export async function obterResumoFinanceiro(startDate: Date, endDate: Date) {
+  const { igrejaId } = await getSessionUser()
   const entradas = await prisma.transacao.aggregate({
     _sum: { valor: true },
-    where: { igreja_id, tipo: "ENTRADA", data: { gte: startDate, lte: endDate } }
+    where: { igreja_id: igrejaId, tipo: "ENTRADA", data: { gte: startDate, lte: endDate } }
   })
 
   const saidas = await prisma.transacao.aggregate({
     _sum: { valor: true },
-    where: { igreja_id, tipo: "SAIDA", data: { gte: startDate, lte: endDate } }
+    where: { igreja_id: igrejaId, tipo: "SAIDA", data: { gte: startDate, lte: endDate } }
   })
 
   return {
@@ -107,12 +105,13 @@ export async function obterResumoFinanceiro(igreja_id: string, startDate: Date, 
   }
 }
 
-export async function listarEntradasPorCategoria(igreja_id: string, startDate: Date, endDate: Date) {
+export async function listarEntradasPorCategoria(startDate: Date, endDate: Date) {
+  const { igrejaId } = await getSessionUser()
   const grouped = await prisma.transacao.groupBy({
     by: ["categoria_id"],
     _sum: { valor: true },
     where: {
-      igreja_id,
+      igreja_id: igrejaId,
       tipo: "ENTRADA",
       categoria_id: { not: null },
       data: { gte: startDate, lte: endDate }
@@ -121,7 +120,7 @@ export async function listarEntradasPorCategoria(igreja_id: string, startDate: D
 
   const categoryIds = grouped.map((g) => g.categoria_id as string)
   const categories = await prisma.categoria.findMany({
-    where: { id: { in: categoryIds }, igreja_id }
+    where: { id: { in: categoryIds }, igreja_id: igrejaId }
   })
 
   return grouped.map(g => {
@@ -133,12 +132,13 @@ export async function listarEntradasPorCategoria(igreja_id: string, startDate: D
   }).sort((a, b) => b.total - a.total)
 }
 
-export async function listarSaidasPorCategoria(igreja_id: string, startDate: Date, endDate: Date) {
+export async function listarSaidasPorCategoria(startDate: Date, endDate: Date) {
+  const { igrejaId } = await getSessionUser()
   const grouped = await prisma.transacao.groupBy({
     by: ["categoria_id"],
     _sum: { valor: true },
     where: {
-      igreja_id,
+      igreja_id: igrejaId,
       tipo: "SAIDA",
       categoria_id: { not: null },
       data: { gte: startDate, lte: endDate }
@@ -147,7 +147,7 @@ export async function listarSaidasPorCategoria(igreja_id: string, startDate: Dat
 
   const categoryIds = grouped.map((g) => g.categoria_id as string)
   const categories = await prisma.categoria.findMany({
-    where: { id: { in: categoryIds }, igreja_id }
+    where: { id: { in: categoryIds }, igreja_id: igrejaId }
   })
 
   return grouped.map(g => {
@@ -159,12 +159,13 @@ export async function listarSaidasPorCategoria(igreja_id: string, startDate: Dat
   }).sort((a, b) => b.total - a.total)
 }
 
-export async function listarEntradasPorCulto(igreja_id: string, startDate: Date, endDate: Date) {
+export async function listarEntradasPorCulto(startDate: Date, endDate: Date) {
+  const { igrejaId } = await getSessionUser()
   const grouped = await prisma.transacao.groupBy({
     by: ["culto_id"],
     _sum: { valor: true },
     where: {
-      igreja_id,
+      igreja_id: igrejaId,
       tipo: "ENTRADA",
       culto_id: { not: null },
       data: { gte: startDate, lte: endDate }
@@ -173,7 +174,7 @@ export async function listarEntradasPorCulto(igreja_id: string, startDate: Date,
 
   const cultoIds = grouped.map((g) => g.culto_id as string)
   const cultos = await prisma.culto.findMany({
-    where: { id: { in: cultoIds }, igreja_id }
+    where: { id: { in: cultoIds }, igreja_id: igrejaId }
   })
 
   return grouped.map(g => {
@@ -185,7 +186,8 @@ export async function listarEntradasPorCulto(igreja_id: string, startDate: Date,
   }).sort((a, b) => b.total - a.total)
 }
 
-export async function obterTotaisMensais(igreja_id: string, ano: number) {
+export async function obterTotaisMensais(ano: number) {
+  const { igrejaId } = await getSessionUser()
   const promises = []
   for (let i = 0; i < 12; i++) {
     const mStart = new Date(ano, i, 1)
@@ -194,11 +196,11 @@ export async function obterTotaisMensais(igreja_id: string, ano: number) {
     promises.push(
       prisma.transacao.aggregate({
         _sum: { valor: true },
-        where: { igreja_id, tipo: 'ENTRADA', data: { gte: mStart, lte: mEnd } }
+        where: { igreja_id: igrejaId, tipo: 'ENTRADA', data: { gte: mStart, lte: mEnd } }
       }),
       prisma.transacao.aggregate({
         _sum: { valor: true },
-        where: { igreja_id, tipo: 'SAIDA', data: { gte: mStart, lte: mEnd } }
+        where: { igreja_id: igrejaId, tipo: 'SAIDA', data: { gte: mStart, lte: mEnd } }
       })
     )
   }
@@ -215,14 +217,15 @@ export async function obterTotaisMensais(igreja_id: string, ano: number) {
   return monthlyTotals
 }
 
-export async function obterEvolucaoMensal(igreja_id: string) {
+export async function obterEvolucaoMensal() {
+  const { igrejaId } = await getSessionUser()
   const results = await prisma.$queryRaw`
     SELECT 
       EXTRACT(YEAR FROM data) as year,
       EXTRACT(MONTH FROM data) as month,
       SUM(valor) as total
     FROM transacoes
-    WHERE igreja_id = ${igreja_id} AND tipo = 'ENTRADA'
+    WHERE igreja_id = ${igrejaId} AND tipo = 'ENTRADA'
     GROUP BY year, month
     ORDER BY year ASC, month ASC
   `

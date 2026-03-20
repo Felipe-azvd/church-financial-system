@@ -2,8 +2,43 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import { prisma } from "./prisma"
 
+export class UnauthorizedError extends Error {
+  constructor(message = "Unauthorized") {
+    super(message)
+    this.name = "UnauthorizedError"
+  }
+}
+
+export class ForbiddenError extends Error {
+  constructor(message = "Forbidden - Acesso Negado") {
+    super(message)
+    this.name = "ForbiddenError"
+  }
+}
+
 export async function getSession() {
   return await getServerSession(authOptions)
+}
+
+export async function getSessionUser() {
+  const session = await getSession()
+  if (!session?.user?.id) {
+    throw new UnauthorizedError()
+  }
+  return {
+    userId: session.user.id,
+    igrejaId: session.user.igreja_id,
+    role: session.user.role,
+    permissions: session.user.permissions || []
+  }
+}
+
+export async function checkPermission(requiredPermission: string) {
+  const user = await getSessionUser()
+  if (!user.permissions.includes(requiredPermission)) {
+    throw new ForbiddenError(`Acesso negado. Permissão necessária: ${requiredPermission}`)
+  }
+  return user
 }
 
 export async function getCurrentUser() {
@@ -17,7 +52,7 @@ export async function getCurrentUser() {
 export async function requireAuth() {
   const user = await getCurrentUser()
   if (!user) {
-    throw new Error("Unauthorized")
+    throw new UnauthorizedError()
   }
   return user
 }
@@ -35,3 +70,4 @@ export async function getTenantPrisma() {
     user
   }
 }
+
