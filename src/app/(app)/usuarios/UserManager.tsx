@@ -62,7 +62,7 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
       <div className="flex items-center justify-between" style={{ marginBottom: 'var(--spacing-xl)' }}>
         <div>
           <h1 className="text-xl font-semibold" style={{ margin: 0 }}>Usuários</h1>
-          <p className="text-sm" style={{ margin: '0.25rem 0 0 0', opacity: 0.7 }}>Gerencie os usuários e seus acessos</p>
+          <p className="text-sm" style={{ margin: 'var(--space-1) 0 0 0', opacity: 0.7 }}>Gerencie os usuários e seus acessos</p>
         </div>
         <div className="flex items-center gap-3">
           {(!isAdding && !editingUser) && (

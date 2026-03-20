@@ -10,6 +10,7 @@ export default function MonthlyEvolutionReport({
       <div className="card-body" style={{ padding: 'var(--spacing-md)', borderBottom: '1px solid var(--border-color)' }}>
         <h2 className="card-title" style={{ fontSize: '1.125rem' }}>Evolução Financeira Mensal</h2>
       </div>
+      <div style={{ maxHeight: '420px', overflowY: 'auto' }}>
       <table className="table table-hover data-table">
         <thead>
           <tr>
@@ -38,6 +39,7 @@ export default function MonthlyEvolutionReport({
           )}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }

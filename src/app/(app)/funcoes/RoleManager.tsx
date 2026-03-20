@@ -106,7 +106,7 @@ export default function RoleManager({
       >
         <div>
           <h2 className="card-title text-xl font-semibold">Gerenciar Funções</h2>
-          <p className="text-sm" style={{ margin: '0.25rem 0 0 0', opacity: 0.7 }}>Defina funções e controle o acesso de cada usuário</p>
+          <p className="text-sm" style={{ margin: 'var(--space-1) 0 0 0', opacity: 0.7 }}>Defina funções e controle o acesso de cada usuário</p>
         </div>
         {!isAdding && !editingRole && (
           <button className="btn btn-primary btn-sm" onClick={() => setIsAdding(true)}>
@@ -121,7 +121,7 @@ export default function RoleManager({
         {(isAdding || editingRole) && (
           <form onSubmit={handleSave} style={{ marginBottom: 'var(--spacing-xl)' }}>
             <div className="card" style={{ padding: 'var(--spacing-lg)' }}>
-              <h3 style={{ marginBottom: 'var(--spacing-md)', fontSize: '1rem' }}>
+              <h3 style={{ marginBottom: 'var(--spacing-md)', fontSize: 'var(--text-base)' }}>
                 {editingRole ? 'Editar Função' : 'Nova Função'}
               </h3>
 
@@ -163,7 +163,7 @@ export default function RoleManager({
                           }}
                         >
                           <div className="flex items-center gap-2">
-                            <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{label}</span>
+                            <span style={{ fontWeight: 600, fontSize: 'var(--text-sm)' }}>{label}</span>
                             {selectedCount > 0 && (
                               <span className="badge badge-soft badge-primary text-xs">
                                 {selectedCount}/{perms.length}
@@ -173,7 +173,7 @@ export default function RoleManager({
                           <button
                             type="button"
                             className={`btn btn-xs btn-soft ${allSelected ? 'btn-error' : 'btn-success'}`}
-                            style={{ fontSize: '0.7rem' }}
+                            style={{ fontSize: 'var(--text-xs)' }}
                             onClick={(e) => { e.preventDefault(); toggleModule(perms, allSelected) }}
                           >
                             {allSelected ? 'Remover todos' : 'Selecionar todos'}

@@ -56,7 +56,7 @@ export default function Header({ userName }: { userName: string }) {
         }
 
         .page-title {
-          font-size: 1.25rem;
+          font-size: var(--text-xl);
           font-weight: 600;
           color: var(--text-primary);
           margin: 0;
@@ -98,7 +98,7 @@ export default function Header({ userName }: { userName: string }) {
         }
 
         .user-name {
-          font-size: 0.875rem;
+          font-size: var(--text-sm);
           font-weight: 500;
           color: var(--text-primary);
           padding-right: var(--spacing-xs);

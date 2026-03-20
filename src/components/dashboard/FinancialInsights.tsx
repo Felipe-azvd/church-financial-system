@@ -83,14 +83,14 @@ export default function FinancialInsights({
   return (
     <div className="card" style={{ padding: 0 }}>
       <div className="card-body" style={{ borderBottom: '1px solid var(--border-color)' }}>
-        <h2 className="card-title" style={{ fontSize: '1.125rem' }}>Insights Financeiros</h2>
+        <h2 className="card-title" style={{ fontSize: 'var(--text-lg)' }}>Insights Financeiros</h2>
       </div>
       <div style={{ padding: 'var(--spacing-md)' }}>
         {insights.length === 0 ? (
           <div className="card card-compact" style={{ opacity: 0.7 }}>
             <div className="card-body flex-row items-center gap-3">
-              <span style={{ fontSize: '1.25rem' }}>📭</span>
-              <p style={{ margin: 0, fontSize: '0.9rem' }}>Dados insuficientes para gerar insights neste período.</p>
+              <span style={{ fontSize: 'var(--text-xl)' }}>📭</span>
+              <p style={{ margin: 0, fontSize: 'var(--text-sm)' }}>Dados insuficientes para gerar insights neste período.</p>
             </div>
           </div>
         ) : (
@@ -98,8 +98,8 @@ export default function FinancialInsights({
             {insights.map((insight, i) => (
               <div key={i} className="card card-compact">
                 <div className="card-body flex-row items-center gap-3">
-                  <span style={{ fontSize: '1.25rem', flexShrink: 0 }}>{insight.icon}</span>
-                  <p style={{ margin: 0, fontSize: '0.875rem', color: insight.color, fontWeight: 500 }}>
+                  <span style={{ fontSize: 'var(--text-xl)', flexShrink: 0 }}>{insight.icon}</span>
+                  <p style={{ margin: 0, fontSize: 'var(--text-sm)', color: insight.color, fontWeight: 500 }}>
                     {insight.message}
                   </p>
                 </div>

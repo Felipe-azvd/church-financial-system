@@ -52,7 +52,7 @@ export default async function LancamentosPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold" style={{ margin: 0 }}>Lançamentos</h1>
-          <p className="text-sm" style={{ margin: '0.25rem 0 0 0', opacity: 0.7 }}>Registro e acompanhamento de transações financeiras</p>
+          <p className="text-sm" style={{ margin: 'var(--space-1) 0 0 0', opacity: 0.7 }}>Registro e acompanhamento de transações financeiras</p>
         </div>
         <div className="flex items-center gap-3">
           <MonthSelector />

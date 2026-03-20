@@ -127,7 +127,7 @@ export default async function DashboardPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold" style={{ margin: 0 }}>Dashboard</h1>
-          <p className="text-sm" style={{ margin: '0.25rem 0 0 0', opacity: 0.7 }}>Visão geral das finanças da igreja</p>
+          <p className="text-sm" style={{ margin: 'var(--space-1) 0 0 0', opacity: 0.7 }}>Visão geral das finanças da igreja</p>
         </div>
         <div className="flex items-center gap-3">
           <DashboardFilter />
@@ -141,7 +141,7 @@ export default async function DashboardPage({
               <span className="card-title text-sm font-medium" style={{ opacity: 0.7 }}>Total Entradas</span>
               <span className="badge badge-soft badge-success text-xs">Entradas</span>
             </div>
-            <p className="text-3xl font-semibold" style={{ color: 'var(--success)', margin: 0 }}>
+            <p className="text-xl font-semibold" style={{ color: 'var(--success)', margin: 0 }}>
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalEntradas)}
             </p>
             {entradasPct !== null && (
@@ -158,7 +158,7 @@ export default async function DashboardPage({
               <span className="card-title text-sm font-medium" style={{ opacity: 0.7 }}>Total Saídas</span>
               <span className="badge badge-soft badge-error text-xs">Saídas</span>
             </div>
-            <p className="text-3xl font-semibold" style={{ color: 'var(--danger)', margin: 0 }}>
+            <p className="text-xl font-semibold" style={{ color: 'var(--danger)', margin: 0 }}>
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalSaidas)}
             </p>
             {saidasPct !== null && (
@@ -175,7 +175,7 @@ export default async function DashboardPage({
               <span className="card-title text-sm font-medium" style={{ opacity: 0.7 }}>Saldo Atual</span>
               <span className={`badge badge-soft text-xs ${saldo >= 0 ? 'badge-info' : 'badge-error'}`}>Saldo</span>
             </div>
-            <p className="text-3xl font-semibold" style={{ color: saldo >= 0 ? 'var(--success)' : 'var(--danger)', margin: 0 }}>
+            <p className="text-xl font-semibold" style={{ color: saldo >= 0 ? 'var(--success)' : 'var(--danger)', margin: 0 }}>
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(saldo)}
             </p>
             {saldoPct !== null && (
@@ -198,7 +198,7 @@ export default async function DashboardPage({
             : { label: 'Saúde Financeira: Estável', badge: 'badge-success', icon: '🟢' }
         return (
           <div className="flex items-center gap-2">
-            <span className={`badge badge-soft ${health.badge}`} style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}>
+            <span className={`badge badge-soft ${health.badge}`} style={{ fontSize: 'var(--text-xs)', padding: 'var(--space-1) var(--space-2)' }}>
               {health.icon} {health.label}
             </span>
             {totalEntradas > 0 && (

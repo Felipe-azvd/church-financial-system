@@ -58,7 +58,7 @@ export default async function RelatoriosPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold" style={{ margin: 0 }}>Relatórios</h1>
-          <p className="text-sm" style={{ margin: '0.25rem 0 0 0', opacity: 0.7 }}>Análise e resumo das finanças por período</p>
+          <p className="text-sm" style={{ margin: 'var(--space-1) 0 0 0', opacity: 0.7 }}>Análise e resumo das finanças por período</p>
         </div>
         <div className="flex items-center gap-3">
           <form className="card" style={{ padding: 'var(--spacing-xs) var(--spacing-sm)', display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'center' }}>
@@ -68,16 +68,16 @@ export default async function RelatoriosPage({
               name="ano" 
               defaultValue={currentYear} 
               className="input-field" 
-              style={{ padding: '0.25rem', width: '80px' }} 
+              style={{ padding: 'var(--space-1)', width: '80px' }} 
             />
-            <button type="submit" className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem' }}>Ver</button>
+            <button type="submit" className="btn btn-secondary" style={{ padding: 'var(--space-1) var(--space-2)' }}>Ver</button>
           </form>
         </div>
       </div>
 
       {/* Executive Summary */}
       <div style={{ marginBottom: 'var(--spacing-2xl)' }}>
-        <h2 style={{ marginBottom: 'var(--spacing-md)', fontSize: '1.2rem', color: 'var(--text-primary)', fontWeight: 600 }}>
+        <h2 style={{ marginBottom: 'var(--spacing-md)', fontSize: 'var(--text-lg)', color: 'var(--text-primary)', fontWeight: 600 }}>
           Resumo Financeiro
         </h2>
         <div style={{

@@ -47,13 +47,13 @@ export function SkeletonTableCard({ rows = 4 }: { rows?: number }) {
       </div>
       <div style={{ padding: 'var(--spacing-md)', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
         {/* Table header */}
-        <div style={{ display: 'flex', gap: '1rem' }}>
+        <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
           <SkeletonLine width="w-1/2" height="h-3" />
           <SkeletonLine width="w-1/4" height="h-3" />
         </div>
         {/* Rows */}
         {Array.from({ length: rows }).map((_, i) => (
-          <div key={i} style={{ display: 'flex', gap: '1rem' }}>
+          <div key={i} style={{ display: 'flex', gap: 'var(--space-3)' }}>
             <SkeletonLine width="w-1/2" height="h-4" />
             <SkeletonLine width="w-1/4" height="h-4" />
           </div>
@@ -73,7 +73,7 @@ export function SkeletonInsightCard() {
         {[1, 2, 3].map(i => (
           <div key={i} className="card card-compact">
             <div className="card-body flex-row items-center gap-3">
-              <div className="animate-pulse" style={{ width: '1.25rem', height: '1.25rem', borderRadius: '50%', backgroundColor: 'var(--bg-tertiary)', flexShrink: 0 }} />
+              <div className="animate-pulse" style={{ width: 'var(--text-xl)', height: 'var(--text-xl)', borderRadius: '50%', backgroundColor: 'var(--bg-tertiary)', flexShrink: 0 }} />
               <SkeletonLine width="w-3/4" height="h-4" />
             </div>
           </div>

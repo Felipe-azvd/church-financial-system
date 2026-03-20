@@ -87,12 +87,12 @@ export default function Sidebar({ userPermissions = [] }: { userPermissions?: st
           justify-content: center;
           color: white;
           font-weight: bold;
-          font-size: 1.125rem;
+          font-size: var(--text-lg);
         }
 
         .logo-text {
           font-weight: 600;
-          font-size: 1.25rem;
+          font-size: var(--text-xl);
           color: var(--text-primary);
         }
 
@@ -119,7 +119,7 @@ export default function Sidebar({ userPermissions = [] }: { userPermissions?: st
           width: 100%;
           cursor: pointer;
           font-family: inherit;
-          font-size: 1rem;
+          font-size: var(--text-base);
         }
 
         .nav-item:hover {

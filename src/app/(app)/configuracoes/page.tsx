@@ -20,7 +20,7 @@ export default async function ConfiguracoesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold" style={{ margin: 0 }}>Configurações</h1>
-          <p className="text-sm" style={{ margin: '0.25rem 0 0 0', opacity: 0.7 }}>Gerencie categorias e cultos da igreja</p>
+          <p className="text-sm" style={{ margin: 'var(--space-1) 0 0 0', opacity: 0.7 }}>Gerencie categorias e cultos da igreja</p>
         </div>
       </div>
 

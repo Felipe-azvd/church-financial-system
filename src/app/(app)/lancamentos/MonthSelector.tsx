@@ -35,13 +35,13 @@ export default function MonthSelector() {
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-md)' }}>
-      <button onClick={handlePrev} className="icon-btn" style={{ padding: '0.5rem', background: 'var(--bg-tertiary)', borderRadius: 'var(--radius-md)' }}>
+      <button onClick={handlePrev} className="icon-btn" style={{ padding: 'var(--space-2)', background: 'var(--bg-tertiary)', borderRadius: 'var(--radius-md)' }}>
         <ChevronLeft size={20} />
       </button>
       <h2 style={{ minWidth: '200px', textAlign: 'center', textTransform: 'capitalize', margin: 0 }}>
         {monthName}
       </h2>
-      <button onClick={handleNext} className="icon-btn" style={{ padding: '0.5rem', background: 'var(--bg-tertiary)', borderRadius: 'var(--radius-md)' }}>
+      <button onClick={handleNext} className="icon-btn" style={{ padding: 'var(--space-2)', background: 'var(--bg-tertiary)', borderRadius: 'var(--radius-md)' }}>
         <ChevronRight size={20} />
       </button>
     </div>

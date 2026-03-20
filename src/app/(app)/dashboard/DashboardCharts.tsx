@@ -56,14 +56,14 @@ export default function DashboardCharts({
     <div className="card card-compact" style={{ margin: 'var(--spacing-md)', opacity: 0.7 }}>
       <div className="card-body flex-row items-center gap-2">
         <span>📭</span>
-        <p style={{ margin: 0, fontSize: '0.875rem' }}>Sem dados suficientes para exibir neste período.</p>
+        <p style={{ margin: 0, fontSize: 'var(--text-sm)' }}>Sem dados suficientes para exibir neste período.</p>
       </div>
     </div>
   )
 
   const chartHeader = (title: string) => (
     <div className="card-body" style={{ borderBottom: '1px solid var(--border-color)' }}>
-      <h2 className="card-title" style={{ fontSize: '1.125rem' }}>{title}</h2>
+      <h2 className="card-title" style={{ fontSize: 'var(--text-lg)' }}>{title}</h2>
     </div>
   )
 
@@ -98,7 +98,7 @@ export default function DashboardCharts({
       </div>
 
       {/* Pie Charts Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: 'var(--spacing-xl)' }}>
+      <div className="grid-charts">
 
         <div className="card" style={{ padding: 0 }}>
           {chartHeader('Entradas por Categoria')}

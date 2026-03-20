@@ -8,8 +8,9 @@ export default function IncomeByCulto({
   return (
     <div className="card" style={{ padding: 0, overflow: 'hidden', marginBottom: 'var(--spacing-xl)' }}>
       <div className="card-body" style={{ padding: 'var(--spacing-md)', borderBottom: '1px solid var(--border-color)' }}>
-        <h2 className="card-title" style={{ fontSize: '1.125rem' }}>Entradas por Culto</h2>
+        <h2 className="card-title" style={{ fontSize: 'var(--text-lg)' }}>Entradas por Culto</h2>
       </div>
+      <div style={{ maxHeight: '420px', overflowY: 'auto' }}>
       <table className="table table-hover data-table">
         <thead>
           <tr>
@@ -38,6 +39,7 @@ export default function IncomeByCulto({
           )}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }

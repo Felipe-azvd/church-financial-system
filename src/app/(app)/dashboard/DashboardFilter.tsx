@@ -44,11 +44,11 @@ export default function DashboardFilter() {
     <div className="card" style={{ marginBottom: 'var(--spacing-xl)', padding: 'var(--spacing-sm) var(--spacing-md)' }}>
       <form onSubmit={handleCustomSubmit} style={{ display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'center', flexWrap: 'wrap' }}>
         <label className="input-label" style={{ marginBottom: 0 }}>De:</label>
-        <input type="date" name="inicio" defaultValue={inicio} required className="input-field" style={{ padding: '0.25rem 0.5rem', width: 'auto' }} />
-        <span style={{ color: 'var(--text-secondary)' }}>até</span>
-        <input type="date" name="fim" defaultValue={fim} required className="input-field" style={{ padding: '0.25rem 0.5rem', width: 'auto' }} />
-        <button type="submit" className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }}>Aplicar</button>
-        <button type="button" className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }} onClick={() => setCustomRange(false)}>Cancelar</button>
+        <input type="date" name="inicio" defaultValue={inicio} required className="input-field" style={{ padding: 'var(--space-1) var(--space-2)', width: 'auto' }} />
+        <span style={{ color: 'var(--text-muted)' }}>até</span>
+        <input type="date" name="fim" defaultValue={fim} required className="input-field" style={{ padding: 'var(--space-1) var(--space-2)', width: 'auto' }} />
+        <button type="submit" className="btn btn-secondary" style={{ padding: 'var(--space-1) var(--space-2)', fontSize: 'var(--text-xs)' }}>Aplicar</button>
+        <button type="button" className="btn btn-secondary" style={{ padding: 'var(--space-1) var(--space-2)', fontSize: 'var(--text-xs)' }} onClick={() => setCustomRange(false)}>Cancelar</button>
       </form>
     </div>
   )

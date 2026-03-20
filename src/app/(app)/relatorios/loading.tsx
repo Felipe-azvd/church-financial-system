@@ -9,7 +9,7 @@ export default function RelatoriosLoading() {
     <div className="space-y-8">
       {/* Page Header skeleton */}
       <div className="flex items-center justify-between">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
           <SkeletonLine width="w-32" height="h-6" />
           <SkeletonLine width="w-64" height="h-3" />
         </div>

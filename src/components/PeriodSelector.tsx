@@ -37,7 +37,7 @@ export default function PeriodSelector() {
       <label className="text-sm" style={{ opacity: 0.7, whiteSpace: 'nowrap' }}>Período:</label>
       <select
         className="select select-sm"
-        style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem', minWidth: '130px' }}
+        style={{ padding: 'var(--space-1) var(--space-2)', fontSize: 'var(--text-xs)', minWidth: '130px' }}
         value={value}
         onChange={(e) => handleChange(e.target.value)}
       >
