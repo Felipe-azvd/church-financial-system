@@ -90,22 +90,18 @@ export default function FinancialInsights({
           <div className="card" style={{ opacity: 0.7 }}>
             <div className="card-body flex-row items-center gap-3">
               <span style={{ fontSize: 'var(--text-xl)' }}>📭</span>
-              <p style={{ margin: 0, fontSize: 'var(--text-sm)' }}>Dados insuficientes para gerar insights neste período.</p>
+              <p style={{ margin: 0, fontSize: 'var(--text-sm)' }}>Nenhum dado neste período</p>
             </div>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
+          <ul className="flex flex-col gap-4">
             {insights.map((insight, i) => (
-              <div key={i} className="card">
-                <div className="card-body flex-row items-center gap-3">
-                  <span style={{ fontSize: 'var(--text-xl)', flexShrink: 0 }}>{insight.icon}</span>
-                  <p style={{ margin: 0, fontSize: 'var(--text-sm)', color: insight.color, fontWeight: 500 }}>
-                    {insight.message}
-                  </p>
-                </div>
-              </div>
+              <li key={i} className="flex items-center gap-3 text-sm font-medium" style={{ color: insight.color }}>
+                <span className="text-xl flex-shrink-0">{insight.icon}</span>
+                {insight.message}
+              </li>
             ))}
-          </div>
+          </ul>
         )}
       </div>
     </div>

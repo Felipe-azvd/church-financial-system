@@ -137,52 +137,49 @@ export default async function DashboardPage({
       {/* Key Metrics */}
       <div className="grid grid-cols-3 gap-6 mb-8">
         <div className="card">
-          <div className="card-body gap-3">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-[var(--text-secondary)]">Total Entradas</span>
-              <span className="badge badge-soft badge-success text-xs">Entradas</span>
-            </div>
-            <p className="text-xl font-semibold" style={{ color: 'var(--success)', margin: 0 }}>
+          <div className="card-body gap-1">
+            <span className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-bold">Total Entradas</span>
+            <p className="text-xl font-bold" style={{ color: 'var(--success)', margin: 0 }}>
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalEntradas)}
             </p>
-            {entradasPct !== null && (
-              <span className={`text-xs font-medium ${entradasPct >= 0 ? 'text-success' : 'text-error'}`}>
-                {entradasPct >= 0 ? '↑' : '↓'} {entradasPct >= 0 ? '+' : ''}{entradasPct.toFixed(1)}% vs mês anterior
+            {entradasPct !== null ? (
+              <span className={`text-xs font-medium mt-1 ${entradasPct >= 0 ? 'text-success' : 'text-error'}`}>
+                {entradasPct >= 0 ? '↑' : '↓'} {Math.abs(entradasPct).toFixed(1)}% vs mês anterior
               </span>
+            ) : (
+              <span className="text-xs font-medium opacity-50 mt-1">Sem dados do mês anterior</span>
             )}
           </div>
         </div>
 
         <div className="card">
-          <div className="card-body gap-3">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-[var(--text-secondary)]">Total Saídas</span>
-              <span className="badge badge-soft badge-error text-xs">Saídas</span>
-            </div>
-            <p className="text-xl font-semibold" style={{ color: 'var(--danger)', margin: 0 }}>
+          <div className="card-body gap-1">
+            <span className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-bold">Total Saídas</span>
+            <p className="text-xl font-bold" style={{ color: 'var(--danger)', margin: 0 }}>
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalSaidas)}
             </p>
-            {saidasPct !== null && (
-              <span className={`text-xs font-medium ${saidasPct <= 0 ? 'text-success' : 'text-error'}`}>
-                {saidasPct >= 0 ? '↑' : '↓'} {saidasPct >= 0 ? '+' : ''}{saidasPct.toFixed(1)}% vs mês anterior
+            {saidasPct !== null ? (
+              <span className={`text-xs font-medium mt-1 ${saidasPct <= 0 ? 'text-success' : 'text-error'}`}>
+                {saidasPct >= 0 ? '↑' : '↓'} {Math.abs(saidasPct).toFixed(1)}% vs mês anterior
               </span>
+            ) : (
+              <span className="text-xs font-medium opacity-50 mt-1">Sem dados do mês anterior</span>
             )}
           </div>
         </div>
 
         <div className="card">
-          <div className="card-body gap-3">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-[var(--text-secondary)]">Saldo Atual</span>
-              <span className={`badge badge-soft text-xs ${saldo >= 0 ? 'badge-info' : 'badge-error'}`}>Saldo</span>
-            </div>
-            <p className="text-xl font-semibold" style={{ color: saldo >= 0 ? 'var(--success)' : 'var(--danger)', margin: 0 }}>
+          <div className="card-body gap-1">
+            <span className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-bold">Saldo Atual</span>
+            <p className="text-xl font-bold" style={{ color: saldo >= 0 ? 'var(--success)' : 'var(--danger)', margin: 0 }}>
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(saldo)}
             </p>
-            {saldoPct !== null && (
-              <span className={`text-xs font-medium ${saldoPct >= 0 ? 'text-success' : 'text-error'}`}>
-                {saldoPct >= 0 ? '↑' : '↓'} {saldoPct >= 0 ? '+' : ''}{saldoPct.toFixed(1)}% vs mês anterior
+            {saldoPct !== null ? (
+              <span className={`text-xs font-medium mt-1 ${saldoPct >= 0 ? 'text-success' : 'text-error'}`}>
+                {saldoPct >= 0 ? '↑' : '↓'} {Math.abs(saldoPct).toFixed(1)}% vs mês anterior
               </span>
+            ) : (
+              <span className="text-xs font-medium opacity-50 mt-1">Sem dados do mês anterior</span>
             )}
           </div>
         </div>

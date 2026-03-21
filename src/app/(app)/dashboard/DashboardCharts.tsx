@@ -58,7 +58,7 @@ export default function DashboardCharts({
     <div className="card" style={{ opacity: 0.7 }}>
       <div className="card-body flex-row items-center gap-2">
         <span>📭</span>
-        <p style={{ margin: 0, fontSize: 'var(--text-sm)' }}>Sem dados suficientes para exibir neste período.</p>
+        <p style={{ margin: 0, fontSize: 'var(--text-sm)' }}>Nenhum dado neste período</p>
       </div>
     </div>
   )
@@ -77,7 +77,7 @@ export default function DashboardCharts({
         <div className="card-body">
           {chartHeader('Evolução Financeira')}
           {monthlyEvolutionData.length === 0 ? emptyState : (
-            <div className="w-full" style={{ height: '320px' }}>
+            <div className="w-full h-[320px]">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={monthlyEvolutionData} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
@@ -108,7 +108,7 @@ export default function DashboardCharts({
           <div className="card-body">
             {chartHeader('Entradas por Categoria')}
             {pieEntradasData.length === 0 ? emptyState : (
-              <div className="w-full" style={{ height: '320px' }}>
+              <div className="w-full h-[320px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie data={pieEntradasData} cx="50%" cy="50%" innerRadius={70} outerRadius={110} paddingAngle={2} dataKey="value">
@@ -129,7 +129,7 @@ export default function DashboardCharts({
           <div className="card-body">
             {chartHeader('Despesas por Categoria')}
             {pieSaidasData.length === 0 ? emptyState : (
-              <div className="w-full" style={{ height: '320px' }}>
+              <div className="w-full h-[320px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie data={pieSaidasData} cx="50%" cy="50%" innerRadius={70} outerRadius={110} paddingAngle={2} dataKey="value">
@@ -153,7 +153,7 @@ export default function DashboardCharts({
         <div className="card-body">
           {chartHeader('Entradas por Culto')}
           {barCultoData.length === 0 ? emptyState : (
-            <div className="w-full" style={{ height: '320px' }}>
+            <div className="w-full h-[320px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={barCultoData} margin={{ top: 30, right: 30, left: 20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
