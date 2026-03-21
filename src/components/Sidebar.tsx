@@ -40,9 +40,13 @@ export default function Sidebar({ userPermissions = [] }: { userPermissions?: st
             <Link
               key={item.href}
               href={item.href}
-              className={`nav-item ${isActive ? 'active' : ''}`}
+              className={`flex items-center gap-3 w-full px-4 py-2.5 rounded-lg transition-colors font-medium text-base cursor-pointer ${
+                isActive
+                  ? 'bg-[var(--accent-primary)] bg-opacity-10 text-[var(--accent-primary)]'
+                  : 'text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)] active:bg-base-300'
+              }`}
             >
-              <Icon size={20} className="nav-icon" />
+              <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-[var(--accent-primary)]' : 'text-[var(--text-muted)] group-hover:text-[var(--text-primary)]'}`} />
               <span>{item.label}</span>
             </Link>
           )
@@ -50,8 +54,11 @@ export default function Sidebar({ userPermissions = [] }: { userPermissions?: st
       </nav>
 
       <div className="sidebar-footer">
-        <button className="nav-item logout-btn" onClick={() => signOut({ callbackUrl: '/login' })}>
-          <LogOut size={20} className="nav-icon" />
+        <button 
+          className="flex items-center gap-3 w-full px-4 py-2.5 rounded-lg transition-colors font-medium text-base cursor-pointer text-[var(--danger)] hover:bg-[var(--danger)] hover:bg-opacity-10 active:bg-opacity-20"
+          onClick={() => signOut({ callbackUrl: '/login' })}
+        >
+          <LogOut className="w-5 h-5 flex-shrink-0" />
           <span>Sair</span>
         </button>
       </div>
@@ -104,38 +111,6 @@ export default function Sidebar({ userPermissions = [] }: { userPermissions?: st
           flex: 1;
         }
 
-        .nav-item {
-          display: flex;
-          align-items: center;
-          gap: var(--spacing-md);
-          padding: var(--spacing-sm) var(--spacing-md);
-          border-radius: var(--radius-md);
-          color: var(--text-secondary);
-          transition: all 0.2s;
-          text-decoration: none;
-          font-weight: 500;
-          background: transparent;
-          border: none;
-          width: 100%;
-          cursor: pointer;
-          font-family: inherit;
-          font-size: var(--text-base);
-        }
-
-        .nav-item:hover {
-          background-color: var(--bg-tertiary);
-          color: var(--text-primary);
-        }
-
-        .nav-item.active {
-          background-color: rgba(59, 130, 246, 0.1);
-          color: var(--accent-primary);
-        }
-
-        .nav-item.active .nav-icon {
-          color: var(--accent-primary);
-        }
-
         .nav-icon {
           color: var(--text-muted);
           transition: color 0.2s;
@@ -144,19 +119,6 @@ export default function Sidebar({ userPermissions = [] }: { userPermissions?: st
         .sidebar-footer {
           padding: var(--spacing-md);
           border-top: 1px solid var(--border-color);
-        }
-
-        .logout-btn {
-          color: var(--danger);
-        }
-
-        .logout-btn .nav-icon {
-          color: var(--danger);
-        }
-
-        .logout-btn:hover {
-          background-color: rgba(239, 68, 68, 0.1);
-          color: var(--danger);
         }
       `}</style>
     </aside>
