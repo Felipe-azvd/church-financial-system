@@ -42,7 +42,7 @@ export default function Sidebar({ userPermissions = [] }: { userPermissions?: st
               href={item.href}
               className={`flex items-center gap-3 w-full px-4 py-2.5 rounded-lg transition-colors font-medium text-base cursor-pointer ${
                 isActive
-                  ? 'bg-[var(--accent-primary)] bg-opacity-10 text-[var(--accent-primary)]'
+                  ? 'bg-[var(--accent-primary)] bg-opacity-10 text-[var(--accent-primary)] glow glow-hover'
                   : 'text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)] active:bg-base-300'
               }`}
             >

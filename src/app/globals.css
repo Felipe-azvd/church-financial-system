@@ -157,6 +157,16 @@ body {
   background: rgba(255, 255, 255, 0.03);
 }
 
+.glow {
+  box-shadow:
+    0 0 5px rgb(var(--primary)),
+    0 0 20px rgba(var(--primary-rgb), 0.4);
+}
+
+.glow-hover:hover {
+  filter: brightness(1.15);
+}
+
 /* Base Elements */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
@@ -229,12 +239,12 @@ button {
 .btn-primary {
   background-color: var(--accent-primary);
   color: white;
-  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 5px rgb(var(--primary)), 0 0 20px rgba(var(--primary-rgb), 0.4);
 }
 
 .btn-primary:hover {
   background-color: var(--accent-hover);
-  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.4);
+  filter: brightness(1.15);
 }
 
 .btn-secondary {
