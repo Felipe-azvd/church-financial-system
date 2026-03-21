@@ -310,8 +310,8 @@ export default function NewTransactionModal({
           {transaction ? 'Editar lançamento' : 'Novo lançamento'}
         </h2>
         
-        {error && <div style={{ color: 'var(--danger)', marginBottom: 'var(--spacing-sm)', padding: 'var(--spacing-xs)', backgroundColor: 'rgba(239, 68, 68, 0.1)', borderRadius: 'var(--radius-sm)' }}>{error}</div>}
-        {successMsg && <div style={{ color: 'var(--success)', marginBottom: 'var(--spacing-sm)', padding: 'var(--spacing-xs)', backgroundColor: 'rgba(16, 185, 129, 0.1)', borderRadius: 'var(--radius-sm)', fontWeight: 600 }}>{successMsg}</div>}
+        {error && <div className="ui-error mb-2 p-2 rounded-md font-medium text-sm">{error}</div>}
+        {successMsg && <div className="ui-success mb-2 p-2 rounded-md font-semibold text-sm">{successMsg}</div>}
 
         <div className="input-group" style={{ marginBottom: 'var(--spacing-md)' }}>
           <label className="input-label" style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Entrada rápida</label>
