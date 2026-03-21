@@ -19,7 +19,7 @@ export default async function AppLayout({
       <Sidebar userPermissions={user.permissions} />
       <div className="main-content">
         <Header userName={user.name || 'Usuário'} />
-        <main className="mx-auto max-w-[1200px] px-6 py-6 w-full flex-1">
+        <main className="flex-1 w-full mx-auto max-w-[1200px] px-6 py-6">
           {children}
         </main>
       </div>
