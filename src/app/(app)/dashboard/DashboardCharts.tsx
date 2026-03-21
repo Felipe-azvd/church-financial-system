@@ -102,7 +102,7 @@ export default function DashboardCharts({
       {insightsSlot}
 
       {/* Pie Charts Grid */}
-      <div className="grid grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
 
         <div className="card">
           <div className="card-body">
@@ -149,7 +149,7 @@ export default function DashboardCharts({
       </div>
 
       {/* Bar Chart — Entradas por Culto */}
-      <div className="card col-span-2">
+      <div className="card md:col-span-2">
         <div className="card-body">
           {chartHeader('Entradas por Culto')}
           {barCultoData.length === 0 ? emptyState : (

@@ -17,7 +17,7 @@ export default function DashboardLoading() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
         <SkeletonStatCard />
         <SkeletonStatCard />
         <SkeletonStatCard />
@@ -29,7 +29,7 @@ export default function DashboardLoading() {
       {/* Charts */}
       <SkeletonChartCard title="Evolução Financeira" />
 
-      <div className="grid grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <SkeletonChartCard title="Entradas por Categoria" />
         <SkeletonChartCard title="Despesas por Categoria" />
       </div>

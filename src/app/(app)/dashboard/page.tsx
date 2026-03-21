@@ -135,7 +135,7 @@ export default async function DashboardPage({
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
         <div className="card">
           <div className="card-body gap-1">
             <span className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-bold">Total Entradas</span>
