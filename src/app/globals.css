@@ -33,6 +33,16 @@
   --primary-rgb: 64, 157, 161;
 }
 
+@theme {
+  --color-background: rgb(var(--background) / <alpha-value>);
+  --color-foreground: rgb(var(--foreground) / <alpha-value>);
+  --color-card: rgb(var(--card) / <alpha-value>);
+  --color-border: rgb(var(--border) / <alpha-value>);
+  --color-primary: rgb(var(--primary) / <alpha-value>);
+  --color-secondary: rgb(var(--secondary) / <alpha-value>);
+  --color-accent: rgb(var(--accent) / <alpha-value>);
+}
+
 :root {
   /* Core Colors */
   --bg-primary: #ffffff;
