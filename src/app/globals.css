@@ -148,6 +148,36 @@ body {
   filter: brightness(1.15);
 }
 
+.ui-interactive,
+.btn,
+.nav-item,
+.card-clickable {
+  transition: all 0.2s ease;
+}
+
+.ui-hover:hover,
+.btn:not(:disabled):hover,
+.nav-item:hover,
+.card-clickable:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
+.ui-active:active,
+.btn:not(:disabled):active,
+.nav-item:active,
+.card-clickable:active {
+  transform: scale(0.98);
+  filter: brightness(0.95);
+}
+
+.ui-disabled,
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 /* Base Elements */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
