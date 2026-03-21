@@ -18,7 +18,7 @@ export default function Sidebar({ userPermissions = [] }: { userPermissions?: st
   const pathname = usePathname()
 
   return (
-    <aside className="sidebar">
+    <aside className="sidebar glass">
       <div className="sidebar-header">
         <div className="logo-placeholder">CF</div>
         <span className="logo-text">ChurchFin</span>

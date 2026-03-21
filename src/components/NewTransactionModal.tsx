@@ -295,7 +295,6 @@ export default function NewTransactionModal({
   }
 
   const modalContentStyle: React.CSSProperties = {
-    backgroundColor: 'var(--bg-secondary)',
     borderRadius: 'var(--radius-lg)',
     padding: 'var(--spacing-xl)',
     width: '90%',
@@ -306,7 +305,7 @@ export default function NewTransactionModal({
 
   return (
     <div style={modalOverlayStyle} onClick={(e) => { if (e.target === e.currentTarget) onClose() }}>
-      <div style={modalContentStyle}>
+      <div style={modalContentStyle} className="glass">
         <h2 className="text-lg font-semibold mb-3">
           {transaction ? 'Editar lançamento' : 'Novo lançamento'}
         </h2>
