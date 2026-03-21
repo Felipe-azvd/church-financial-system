@@ -23,12 +23,14 @@ export default function TransactionList({
   entradas,
   saidas,
   lookups,
-  userPermissions
+  userPermissions,
+  headerSlot
 }: {
   entradas: TransactionData[]
   saidas: TransactionData[]
   lookups: { categorias: Lookup[], cultos: Lookup[] }
   userPermissions: string[]
+  headerSlot?: React.ReactNode
 }) {
   const [editingTx, setEditingTx] = useState<TransactionData | null>(null)
   const [isNewModalOpen, setIsNewModalOpen] = useState(false)
@@ -56,9 +58,9 @@ export default function TransactionList({
       setOptimisticTxs((prev) => prev.filter(t => t.id !== id))
       try {
         const res = await deleteTransaction(id)
-        if (!res.success) throw new Error(res.error || 'Erro ao excluir lançamento')
+        if (!res.success) throw new Error(res.error || 'Não foi possível excluir este lançamento.')
       } catch (err: any) {
-        alert(err.message || 'Erro ao excluir lançamento')
+        alert(err.message || 'Operação cancelada: erro inesperado.')
         setOptimisticTxs(allDbTransactions) // Revert on fail
       }
     }
@@ -137,8 +139,13 @@ export default function TransactionList({
               <tbody>
                 {displayTransactions.length === 0 ? (
                   <tr>
-                    <td colSpan={canAct ? 8 : 7} style={{ textAlign: 'center', padding: 'var(--spacing-xl)', color: 'var(--text-muted)' }}>
-                      Nenhum Lançamento neste mês.
+                    <td colSpan={canAct ? 8 : 7} style={{ textAlign: 'center', padding: 'var(--spacing-2xl) 0' }}>
+                      <p style={{ color: 'var(--text-muted)', fontWeight: 500, marginBottom: 'var(--spacing-md)' }}>Nenhum lançamento encontrado neste período.</p>
+                      {canCreate && (
+                        <button className="btn btn-secondary btn-sm" onClick={() => setIsNewModalOpen(true)}>
+                          <Plus size={16} /> Adicione um lançamento para começar
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ) : (
@@ -198,12 +205,19 @@ export default function TransactionList({
 
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 'var(--spacing-xl)' }}>
-        {canCreate && (
-          <button className="btn btn-primary" onClick={() => setIsNewModalOpen(true)}>
-            <Plus size={20} /> Novo lançamento
-          </button>
-        )}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-2xl font-semibold mb-3">Lançamentos</h1>
+          <p className="text-xs opacity-70" style={{ margin: 'var(--space-1) 0 0 0' }}>Registro e acompanhamento de transações financeiras</p>
+        </div>
+        <div className="flex items-center gap-3">
+          {headerSlot}
+          {canCreate && (
+            <button className="btn btn-primary" onClick={() => setIsNewModalOpen(true)}>
+              <Plus size={20} /> Novo lançamento
+            </button>
+          )}
+        </div>
       </div>
 
       <NewTransactionModal 

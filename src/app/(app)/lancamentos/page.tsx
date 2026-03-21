@@ -36,22 +36,12 @@ export default async function LancamentosPage({
 
   return (
     <div className="space-y-8">
-      {/* Page Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold mb-3">Lançamentos</h1>
-          <p className="text-xs opacity-70" style={{ margin: 'var(--space-1) 0 0 0' }}>Registro e acompanhamento de transações financeiras</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <MonthSelector />
-        </div>
-      </div>
-
       <TransactionList 
         entradas={entradas} 
         saidas={saidas} 
         lookups={lookups}
         userPermissions={user.permissions} 
+        headerSlot={<MonthSelector />}
       />
     </div>
   )

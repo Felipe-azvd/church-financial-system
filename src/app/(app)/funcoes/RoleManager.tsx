@@ -46,7 +46,7 @@ export default function RoleManager({
       }
       setSelectedPermissions([])
     } catch (err) {
-      alert('Erro ao salvar função.')
+      alert('Não foi possível salvar a função no momento.')
     }
     setLoading(false)
   }
@@ -60,7 +60,7 @@ export default function RoleManager({
       try {
         await deleteRole(id)
       } catch (err) {
-        alert('Erro ao remover função.')
+        alert('Erro inesperado: a função não pôde ser removida.')
       }
     }
   }
@@ -244,9 +244,9 @@ export default function RoleManager({
                       <td style={{ fontWeight: 600 }}>{r.nome}</td>
                       <td style={{ textAlign: 'center' }}>
                         {isDefault ? (
-                          <span className="badge badge-soft badge-info text-xs">Acesso Padrão</span>
+                          <span className="badge badge-soft badge-neutral text-xs">Acesso Padrão</span>
                         ) : (
-                          <span className="badge badge-soft badge-primary text-xs">
+                          <span className="badge badge-soft badge-neutral text-xs">
                             {r.permissions?.length || 0} permissão(ões)
                           </span>
                         )}

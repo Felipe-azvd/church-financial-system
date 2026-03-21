@@ -141,6 +141,23 @@ button {
   @apply p-6 flex flex-col;
 }
 
+/* Unified Tables Structure */
+.table th, .table td {
+  padding: 1rem 1.5rem !important;
+  vertical-align: middle;
+}
+
+.table-hover tbody tr {
+  transition: background-color 0.2s ease, transform 0s !important;
+  transform: none !important;
+}
+
+.table-hover tbody tr:hover {
+  background-color: var(--bg-tertiary) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
 /* Button variants */
 .btn {
   display: inline-flex;

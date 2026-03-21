@@ -34,7 +34,7 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
         setIsAdding(false)
       }
     } catch (err: any) {
-      setError(err.message || 'Erro ao salvar usuário.')
+      setError(err.message || 'Não foi possível salvar o usuário neste momento.')
     } finally {
       setLoading(false)
     }
@@ -45,7 +45,7 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
       try {
         await deleteUser(id)
       } catch (err: any) {
-        alert(err.message || 'Erro ao excluir usuário.')
+        alert(err.message || 'Não foi possível excluir o usuário permanentemente.')
       }
     }
   }
@@ -129,8 +129,11 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
               <tbody>
                 {initialUsers.length === 0 ? (
                   <tr>
-                    <td colSpan={4} style={{ textAlign: 'center', padding: 'var(--spacing-xl)', color: 'var(--text-muted)' }}>
-                      Nenhum usuário encontrado.
+                    <td colSpan={4} style={{ textAlign: 'center', padding: 'var(--spacing-2xl) 0' }}>
+                      <p style={{ color: 'var(--text-muted)', fontWeight: 500, marginBottom: 'var(--spacing-md)' }}>Nenhum usuário encontrado no sistema.</p>
+                      <button className="btn btn-secondary btn-sm" onClick={() => setIsAdding(true)}>
+                        Adicione um usuário para começar
+                      </button>
                     </td>
                   </tr>
                 ) : (
@@ -139,7 +142,7 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
                       <td style={{ fontWeight: 500 }}>{u.nome}</td>
                       <td style={{ color: 'var(--text-secondary)' }}>{u.email}</td>
                       <td>
-                        <span className="badge badge-soft badge-info">
+                        <span className="badge badge-soft badge-neutral">
                           {u.role_nome.toUpperCase()}
                         </span>
                       </td>
