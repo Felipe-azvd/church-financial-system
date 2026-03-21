@@ -3,6 +3,37 @@
 @plugin "flyonui";
 
 :root {
+  /* BASE LIGHT */
+  --background: 255 255 255;
+  --foreground: 15 23 42;
+  --card: 249 250 251;
+  --border: 229 231 235;
+
+  /* PALETA LIGHT */
+  --primary: 132 228 136;
+  --secondary: 107 206 144;
+  --accent: 84 183 154;
+
+  /* RGB (para efeitos) */
+  --primary-rgb: 132, 228, 136;
+}
+
+.dark {
+  /* BASE DARK */
+  --background: 15 23 42;
+  --foreground: 248 250 252;
+  --card: 17 24 39;
+  --border: 31 41 55;
+
+  /* PALETA DARK */
+  --primary: 64 157 161;
+  --secondary: 47 105 139;
+  --accent: 33 58 117;
+
+  --primary-rgb: 64, 157, 161;
+}
+
+:root {
   /* Core Colors */
   --bg-primary: #ffffff;
   --bg-secondary: #f8fafc;
