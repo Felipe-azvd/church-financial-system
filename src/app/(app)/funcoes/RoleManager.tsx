@@ -160,7 +160,7 @@ export default function RoleManager({
                             justifyContent: 'space-between',
                             listStyle: 'none',
                             userSelect: 'none',
-                            borderRadius: 'var(--radius-lg)',
+                            borderRadius: 'var(--radius-xl)',
                           }}
                         >
                           <div className="flex items-center gap-2">
