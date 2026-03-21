@@ -15,7 +15,7 @@ export default async function ConfiguracoesPage() {
   ])
 
   return (
-    <div className="space-y-8">
+    <div className="px-6 py-6 lg:px-10 flex flex-col gap-6">
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -24,7 +24,7 @@ export default async function ConfiguracoesPage() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 'var(--spacing-lg)' }}>
+      <div className="grid gap-6" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
         
         <ConfigItemManager title="Categorias" type="categoria" items={categorias} />
         <ConfigItemManager title="Cultos" type="culto" items={cultos} />

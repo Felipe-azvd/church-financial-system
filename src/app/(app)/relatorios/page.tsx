@@ -53,7 +53,7 @@ export default async function RelatoriosPage({
   const mediaMensal = summary.entradas / 12
 
   return (
-    <div className="px-6 py-6 lg:px-10 space-y-6">
+    <div className="px-6 py-6 lg:px-10 flex flex-col gap-6">
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -76,7 +76,7 @@ export default async function RelatoriosPage({
       </div>
 
       {/* Executive Summary */}
-      <div className="space-y-6">
+      <div className="flex flex-col gap-6">
         <h2 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
           Resumo Financeiro
         </h2>

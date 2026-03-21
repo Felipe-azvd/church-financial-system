@@ -3,6 +3,8 @@ import DashboardCharts from "./DashboardCharts"
 import DashboardFilter from "./DashboardFilter"
 import FinancialInsights from "@/components/dashboard/FinancialInsights"
 import { getMonthlyTotals } from "@/app/actions/finance"
+import PeriodSelector from "@/components/PeriodSelector"
+import { Suspense } from "react"
 
 export default async function DashboardPage({
   searchParams,
@@ -60,7 +62,7 @@ export default async function DashboardPage({
 
   // 1. Financial Evolution Data
   const evolutionMap: Record<string, { date: string, entradas: number, saidas: number }> = {}
-  
+
   // 2. Categories Data
   const catEntradasMap: Record<string, number> = {}
   const catSaidasMap: Record<string, number> = {}
@@ -96,9 +98,9 @@ export default async function DashboardPage({
   })
 
   const evolutionData = Object.values(evolutionMap)
-  const pieEntradasData = Object.entries(catEntradasMap).map(([name, value]) => ({ name, value })).filter(d => d.value > 0).sort((a,b) => b.value - a.value)
-  const pieSaidasData = Object.entries(catSaidasMap).map(([name, value]) => ({ name, value })).filter(d => d.value > 0).sort((a,b) => b.value - a.value)
-  const barCultoData = Object.entries(cultoEntradasMap).map(([name, value]) => ({ name, value })).filter(d => d.value > 0).sort((a,b) => b.value - a.value)
+  const pieEntradasData = Object.entries(catEntradasMap).map(([name, value]) => ({ name, value })).filter(d => d.value > 0).sort((a, b) => b.value - a.value)
+  const pieSaidasData = Object.entries(catSaidasMap).map(([name, value]) => ({ name, value })).filter(d => d.value > 0).sort((a, b) => b.value - a.value)
+  const barCultoData = Object.entries(cultoEntradasMap).map(([name, value]) => ({ name, value })).filter(d => d.value > 0).sort((a, b) => b.value - a.value)
 
   const saldo = totalEntradas - totalSaidas
   const currentYear = now.getFullYear()
@@ -115,14 +117,14 @@ export default async function DashboardPage({
     return ((curr - prev) / prev) * 100
   }
 
-  const entradasPct  = pctChange(currM.entradas, prevM?.entradas ?? null)
-  const saidasPct    = pctChange(currM.saidas,   prevM?.saidas   ?? null)
-  const saldoCurrM   = currM.entradas - currM.saidas
-  const saldoPrevM   = prevM ? prevM.entradas - prevM.saidas : null
-  const saldoPct     = pctChange(saldoCurrM, saldoPrevM)
+  const entradasPct = pctChange(currM.entradas, prevM?.entradas ?? null)
+  const saidasPct = pctChange(currM.saidas, prevM?.saidas ?? null)
+  const saldoCurrM = currM.entradas - currM.saidas
+  const saldoPrevM = prevM ? prevM.entradas - prevM.saidas : null
+  const saldoPct = pctChange(saldoCurrM, saldoPrevM)
 
   return (
-    <div className="px-6 py-6 lg:px-10 space-y-6">
+    <div className="px-6 py-6 lg:px-10 flex flex-col gap-6">
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -130,6 +132,9 @@ export default async function DashboardPage({
           <p className="text-xs opacity-70" style={{ margin: 'var(--space-1) 0 0 0' }}>Visão geral das finanças da igreja</p>
         </div>
         <div className="flex items-center gap-3">
+          <Suspense fallback={null}>
+            <PeriodSelector />
+          </Suspense>
           <DashboardFilter />
         </div>
       </div>
@@ -192,8 +197,8 @@ export default async function DashboardPage({
           saldo < 0
             ? { label: 'Saúde Financeira: Crítica', badge: 'badge-error', icon: '🔴' }
             : expenseRatio > 0.8
-            ? { label: 'Saúde Financeira: Atenção', badge: 'badge-warning', icon: '🟡' }
-            : { label: 'Saúde Financeira: Estável', badge: 'badge-success', icon: '🟢' }
+              ? { label: 'Saúde Financeira: Atenção', badge: 'badge-warning', icon: '🟡' }
+              : { label: 'Saúde Financeira: Estável', badge: 'badge-success', icon: '🟢' }
         return (
           <div className="flex items-center gap-2">
             <span className={`badge badge-soft ${health.badge}`} style={{ fontSize: 'var(--text-xs)', padding: 'var(--space-1) var(--space-2)' }}>
@@ -209,7 +214,7 @@ export default async function DashboardPage({
       })()}
 
       {/* Dashboard Charts Interleaving Insights */}
-      <DashboardCharts 
+      <DashboardCharts
         evolutionData={evolutionData}
         pieEntradasData={pieEntradasData}
         pieSaidasData={pieSaidasData}

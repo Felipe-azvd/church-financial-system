@@ -36,7 +36,7 @@ export default async function UsuariosPage() {
   }))
 
   return (
-    <div>
+    <div className="px-6 py-6 lg:px-10 flex flex-col gap-6">
       <UserManager initialUsers={usuarios} initialRoles={roles} />
     </div>
   )

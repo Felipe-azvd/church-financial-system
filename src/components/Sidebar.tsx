@@ -16,7 +16,7 @@ const navItems = [
   { href: '/configuracoes', label: 'Configurações', icon: Settings },
 ]
 
-export default function Sidebar({ userPermissions = [] }: { userPermissions?: string[] }) {
+export default function Sidebar({ userPermissions = [], userName = '' }: { userPermissions?: string[], userName?: string }) {
   const pathname = usePathname()
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -72,13 +72,16 @@ export default function Sidebar({ userPermissions = [] }: { userPermissions?: st
         })}
       </nav>
 
-      <div className="sidebar-footer">
+      <div className="sidebar-footer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span className="user-name" style={{ fontSize: 'var(--text-sm)', fontWeight: 500, color: 'var(--text-primary)' }}>
+          {userName}
+        </span>
         <button 
-          className="flex items-center gap-3 w-full px-4 py-2.5 rounded-lg transition-colors font-medium text-base cursor-pointer text-[var(--danger)] hover:bg-[var(--danger)] hover:bg-opacity-10 active:bg-opacity-20"
           onClick={() => signOut({ callbackUrl: '/login' })}
+          className="p-2 rounded-lg text-[var(--danger)] hover:bg-[var(--danger)] hover:bg-opacity-10 transition-colors"
+          title="Sair"
         >
-          <LogOut className="w-5 h-5 flex-shrink-0" />
-          <span>Sair</span>
+          <LogOut className="w-5 h-5" />
         </button>
       </div>
 

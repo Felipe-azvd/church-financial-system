@@ -32,7 +32,7 @@ export default async function FuncoesPage() {
   })
 
   return (
-    <div className="space-y-8">
+    <div className="px-6 py-6 lg:px-10 flex flex-col gap-6">
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
