@@ -71,9 +71,6 @@ export default function Sidebar({ userPermissions = [] }: { userPermissions?: st
           border-right: 1px solid var(--border-color);
           display: flex;
           flex-direction: column;
-          position: fixed;
-          left: 0;
-          top: 0;
         }
 
         .sidebar-header {

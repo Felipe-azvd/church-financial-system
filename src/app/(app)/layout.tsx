@@ -15,7 +15,7 @@ export default async function AppLayout({
   }
 
   return (
-    <div className="app-layout">
+    <div className="app-layout gap-6">
       <Sidebar userPermissions={user.permissions} />
       <div className="main-content">
         <Header userName={user.name || 'Usuário'} />
