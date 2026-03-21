@@ -237,6 +237,10 @@ button {
   padding: 0 var(--spacing-md);
 }
 
+.ui-container {
+  padding: 24px;
+}
+
 .card {
   width: 100%;
   @apply rounded-xl shadow-sm transition-all duration-200 glass;

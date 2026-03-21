@@ -122,7 +122,7 @@ export default async function DashboardPage({
   const saldoPct     = pctChange(saldoCurrM, saldoPrevM)
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="px-6 py-6 lg:px-10 space-y-6">
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -135,7 +135,7 @@ export default async function DashboardPage({
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         <div className="card w-full">
           <div className="card-body gap-1">
             <span className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-bold">Total Entradas</span>

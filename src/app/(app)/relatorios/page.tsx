@@ -53,7 +53,7 @@ export default async function RelatoriosPage({
   const mediaMensal = summary.entradas / 12
 
   return (
-    <div className="space-y-8">
+    <div className="px-6 py-6 lg:px-10 space-y-6">
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -76,14 +76,12 @@ export default async function RelatoriosPage({
       </div>
 
       {/* Executive Summary */}
-      <div style={{ marginBottom: 'var(--spacing-2xl)' }}>
+      <div className="space-y-6">
         <h2 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
           Resumo Financeiro
         </h2>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: 'var(--spacing-md)'
+        <div className="grid gap-6" style={{
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))'
         }}>
           <div className="card w-full">
             <div className="card-body gap-2">
