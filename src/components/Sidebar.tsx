@@ -40,9 +40,9 @@ export default function Sidebar({ userPermissions = [] }: { userPermissions?: st
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 w-full px-4 py-2.5 rounded-lg transition-colors font-medium text-base cursor-pointer ${
+              className={`flex items-center gap-3 w-full px-4 py-2.5 rounded-lg transition-colors font-medium text-base cursor-pointer nav-item ${
                 isActive
-                  ? 'bg-[var(--accent-primary)] bg-opacity-10 text-[var(--accent-primary)] glow glow-hover'
+                  ? 'nav-item-active text-[var(--accent-primary)] glow glow-hover'
                   : 'text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)] active:bg-base-300'
               }`}
             >
@@ -111,6 +111,16 @@ export default function Sidebar({ userPermissions = [] }: { userPermissions?: st
         .nav-icon {
           color: var(--text-muted);
           transition: color 0.2s;
+        }
+
+        .nav-item {
+          border-left: 3px solid transparent;
+        }
+
+        .nav-item-active {
+          background: linear-gradient(90deg, rgba(var(--primary-rgb), 0.2), transparent);
+          border-left: 3px solid rgb(var(--primary));
+          text-shadow: 0 0 10px rgba(var(--primary-rgb), 0.5);
         }
 
         .sidebar-footer {
