@@ -55,7 +55,7 @@ export default function DashboardCharts({
   const monthlyEvolutionData = Object.keys(monthlyMap).sort().map((k) => monthlyMap[k])
 
   const emptyState = (
-    <div className="card" style={{ opacity: 0.7 }}>
+    <div className="card w-full" style={{ opacity: 0.7 }}>
       <div className="card-body flex-row items-center gap-2">
         <span>📭</span>
         <p style={{ margin: 0, fontSize: 'var(--text-sm)' }}>Nenhum dado neste período</p>
@@ -73,7 +73,7 @@ export default function DashboardCharts({
     <div className="flex flex-col gap-6 mb-8">
       
       {/* Financial Evolution Line Chart */}
-      <div className="card">
+      <div className="card w-full">
         <div className="card-body">
           {chartHeader('Evolução Financeira')}
           {monthlyEvolutionData.length === 0 ? emptyState : (
@@ -104,7 +104,7 @@ export default function DashboardCharts({
       {/* Pie Charts Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
 
-        <div className="card">
+        <div className="card w-full">
           <div className="card-body">
             {chartHeader('Entradas por Categoria')}
             {pieEntradasData.length === 0 ? emptyState : (
@@ -125,7 +125,7 @@ export default function DashboardCharts({
           </div>
         </div>
 
-        <div className="card">
+        <div className="card w-full">
           <div className="card-body">
             {chartHeader('Despesas por Categoria')}
             {pieSaidasData.length === 0 ? emptyState : (
@@ -149,7 +149,7 @@ export default function DashboardCharts({
       </div>
 
       {/* Bar Chart — Entradas por Culto */}
-      <div className="card md:col-span-2">
+      <div className="card w-full md:col-span-2">
         <div className="card-body">
           {chartHeader('Entradas por Culto')}
           {barCultoData.length === 0 ? emptyState : (

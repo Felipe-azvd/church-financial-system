@@ -48,7 +48,7 @@ export default function ConfigItemManager({
   }
 
   return (
-    <div className="card">
+    <div className="card w-full">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-md)' }}>
         <h2 className="text-lg font-semibold mb-3">{title}</h2>
         {!isAdding && !editingItem && (

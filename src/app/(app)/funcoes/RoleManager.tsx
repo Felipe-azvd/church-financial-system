@@ -98,7 +98,7 @@ export default function RoleManager({
   }
 
   return (
-    <div className="card">
+    <div className="card w-full">
       {/* Card header */}
       <div
         className="card-body"
@@ -120,7 +120,7 @@ export default function RoleManager({
         {/* Add / Edit form */}
         {(isAdding || editingRole) && (
           <form onSubmit={handleSave} style={{ marginBottom: 'var(--spacing-xl)' }}>
-            <div className="card">
+            <div className="card w-full">
               <div className="card-body">
               <h3 className="text-sm font-medium mb-3">
                 {editingRole ? 'Editar Função' : 'Nova Função'}
@@ -149,7 +149,7 @@ export default function RoleManager({
                     const label = MODULE_LABELS[module] || module.charAt(0).toUpperCase() + module.slice(1)
 
                     return (
-                      <details key={module} className="card" open={someSelected}>
+                      <details key={module} className="card w-full" open={someSelected}>
                         {/* Summary is the accordion header */}
                         <summary
                           style={{

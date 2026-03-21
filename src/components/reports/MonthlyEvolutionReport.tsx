@@ -6,7 +6,7 @@ export default function MonthlyEvolutionReport({
   data: { month: string; total: number }[]
 }) {
   return (
-    <div className="card mb-8 overflow-hidden">
+    <div className="card w-full mb-8 overflow-hidden">
       <div className="card-body border-b border-[var(--border-color)]">
         <h2 className="text-lg font-semibold mb-3">Evolução Mensal</h2>
       </div>

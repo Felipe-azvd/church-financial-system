@@ -121,7 +121,7 @@ export default function TransactionList({
         <h2 className="text-lg font-semibold mb-3">
           Extrato Financeiro
         </h2>
-        <div className="card overflow-hidden max-h-[420px] overflow-y-auto">
+        <div className="card w-full overflow-hidden max-h-[420px] overflow-y-auto">
           <div className="table-responsive">
             <table className="table table-hover data-table">
               <thead>

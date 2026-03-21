@@ -81,13 +81,13 @@ export default function FinancialInsights({
   }
 
   return (
-    <div className="card">
+    <div className="card w-full">
       <div className="card-body" style={{ borderBottom: '1px solid var(--border-color)' }}>
         <h2 className="text-lg font-semibold mb-3">Insights Financeiros</h2>
       </div>
       <div className="card-body">
         {insights.length === 0 ? (
-          <div className="card" style={{ opacity: 0.7 }}>
+          <div className="card w-full" style={{ opacity: 0.7 }}>
             <div className="card-body flex-row items-center gap-3">
               <span style={{ fontSize: 'var(--text-xl)' }}>📭</span>
               <p style={{ margin: 0, fontSize: 'var(--text-sm)' }}>Nenhum dado neste período</p>

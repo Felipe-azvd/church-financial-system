@@ -32,7 +32,7 @@ export default function FinancialSummary({
         gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
         gap: 'var(--spacing-md)'
       }}>
-        <div className="card">
+        <div className="card w-full">
           <div className="card-body">
             <h3 className="text-sm font-medium mb-3">Entradas totais</h3>
             <p className="text-xl font-semibold" style={{ color: 'var(--success)' }}>
@@ -41,7 +41,7 @@ export default function FinancialSummary({
           </div>
         </div>
         
-        <div className="card">
+        <div className="card w-full">
           <div className="card-body">
             <h3 className="text-sm font-medium mb-3">Saídas totais</h3>
             <p className="text-xl font-semibold" style={{ color: 'var(--danger)' }}>
@@ -50,7 +50,7 @@ export default function FinancialSummary({
           </div>
         </div>
 
-        <div className="card">
+        <div className="card w-full">
           <div className="card-body">
             <h3 className="text-sm font-medium mb-3">Saldo anual</h3>
             <p className="text-xl font-semibold" style={{ color: saldo >= 0 ? 'var(--primary)' : 'var(--danger)' }}>
@@ -59,7 +59,7 @@ export default function FinancialSummary({
           </div>
         </div>
 
-        <div className="card">
+        <div className="card w-full">
           <div className="card-body">
             <h3 className="text-sm font-medium mb-3">Melhor mês</h3>
             <p className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>
@@ -68,7 +68,7 @@ export default function FinancialSummary({
           </div>
         </div>
 
-        <div className="card">
+        <div className="card w-full">
           <div className="card-body">
             <h3 className="text-sm font-medium mb-3">Maior despesa</h3>
             <p className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>
@@ -77,7 +77,7 @@ export default function FinancialSummary({
           </div>
         </div>
 
-        <div className="card">
+        <div className="card w-full">
           <div className="card-body">
             <h3 className="text-sm font-medium mb-3">Média mensal</h3>
             <p className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>

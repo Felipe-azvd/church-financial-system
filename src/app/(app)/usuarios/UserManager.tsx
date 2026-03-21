@@ -72,7 +72,7 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
       </div>
 
       {(isAdding || editingUser) && (
-        <form onSubmit={handleSave} className="card" style={{ marginBottom: 'var(--spacing-md)' }}>
+        <form onSubmit={handleSave} className="card w-full" style={{ marginBottom: 'var(--spacing-md)' }}>
           <h3 className="text-sm font-medium mb-3">
             {editingUser ? 'Editar Usuário' : 'Criar Usuário'}
           </h3>
@@ -115,7 +115,7 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
       )}
 
       {(!isAdding && !editingUser) && (
-        <div className="card overflow-hidden max-h-[420px] overflow-y-auto">
+        <div className="card w-full overflow-hidden max-h-[420px] overflow-y-auto">
           <div className="table-responsive">
             <table className="table table-hover data-table">
               <thead>

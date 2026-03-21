@@ -136,7 +136,7 @@ export default async function DashboardPage({
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
-        <div className="card">
+        <div className="card w-full">
           <div className="card-body gap-1">
             <span className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-bold">Total Entradas</span>
             <p className="text-xl font-bold" style={{ color: 'var(--success)', margin: 0 }}>
@@ -152,7 +152,7 @@ export default async function DashboardPage({
           </div>
         </div>
 
-        <div className="card">
+        <div className="card w-full">
           <div className="card-body gap-1">
             <span className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-bold">Total Saídas</span>
             <p className="text-xl font-bold" style={{ color: 'var(--danger)', margin: 0 }}>
@@ -168,7 +168,7 @@ export default async function DashboardPage({
           </div>
         </div>
 
-        <div className="card">
+        <div className="card w-full">
           <div className="card-body gap-1">
             <span className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-bold">Saldo Atual</span>
             <p className="text-xl font-bold" style={{ color: saldo >= 0 ? 'var(--success)' : 'var(--danger)', margin: 0 }}>

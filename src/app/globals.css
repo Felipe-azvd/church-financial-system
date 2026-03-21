@@ -132,6 +132,7 @@ button {
 }
 
 .card {
+  width: 100%;
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);
   @apply rounded-xl shadow-sm transition-all duration-200;

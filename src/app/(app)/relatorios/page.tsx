@@ -61,7 +61,7 @@ export default async function RelatoriosPage({
           <p className="text-xs opacity-70" style={{ margin: 'var(--space-1) 0 0 0' }}>Análise e resumo das finanças por período</p>
         </div>
         <div className="flex items-center gap-3">
-          <form className="card" style={{ padding: 'var(--spacing-xs) var(--spacing-sm)', display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'center' }}>
+          <form className="card w-full" style={{ padding: 'var(--spacing-xs) var(--spacing-sm)', display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'center' }}>
             <label className="input-label">Ano:</label>
             <input 
               type="number" 
@@ -85,7 +85,7 @@ export default async function RelatoriosPage({
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
           gap: 'var(--spacing-md)'
         }}>
-          <div className="card">
+          <div className="card w-full">
             <div className="card-body gap-2">
               <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Entradas Totais</span>
               <p className="text-xl font-semibold" style={{ color: 'var(--success)', margin: 0 }}>
@@ -94,7 +94,7 @@ export default async function RelatoriosPage({
             </div>
           </div>
 
-          <div className="card">
+          <div className="card w-full">
             <div className="card-body gap-2">
               <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Saídas Totais</span>
               <p className="text-xl font-semibold" style={{ color: 'var(--danger)', margin: 0 }}>
@@ -103,7 +103,7 @@ export default async function RelatoriosPage({
             </div>
           </div>
 
-          <div className="card">
+          <div className="card w-full">
             <div className="card-body gap-2">
               <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Saldo Anual</span>
               <p className="text-xl font-semibold" style={{ color: summary.saldo >= 0 ? 'var(--success)' : 'var(--danger)', margin: 0 }}>
@@ -112,7 +112,7 @@ export default async function RelatoriosPage({
             </div>
           </div>
 
-          <div className="card">
+          <div className="card w-full">
             <div className="card-body gap-2">
               <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Média Mensal</span>
               <p className="text-xl font-semibold" style={{ color: 'var(--text-primary)', margin: 0 }}>
@@ -121,14 +121,14 @@ export default async function RelatoriosPage({
             </div>
           </div>
 
-          <div className="card">
+          <div className="card w-full">
             <div className="card-body gap-2">
               <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Melhor Mês</span>
               <p className="text-xl font-semibold" style={{ color: 'var(--text-primary)', margin: 0 }}>{melhorMes}</p>
             </div>
           </div>
 
-          <div className="card">
+          <div className="card w-full">
             <div className="card-body gap-2">
               <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Maior Despesa</span>
               <p className="text-xl font-semibold" style={{ color: 'var(--text-primary)', margin: 0 }}>{maiorDespesa}</p>
