@@ -2,8 +2,10 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, ReceiptText, PieChart, Settings, Users, LogOut, Key } from 'lucide-react'
+import { LayoutDashboard, ReceiptText, PieChart, Settings, Users, LogOut, Key, Sun, Moon } from 'lucide-react'
 import { signOut } from 'next-auth/react'
+import { useState, useEffect } from 'react'
+import { useTheme } from 'next-themes'
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -16,12 +18,29 @@ const navItems = [
 
 export default function Sidebar({ userPermissions = [] }: { userPermissions?: string[] }) {
   const pathname = usePathname()
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   return (
     <aside className="sidebar glass">
-      <div className="sidebar-header">
-        <div className="logo-placeholder">CF</div>
-        <span className="logo-text">ChurchFin</span>
+      <div className="sidebar-header" style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
+          <div className="logo-placeholder">CF</div>
+          <span className="logo-text">ChurchFin</span>
+        </div>
+        {mounted && (
+          <button
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className="p-1.5 rounded-full hover:bg-[var(--bg-tertiary)] transition-colors"
+            title="Alternar Tema"
+          >
+            {theme === 'dark' ? <Sun className="w-4 h-4 text-[var(--warning)]" /> : <Moon className="w-4 h-4 text-[var(--text-primary)]" />}
+          </button>
+        )}
       </div>
 
       <nav className="sidebar-nav">
