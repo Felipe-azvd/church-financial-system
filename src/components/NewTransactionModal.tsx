@@ -295,7 +295,7 @@ export default function NewTransactionModal({
   }
 
   const modalContentStyle: React.CSSProperties = {
-    borderRadius: 'var(--radius-xl)',
+    borderRadius: 'var(--radius-lg)',
     padding: 'var(--spacing-xl)',
     width: '90%',
     maxWidth: '500px',
