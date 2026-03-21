@@ -57,7 +57,7 @@ export default async function RelatoriosPage({
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold" style={{ margin: 0 }}>Relatórios</h1>
+          <h1 className="text-2xl font-semibold mb-3">Relatórios</h1>
           <p className="text-xs opacity-70" style={{ margin: 'var(--space-1) 0 0 0' }}>Análise e resumo das finanças por período</p>
         </div>
         <div className="flex items-center gap-3">

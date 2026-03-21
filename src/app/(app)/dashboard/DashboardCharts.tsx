@@ -55,7 +55,7 @@ export default function DashboardCharts({
   const monthlyEvolutionData = Object.keys(monthlyMap).sort().map((k) => monthlyMap[k])
 
   const emptyState = (
-    <div className="card card-compact" style={{ margin: 'var(--spacing-md)', opacity: 0.7 }}>
+    <div className="card" style={{ opacity: 0.7 }}>
       <div className="card-body flex-row items-center gap-2">
         <span>📭</span>
         <p style={{ margin: 0, fontSize: 'var(--text-sm)' }}>Sem dados suficientes para exibir neste período.</p>
@@ -70,7 +70,7 @@ export default function DashboardCharts({
   )
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6 mb-8">
       
       {/* Financial Evolution Line Chart */}
       <div className="card">

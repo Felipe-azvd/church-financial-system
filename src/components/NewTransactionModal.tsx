@@ -307,7 +307,7 @@ export default function NewTransactionModal({
   return (
     <div style={modalOverlayStyle} onClick={(e) => { if (e.target === e.currentTarget) onClose() }}>
       <div style={modalContentStyle}>
-        <h2 className="text-lg font-semibold mb-6 mt-0">
+        <h2 className="text-lg font-semibold mb-3">
           {transaction ? 'Editar lançamento' : 'Novo lançamento'}
         </h2>
         

@@ -34,7 +34,7 @@ export default function LoginForm() {
     <div className="login-container">
       <div className="card login-card">
         <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-xl)' }}>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 600 }}>Church Financial</h1>
+          <h1 className="text-2xl font-semibold mb-3">Church Financial</h1>
           <p style={{ color: 'var(--text-secondary)' }}>Acesse sua conta</p>
         </div>
 

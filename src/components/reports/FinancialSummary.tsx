@@ -33,8 +33,8 @@ export default function FinancialSummary({
         gap: 'var(--spacing-md)'
       }}>
         <div className="card">
-          <div className="card-body gap-2">
-            <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">Entradas totais</h3>
+          <div className="card-body">
+            <h3 className="text-sm font-medium mb-3">Entradas totais</h3>
             <p className="text-xl font-semibold" style={{ color: 'var(--success)' }}>
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(entradas)}
             </p>
@@ -42,8 +42,8 @@ export default function FinancialSummary({
         </div>
         
         <div className="card">
-          <div className="card-body gap-2">
-            <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">Saídas totais</h3>
+          <div className="card-body">
+            <h3 className="text-sm font-medium mb-3">Saídas totais</h3>
             <p className="text-xl font-semibold" style={{ color: 'var(--danger)' }}>
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(saidas)}
             </p>
@@ -51,8 +51,8 @@ export default function FinancialSummary({
         </div>
 
         <div className="card">
-          <div className="card-body gap-2">
-            <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">Saldo anual</h3>
+          <div className="card-body">
+            <h3 className="text-sm font-medium mb-3">Saldo anual</h3>
             <p className="text-xl font-semibold" style={{ color: saldo >= 0 ? 'var(--primary)' : 'var(--danger)' }}>
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(saldo)}
             </p>
@@ -60,8 +60,8 @@ export default function FinancialSummary({
         </div>
 
         <div className="card">
-          <div className="card-body gap-2">
-            <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">Melhor mês</h3>
+          <div className="card-body">
+            <h3 className="text-sm font-medium mb-3">Melhor mês</h3>
             <p className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>
               {melhorMes}
             </p>
@@ -69,8 +69,8 @@ export default function FinancialSummary({
         </div>
 
         <div className="card">
-          <div className="card-body gap-2">
-            <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">Maior despesa</h3>
+          <div className="card-body">
+            <h3 className="text-sm font-medium mb-3">Maior despesa</h3>
             <p className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>
               {maiorDespesa}
             </p>
@@ -78,8 +78,8 @@ export default function FinancialSummary({
         </div>
 
         <div className="card">
-          <div className="card-body gap-2">
-            <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">Média mensal</h3>
+          <div className="card-body">
+            <h3 className="text-sm font-medium mb-3">Média mensal</h3>
             <p className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(mediaMensal)}
             </p>

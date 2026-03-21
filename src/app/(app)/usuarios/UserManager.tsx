@@ -61,7 +61,7 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
       {/* Page Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-semibold" style={{ margin: 0 }}>Usuários</h1>
+          <h1 className="text-2xl font-semibold mb-3">Usuários</h1>
           <p className="text-xs opacity-70" style={{ margin: 'var(--space-1) 0 0 0' }}>Gerencie os usuários e seus acessos</p>
         </div>
         <div className="flex items-center gap-3">

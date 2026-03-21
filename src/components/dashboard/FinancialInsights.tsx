@@ -83,7 +83,7 @@ export default function FinancialInsights({
   return (
     <div className="card">
       <div className="card-body" style={{ borderBottom: '1px solid var(--border-color)' }}>
-        <h2 className="card-title" style={{ fontSize: 'var(--text-lg)' }}>Insights Financeiros</h2>
+        <h2 className="text-lg font-semibold mb-3">Insights Financeiros</h2>
       </div>
       <div className="card-body">
         {insights.length === 0 ? (

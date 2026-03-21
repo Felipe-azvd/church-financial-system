@@ -126,7 +126,7 @@ export default async function DashboardPage({
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold" style={{ margin: 0 }}>Dashboard</h1>
+          <h1 className="text-2xl font-semibold mb-3">Dashboard</h1>
           <p className="text-xs opacity-70" style={{ margin: 'var(--space-1) 0 0 0' }}>Visão geral das finanças da igreja</p>
         </div>
         <div className="flex items-center gap-3">

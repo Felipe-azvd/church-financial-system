@@ -105,7 +105,7 @@ export default function RoleManager({
         style={{ borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
       >
         <div>
-          <h2 className="text-lg font-semibold">Gerenciar Funções</h2>
+          <h2 className="text-lg font-semibold mb-3">Gerenciar Funções</h2>
           <p className="text-xs opacity-70" style={{ margin: 'var(--space-1) 0 0 0' }}>Defina funções e controle o acesso de cada usuário</p>
         </div>
         {!isAdding && !editingRole && (
