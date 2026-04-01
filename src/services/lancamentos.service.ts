@@ -13,7 +13,9 @@ export type CreateLancamentoDTO = {
 export type UpdateLancamentoDTO = Partial<CreateLancamentoDTO>
 
 export async function criarLancamento(data: CreateLancamentoDTO) {
-  const { userId } = await getSessionUser()
+  const user = await getSessionUser()
+  if (!user || !user.id) throw new Error("Usuário não autenticado")
+  const userId = user.id
   return await prisma.transacao.create({
     data: {
       igreja_id: 'auto', // Overridden by Prisma Tenant extension automatically
@@ -204,7 +206,10 @@ export async function obterTotaisMensais(ano: number) {
 }
 
 export async function obterEvolucaoMensal() {
-  const { igreja_id } = await getSessionUser()
+  const user = await getSessionUser()
+  if (!user || !user.igreja_id) throw new Error("Usuário não autenticado ou sem igreja associada")
+  const igreja_id = user.igreja_id
+
   const results = await prisma.$queryRaw`
     SELECT 
       EXTRACT(YEAR FROM data) as year,

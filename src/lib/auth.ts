@@ -19,7 +19,10 @@ export async function getCurrentUser() {
   return user
 }
 
-export function checkPermission(user: any, permission: string) {
+export function checkPermission(
+  user: { permissions?: string[] } | null | undefined, 
+  permission: string
+) {
   if (!user?.permissions?.includes(permission)) {
     throw new UnauthorizedError("Acesso negado")
   }

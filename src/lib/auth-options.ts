@@ -42,11 +42,16 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
+        // 🔥 O TypeScript exige que role e permissions estejam aqui
+        // Usamos (user as any) temporariamente para evitar falhas caso 
+        // os nomes no Prisma divirjam levemente (ex: 'cargo' em vez de 'role')
         const userReturn = {
           id: user.id,
           name: user.nome,
           email: user.email,
-          igreja_id: user.igreja_id
+          igreja_id: user.igreja_id,
+          role: (user as any).role || "ADMIN", 
+          permissions: (user as any).permissions || []
         }
 
         console.log("✅ RETORNANDO USER:", userReturn)
@@ -61,18 +66,24 @@ export const authOptions: NextAuthOptions = {
   },
 
   callbacks: {
+    // 🔥 1. Repassando os novos campos para o Token do navegador
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id
         token.igreja_id = user.igreja_id
+        token.role = user.role
+        token.permissions = user.permissions
       }
       return token
     },
 
+    // 🔥 2. Injetando os campos do Token para a Sessão ativa
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string
         session.user.igreja_id = token.igreja_id as string
+        session.user.role = token.role as string
+        session.user.permissions = token.permissions as string[]
       }
       return session
     }
