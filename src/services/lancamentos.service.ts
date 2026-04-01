@@ -204,14 +204,14 @@ export async function obterTotaisMensais(ano: number) {
 }
 
 export async function obterEvolucaoMensal() {
-  const { igrejaId } = await getSessionUser()
+  const { igreja_id } = await getSessionUser()
   const results = await prisma.$queryRaw`
     SELECT 
       EXTRACT(YEAR FROM data) as year,
       EXTRACT(MONTH FROM data) as month,
       SUM(valor) as total
     FROM transacoes
-    WHERE igreja_id = ${igrejaId} AND tipo = 'ENTRADA'
+    WHERE igreja_id = ${igreja_id} AND tipo = 'ENTRADA'
     GROUP BY year, month
     ORDER BY year ASC, month ASC
   `

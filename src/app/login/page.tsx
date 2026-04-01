@@ -7,7 +7,7 @@ import { useState } from 'react'
 export default function LoginForm() {
   const router = useRouter()
   const [email, setEmail] = useState('')
-  const [senha, setSenha] = useState('')
+  const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
@@ -19,7 +19,7 @@ export default function LoginForm() {
     const res = await signIn('credentials', {
       redirect: false,
       email,
-      senha,
+      password,
     })
 
     if (res?.error) {
@@ -66,13 +66,13 @@ export default function LoginForm() {
           </div>
 
           <div className="input-group" style={{ marginBottom: 'var(--spacing-xl)' }}>
-            <label className="input-label" htmlFor="senha">Senha</label>
+            <label className="input-label" htmlFor="password">Senha</label>
             <input
-              id="senha"
+              id="password"
               type="password"
               className="input-field"
-              value={senha}
-              onChange={(e) => setSenha(e.target.value)}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
               placeholder="••••••••"
             />

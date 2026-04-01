@@ -16,11 +16,11 @@ export const prismaTenant = prisma.$extends({
             throw new Error("Tenant context not found")
           }
 
-          if (!sessionUser || !sessionUser.igrejaId) {
+          if (!sessionUser || !sessionUser.igreja_id) {
             throw new Error("Tenant context not found")
           }
 
-          const tenantId = sessionUser.igrejaId
+          const tenantId = sessionUser.igreja_id
 
           // Block unsafe operations that rely solely on unique IDs without tenant bounds
           const unsafeOperations = ['findUnique', 'findUniqueOrThrow', 'update', 'delete']
