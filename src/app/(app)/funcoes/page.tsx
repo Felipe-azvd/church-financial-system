@@ -7,7 +7,7 @@ export default async function FuncoesPage() {
   await checkPermission('funcoes.visualizar')
   
   const rolesRaw = await db.role.findMany({
-    where: { igreja_id: tenantId },
+    where: { igreja_id: tenantId, nome: { not: 'MASTER' } },
     orderBy: { nome: 'asc' },
     select: {
       id: true,

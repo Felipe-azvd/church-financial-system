@@ -14,15 +14,13 @@ export default async function AppLayout({
   }
 
   return (
-    <div className="app-layout gap-6">
+    <div className="flex h-screen overflow-hidden">
       <Sidebar userPermissions={user.permissions} userName={user.name || 'Usuário'} />
-      <div className="main-content">
-        <main className="flex-1 w-full px-6 pb-6 pt-24">
-          <div className="w-full max-w-[1400px] mx-auto">
-            {children}
-          </div>
-        </main>
-      </div>
+      <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 w-full px-6 pb-6 pt-6">
+        <div className="w-full max-w-[1400px] mx-auto">
+          {children}
+        </div>
+      </main>
     </div>
   )
 }

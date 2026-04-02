@@ -1,5 +1,6 @@
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth-options"
+import { cookies } from "next/headers"
 import { prisma } from "./prisma"
 
 export class UnauthorizedError extends Error {}
@@ -58,9 +59,19 @@ export async function getTenantPrisma() {
     throw new Error("Tenant não encontrado")
   }
 
+  let tenantId = user.igreja_id;
+
+  if ((user as any).is_master) {
+    const cookieStore = await cookies();
+    const masterTenantId = cookieStore.get('master_tenant_id')?.value;
+    if (masterTenantId) {
+      tenantId = masterTenantId;
+    }
+  }
+
   return {
     db: prisma,
-    tenantId: user.igreja_id, 
+    tenantId, 
     user
   }
 }

@@ -26,7 +26,7 @@ export default function Sidebar({ userPermissions = [], userName = '' }: { userP
   }, [])
 
   return (
-    <aside className="sidebar glass">
+    <aside className="sidebar glass flex justify-between flex-col w-64 flex-shrink-0 h-full overflow-y-auto border-r border-gray-200 dark:border-gray-800 bg-[var(--bg-secondary)]">
       <div className="sidebar-header" style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
           <div className="logo-placeholder">CF</div>
@@ -92,12 +92,7 @@ export default function Sidebar({ userPermissions = [], userName = '' }: { userP
 
       <style jsx>{`
         .sidebar {
-          width: 260px;
-          height: 100vh;
-          background-color: var(--bg-secondary);
-          border-right: 1px solid var(--border-color);
-          display: flex;
-          flex-direction: column;
+          /* Estilos flex agora controlados pelo Tailwind */
         }
 
         .sidebar-header {

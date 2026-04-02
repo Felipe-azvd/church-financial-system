@@ -7,7 +7,7 @@ export default async function UsuariosPage() {
   await checkPermission('usuarios.visualizar')
   
   const usuariosRaw = await db.usuario.findMany({
-    where: { igreja_id: tenantId },
+    where: { igreja_id: tenantId, is_master: false },
     orderBy: { nome: 'asc' },
     select: {
       id: true,
@@ -19,7 +19,7 @@ export default async function UsuariosPage() {
   })
 
   const roles = await db.role.findMany({
-    where: { igreja_id: tenantId },
+    where: { igreja_id: tenantId, nome: { not: 'MASTER' } },
     orderBy: { nome: 'asc' },
     select: { id: true, nome: true }
   })
