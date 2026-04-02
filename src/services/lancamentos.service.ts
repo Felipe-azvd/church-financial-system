@@ -1,5 +1,4 @@
-import { prismaTenant as prisma } from "@/lib/prisma-tenant"
-import { getSessionUser } from "@/lib/auth"
+import { getTenantPrisma, checkPermission } from "@/lib/auth"
 
 export type CreateLancamentoDTO = {
   descricao: string
@@ -13,13 +12,12 @@ export type CreateLancamentoDTO = {
 export type UpdateLancamentoDTO = Partial<CreateLancamentoDTO>
 
 export async function criarLancamento(data: CreateLancamentoDTO) {
-  const user = await getSessionUser()
-  if (!user || !user.id) throw new Error("Usuário não autenticado")
-  const userId = user.id
-  return await prisma.transacao.create({
+  await checkPermission('lancamentos.criar')
+  const { db, tenantId, user } = await getTenantPrisma()
+  return await db.transacao.create({
     data: {
-      igreja_id: 'auto', // Overridden by Prisma Tenant extension automatically
-      usuario_id: userId,
+      igreja_id: tenantId, // Overridden by Prisma Tenant extension automatically, but explicitly set for isolation
+      usuario_id: user.id,
       descricao: data.descricao,
       valor: data.valor,
       data: data.data,
@@ -31,8 +29,10 @@ export async function criarLancamento(data: CreateLancamentoDTO) {
 }
 
 export async function listarLancamentos(startDate: Date, endDate: Date) {
-  return await prisma.transacao.findMany({
+  const { db, tenantId } = await getTenantPrisma()
+  return await db.transacao.findMany({
     where: { 
+      igreja_id: tenantId,
       data: {
         gte: startDate,
         lte: endDate
@@ -47,9 +47,12 @@ export async function listarLancamentos(startDate: Date, endDate: Date) {
 }
 
 export async function atualizarLancamento(id: string, data: UpdateLancamentoDTO) {
-  const result = await prisma.transacao.updateMany({
+  await checkPermission('lancamentos.editar')
+  const { db, tenantId } = await getTenantPrisma()
+  const result = await db.transacao.updateMany({
     where: { 
-      id
+      id,
+      igreja_id: tenantId
     },
     data: {
       descricao: data.descricao,
@@ -69,9 +72,12 @@ export async function atualizarLancamento(id: string, data: UpdateLancamentoDTO)
 }
 
 export async function deletarLancamento(id: string) {
-  const result = await prisma.transacao.deleteMany({
+  await checkPermission('lancamentos.excluir')
+  const { db, tenantId } = await getTenantPrisma()
+  const result = await db.transacao.deleteMany({
     where: { 
-      id
+      id,
+      igreja_id: tenantId
     }
   })
   
@@ -83,14 +89,15 @@ export async function deletarLancamento(id: string) {
 }
 
 export async function obterResumoFinanceiro(startDate: Date, endDate: Date) {
-  const entradas = await prisma.transacao.aggregate({
+  const { db, tenantId } = await getTenantPrisma()
+  const entradas = await db.transacao.aggregate({
     _sum: { valor: true },
-    where: { tipo: "ENTRADA", data: { gte: startDate, lte: endDate } }
+    where: { igreja_id: tenantId, tipo: "ENTRADA", data: { gte: startDate, lte: endDate } }
   })
 
-  const saidas = await prisma.transacao.aggregate({
+  const saidas = await db.transacao.aggregate({
     _sum: { valor: true },
-    where: { tipo: "SAIDA", data: { gte: startDate, lte: endDate } }
+    where: { igreja_id: tenantId, tipo: "SAIDA", data: { gte: startDate, lte: endDate } }
   })
 
   return {
@@ -101,10 +108,12 @@ export async function obterResumoFinanceiro(startDate: Date, endDate: Date) {
 }
 
 export async function listarEntradasPorCategoria(startDate: Date, endDate: Date) {
-  const grouped = await prisma.transacao.groupBy({
+  const { db, tenantId } = await getTenantPrisma()
+  const grouped = await db.transacao.groupBy({
     by: ["categoria_id"],
     _sum: { valor: true },
     where: {
+      igreja_id: tenantId,
       tipo: "ENTRADA",
       categoria_id: { not: null },
       data: { gte: startDate, lte: endDate }
@@ -112,8 +121,8 @@ export async function listarEntradasPorCategoria(startDate: Date, endDate: Date)
   })
 
   const categoryIds = grouped.map((g) => g.categoria_id as string)
-  const categories = await prisma.categoria.findMany({
-    where: { id: { in: categoryIds } }
+  const categories = await db.categoria.findMany({
+    where: { igreja_id: tenantId, id: { in: categoryIds } }
   })
 
   return grouped.map(g => {
@@ -126,10 +135,12 @@ export async function listarEntradasPorCategoria(startDate: Date, endDate: Date)
 }
 
 export async function listarSaidasPorCategoria(startDate: Date, endDate: Date) {
-  const grouped = await prisma.transacao.groupBy({
+  const { db, tenantId } = await getTenantPrisma()
+  const grouped = await db.transacao.groupBy({
     by: ["categoria_id"],
     _sum: { valor: true },
     where: {
+      igreja_id: tenantId,
       tipo: "SAIDA",
       categoria_id: { not: null },
       data: { gte: startDate, lte: endDate }
@@ -137,8 +148,8 @@ export async function listarSaidasPorCategoria(startDate: Date, endDate: Date) {
   })
 
   const categoryIds = grouped.map((g) => g.categoria_id as string)
-  const categories = await prisma.categoria.findMany({
-    where: { id: { in: categoryIds } }
+  const categories = await db.categoria.findMany({
+    where: { igreja_id: tenantId, id: { in: categoryIds } }
   })
 
   return grouped.map(g => {
@@ -151,10 +162,12 @@ export async function listarSaidasPorCategoria(startDate: Date, endDate: Date) {
 }
 
 export async function listarEntradasPorCulto(startDate: Date, endDate: Date) {
-  const grouped = await prisma.transacao.groupBy({
+  const { db, tenantId } = await getTenantPrisma()
+  const grouped = await db.transacao.groupBy({
     by: ["culto_id"],
     _sum: { valor: true },
     where: {
+      igreja_id: tenantId,
       tipo: "ENTRADA",
       culto_id: { not: null },
       data: { gte: startDate, lte: endDate }
@@ -162,8 +175,8 @@ export async function listarEntradasPorCulto(startDate: Date, endDate: Date) {
   })
 
   const cultoIds = grouped.map((g) => g.culto_id as string)
-  const cultos = await prisma.culto.findMany({
-    where: { id: { in: cultoIds } }
+  const cultos = await db.culto.findMany({
+    where: { igreja_id: tenantId, id: { in: cultoIds } }
   })
 
   return grouped.map(g => {
@@ -176,19 +189,20 @@ export async function listarEntradasPorCulto(startDate: Date, endDate: Date) {
 }
 
 export async function obterTotaisMensais(ano: number) {
+  const { db, tenantId } = await getTenantPrisma()
   const promises = []
   for (let i = 0; i < 12; i++) {
     const mStart = new Date(ano, i, 1)
     const mEnd = new Date(ano, i + 1, 0, 23, 59, 59, 999)
 
     promises.push(
-      prisma.transacao.aggregate({
+      db.transacao.aggregate({
         _sum: { valor: true },
-        where: { tipo: 'ENTRADA', data: { gte: mStart, lte: mEnd } }
+        where: { igreja_id: tenantId, tipo: 'ENTRADA', data: { gte: mStart, lte: mEnd } }
       }),
-      prisma.transacao.aggregate({
+      db.transacao.aggregate({
         _sum: { valor: true },
-        where: { tipo: 'SAIDA', data: { gte: mStart, lte: mEnd } }
+        where: { igreja_id: tenantId, tipo: 'SAIDA', data: { gte: mStart, lte: mEnd } }
       })
     )
   }
@@ -206,17 +220,15 @@ export async function obterTotaisMensais(ano: number) {
 }
 
 export async function obterEvolucaoMensal() {
-  const user = await getSessionUser()
-  if (!user || !user.igreja_id) throw new Error("Usuário não autenticado ou sem igreja associada")
-  const igreja_id = user.igreja_id
+  const { db, tenantId } = await getTenantPrisma()
 
-  const results = await prisma.$queryRaw`
+  const results = await db.$queryRaw`
     SELECT 
       EXTRACT(YEAR FROM data) as year,
       EXTRACT(MONTH FROM data) as month,
       SUM(valor) as total
     FROM transacoes
-    WHERE igreja_id = ${igreja_id} AND tipo = 'ENTRADA'
+    WHERE igreja_id = ${tenantId} AND tipo = 'ENTRADA'
     GROUP BY year, month
     ORDER BY year ASC, month ASC
   `

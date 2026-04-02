@@ -1,13 +1,10 @@
-import { getTenantPrisma } from "@/lib/auth"
-import { redirect } from "next/navigation"
+import { getTenantPrisma, checkPermission } from "@/lib/auth"
 import UserManager from "./UserManager"
 
 export default async function UsuariosPage() {
   const { db, tenantId, user } = await getTenantPrisma()
   
-  if (user.role !== 'ADMINISTRADOR') {
-    redirect('/dashboard')
-  }
+  await checkPermission('usuarios.visualizar')
   
   const usuariosRaw = await db.usuario.findMany({
     where: { igreja_id: tenantId },

@@ -1,13 +1,10 @@
-import { getTenantPrisma } from "@/lib/auth"
-import { redirect } from "next/navigation"
+import { getTenantPrisma, checkPermission } from "@/lib/auth"
 import RoleManager from "./RoleManager"
 
 export default async function FuncoesPage() {
   const { db, tenantId, user } = await getTenantPrisma()
   
-  if (user.role !== 'ADMINISTRADOR') {
-    redirect('/dashboard')
-  }
+  await checkPermission('funcoes.visualizar')
   
   const rolesRaw = await db.role.findMany({
     where: { igreja_id: tenantId },

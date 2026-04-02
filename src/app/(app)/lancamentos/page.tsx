@@ -1,6 +1,5 @@
 import { getLookups } from "@/app/actions/finance"
-import { getTenantPrisma } from "@/lib/auth"
-import { redirect } from "next/navigation"
+import { getTenantPrisma, checkPermission } from "@/lib/auth"
 import { listarLancamentos } from "@/services/lancamentos.service"
 import MonthSelector from "./MonthSelector"
 import TransactionList from "./TransactionList"
@@ -11,10 +10,7 @@ export default async function LancamentosPage({
   searchParams: Promise<{ mes?: string }>
 }) {
   const { db, tenantId, user } = await getTenantPrisma()
-  
-  if (!user.permissions.includes('lancamentos.visualizar')) {
-    redirect('/dashboard')
-  }
+  await checkPermission('lancamentos.visualizar')
 
   const lookups = await getLookups()
   const sp = await searchParams
@@ -41,6 +37,7 @@ export default async function LancamentosPage({
         saidas={saidas} 
         lookups={lookups}
         userPermissions={user.permissions} 
+        isMaster={(user as any).is_master}
         headerSlot={<MonthSelector />}
       />
     </div>

@@ -1,5 +1,4 @@
-import { getTenantPrisma } from "@/lib/auth"
-import { redirect } from "next/navigation"
+import { getTenantPrisma, checkPermission } from "@/lib/auth"
 import FinancialSummary from "@/components/reports/FinancialSummary"
 import IncomeByCategory from "@/components/reports/IncomeByCategory"
 import ExpensesByCategory from "@/components/reports/ExpensesByCategory"
@@ -14,9 +13,7 @@ export default async function RelatoriosPage({
 }) {
   const { db, tenantId, user } = await getTenantPrisma()
   
-  if (!user.permissions.includes('relatorios.visualizar')) {
-    redirect('/dashboard')
-  }
+  await checkPermission('relatorios.visualizar')
 
   const currentYear = searchParams.ano ? parseInt(searchParams.ano) : new Date().getFullYear()
 

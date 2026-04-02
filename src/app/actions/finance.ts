@@ -1,6 +1,6 @@
 'use server'
 
-import { checkPermission, getTenantPrisma, getCurrentUser } from "@/lib/auth"
+import { checkPermission, getTenantPrisma } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
 import * as lancamentoService from "@/services/lancamentos.service"
 import { lancamentoSchema } from "@/schemas/lancamento.schema"
@@ -16,8 +16,7 @@ export async function createTransaction(data: {
   culto_id?: string | null
 }): Promise<ActionResponse> {
   try {
-    const user = await getCurrentUser()
-    checkPermission(user, 'lancamentos.criar')
+    await checkPermission('lancamentos.criar')
 
     // Optional fields must be handled since schema is typed
     const parsedData = lancamentoSchema.parse({
@@ -56,8 +55,7 @@ export async function updateTransaction(id: string, data: {
   culto_id?: string | null
 }): Promise<ActionResponse> {
   try {
-    const user = await getCurrentUser()
-    checkPermission(user, 'lancamentos.editar')
+    await checkPermission('lancamentos.editar')
 
     const parsedData = lancamentoSchema.parse({
       ...data,
@@ -88,8 +86,7 @@ export async function updateTransaction(id: string, data: {
 
 export async function deleteTransaction(id: string): Promise<ActionResponse> {
   try {
-    const user = await getCurrentUser()
-    checkPermission(user, 'lancamentos.excluir')
+    await checkPermission('lancamentos.excluir')
 
     await lancamentoService.deletarLancamento(id)
 

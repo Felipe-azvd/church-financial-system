@@ -24,20 +24,22 @@ export default function TransactionList({
   saidas,
   lookups,
   userPermissions,
-  headerSlot
+  headerSlot,
+  isMaster
 }: {
   entradas: TransactionData[]
   saidas: TransactionData[]
   lookups: { categorias: Lookup[], cultos: Lookup[] }
   userPermissions: string[]
   headerSlot?: React.ReactNode
+  isMaster?: boolean
 }) {
   const [editingTx, setEditingTx] = useState<TransactionData | null>(null)
   const [isNewModalOpen, setIsNewModalOpen] = useState(false)
 
-  const canEdit = userPermissions.includes('lancamentos.editar')
-  const canDelete = userPermissions.includes('lancamentos.excluir')
-  const canCreate = userPermissions.includes('lancamentos.criar')
+  const canEdit = isMaster || userPermissions.includes('lancamentos.editar')
+  const canDelete = isMaster || userPermissions.includes('lancamentos.excluir')
+  const canCreate = isMaster || userPermissions.includes('lancamentos.criar')
   const canAct = canEdit || canDelete
 
   // Combine and sort transactions chronologically mapping directly from db props

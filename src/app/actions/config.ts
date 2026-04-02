@@ -1,14 +1,12 @@
 'use server'
 
-import { getTenantPrisma } from "@/lib/auth"
+import { getTenantPrisma, checkPermission } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
 
 export async function createConfigItem(type: 'categoria' | 'culto', nome: string, itemTipo?: string) {
   const { db, tenantId, user } = await getTenantPrisma()
 
-  if (!user.permissions.includes('configuracoes.editar')) {
-    throw new Error('Acesso negado. Apenas usuários com permissão podem gerenciar configurações.')
-  }
+  await checkPermission('configuracoes.editar')
 
   if (type === 'categoria') {
     await db.categoria.create({ data: { nome, tipo: itemTipo || 'AMBOS', igreja_id: tenantId } })
@@ -22,9 +20,7 @@ export async function createConfigItem(type: 'categoria' | 'culto', nome: string
 export async function updateConfigItem(type: 'categoria' | 'culto', id: string, nome: string, itemTipo?: string) {
   const { db, tenantId, user } = await getTenantPrisma()
 
-  if (!user.permissions.includes('configuracoes.editar')) {
-    throw new Error('Acesso negado. Apenas usuários com permissão podem gerenciar configurações.')
-  }
+  await checkPermission('configuracoes.editar')
 
   if (type === 'categoria') {
     await db.categoria.updateMany({ 
@@ -44,9 +40,7 @@ export async function updateConfigItem(type: 'categoria' | 'culto', id: string, 
 export async function deleteConfigItem(type: 'categoria' | 'culto', id: string) {
   const { db, tenantId, user } = await getTenantPrisma()
 
-  if (!user.permissions.includes('configuracoes.editar')) {
-    throw new Error('Acesso negado. Apenas usuários com permissão podem gerenciar configurações.')
-  }
+  await checkPermission('configuracoes.editar')
 
   if (type === 'categoria') {
     await db.categoria.deleteMany({ where: { id, igreja_id: tenantId } })

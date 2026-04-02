@@ -1,13 +1,10 @@
-import { getTenantPrisma } from "@/lib/auth"
-import { redirect } from "next/navigation"
+import { getTenantPrisma, checkPermission } from "@/lib/auth"
 import ConfigItemManager from "./ConfigItemManager"
 
 export default async function ConfiguracoesPage() {
   const { db, tenantId, user } = await getTenantPrisma()
   
-  if (user.role !== 'ADMINISTRADOR') {
-    redirect('/dashboard')
-  }
+  await checkPermission('configuracoes.visualizar')
   
   const [categorias, cultos] = await Promise.all([
     db.categoria.findMany({ where: { igreja_id: tenantId } }),
