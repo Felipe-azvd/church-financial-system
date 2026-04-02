@@ -46,13 +46,16 @@ export const authOptions: NextAuthOptions = {
         // 🔥 O TypeScript exige que role e permissions estejam aqui
         // Usamos (user as any) temporariamente para evitar falhas caso 
         // os nomes no Prisma divirjam levemente (ex: 'cargo' em vez de 'role')
+        const cargo = user.role?.nome || "MEMBRO";
+        
         const userReturn = {
           id: user.id,
           name: user.nome,
           email: user.email,
           igreja_id: user.igreja_id,
-          role: user.role?.nome || "MEMBRO", // 🔥 Agora ele lê o nome da tabela!
-          permissions: [] // Deixe vazio por enquanto, o MASTER não precisa disso
+          role: cargo,
+          // 🔥 A INJEÇÃO: Se for MASTER, ganha um coringa. Senão, array vazio (ou permissões reais).
+          permissions: cargo === "MASTER" ? ["*"] : []
         }
 
         console.log("✅ RETORNANDO USER:", userReturn)

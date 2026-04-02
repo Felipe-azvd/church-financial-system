@@ -45,12 +45,17 @@ export default function Sidebar({ userPermissions = [], userName = '' }: { userP
 
       <nav className="sidebar-nav">
         {navItems.map((item) => {
-          if (item.label === 'Dashboard' && !userPermissions.includes('dashboard.visualizar')) return null
-          if (item.label === 'Lançamentos' && !userPermissions.includes('lancamentos.visualizar')) return null
-          if (item.label === 'Relatórios' && !userPermissions.includes('relatorios.visualizar')) return null
-          if (item.label === 'Usuários' && !userPermissions.includes('usuarios.visualizar')) return null
-          if (item.label === 'Funções' && !userPermissions.includes('funcoes.visualizar')) return null
-          if (item.label === 'Configurações' && !userPermissions.includes('configuracoes.visualizar')) return null
+          // 🔥 O CORINGA: Se for MASTER, o primeiro item é "*", então ele pula a verificação normal
+          const isMaster = userPermissions[0] === '*';
+
+          if (!isMaster) {
+            if (item.label === 'Dashboard' && !userPermissions.includes('dashboard.visualizar')) return null
+            if (item.label === 'Lançamentos' && !userPermissions.includes('lancamentos.visualizar')) return null
+            if (item.label === 'Relatórios' && !userPermissions.includes('relatorios.visualizar')) return null
+            if (item.label === 'Usuários' && !userPermissions.includes('usuarios.visualizar')) return null
+            if (item.label === 'Funções' && !userPermissions.includes('funcoes.visualizar')) return null
+            if (item.label === 'Configurações' && !userPermissions.includes('configuracoes.visualizar')) return null
+          }
 
           const isActive = pathname.startsWith(item.href)
           const Icon = item.icon
