@@ -43,10 +43,9 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
-        // 🔥 O TypeScript exige que role e permissions estejam aqui
-        // Usamos (user as any) temporariamente para evitar falhas caso 
-        // os nomes no Prisma divirjam levemente (ex: 'cargo' em vez de 'role')
+        // Prepara a devolução do usuário
         const cargo = user.role?.nome || "MEMBRO";
+        const isMaster = user.is_master === true; // Garante o booleano
         
         const userReturn = {
           id: user.id,
@@ -54,48 +53,36 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           igreja_id: user.igreja_id,
           role: cargo,
-          // 🔥 A INJEÇÃO: Se for MASTER, ganha um coringa. Senão, array vazio (ou permissões reais).
-          permissions: cargo === "MASTER" ? ["*"] : []
+          permissions: isMaster ? ["*"] : [],
+          is_master: isMaster // 🔥 AGORA SIM ELE VAI JUNTO!
         }
-
-        console.log("✅ RETORNANDO USER:", userReturn)
-
-        return userReturn
+        
+        console.log("✅ RETORNANDO USER:", userReturn);
+        return userReturn;
       }
     })
   ],
-
-  session: {
-    strategy: "jwt"
-  },
-
+  session: { strategy: "jwt" },
   callbacks: {
-    // 🔥 1. Repassando os novos campos para o Token do navegador
     async jwt({ token, user }) {
+      // Ocorre logo após o login. Pega o userReturn e joga no Token
       if (user) {
-        token.id = user.id
-        token.igreja_id = user.igreja_id
-        token.role = user.role
-        token.permissions = user.permissions
+        token.igreja_id = (user as any).igreja_id;
+        token.is_master = (user as any).is_master;
+        token.role = (user as any).role;
+        token.permissions = (user as any).permissions;
       }
-      return token
+      return token;
     },
-
-    // 🔥 2. Injetando os campos do Token para a Sessão ativa
     async session({ session, token }) {
+      // Ocorre a cada requisição. Pega o Token e joga na Sessão ativa
       if (session.user) {
-        session.user.id = token.id as string
-        session.user.igreja_id = token.igreja_id as string
-        session.user.role = token.role as string
-        session.user.permissions = token.permissions as string[]
+        (session.user as any).igreja_id = token.igreja_id;
+        (session.user as any).is_master = token.is_master;
+        (session.user as any).role = token.role;
+        (session.user as any).permissions = token.permissions;
       }
-      return session
+      return session;
     }
-  },
-
-  pages: {
-    signIn: "/login"
-  },
-
-  secret: process.env.NEXTAUTH_SECRET
+  }
 }

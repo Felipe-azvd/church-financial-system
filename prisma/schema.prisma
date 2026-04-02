@@ -29,6 +29,7 @@ model Usuario {
   senha     String
   role_id   String
   igreja_id String
+  is_master Boolean  @default(false) 
   
   igreja    Igreja   @relation(fields: [igreja_id], references: [id], onDelete: Cascade)
   role      Role     @relation(fields: [role_id], references: [id], onDelete: Restrict)

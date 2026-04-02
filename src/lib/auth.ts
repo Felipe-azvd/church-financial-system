@@ -19,13 +19,36 @@ export async function getCurrentUser() {
   return user
 }
 
-export function checkPermission(
-  user: { permissions?: string[] } | null | undefined, 
-  permission: string
-) {
-  if (!user?.permissions?.includes(permission)) {
-    throw new UnauthorizedError("Acesso negado")
+// 🔥 FUNÇÃO BLINDADA E INTELIGENTE
+export async function checkPermission(arg1: any, arg2?: string) {
+  let user;
+  let permission;
+
+  // Resolve se a página mandou (user, permissao) ou apenas ('permissao')
+  if (typeof arg1 === 'string') {
+    user = await getCurrentUser();
+    permission = arg1;
+  } else {
+    user = arg1;
+    permission = arg2;
   }
+
+  // 1. O GOD MODE ABSOLUTO: Se for master, passa direto e ignora tudo!
+  if (user?.is_master === true) {
+    return user;
+  }
+
+  // 2. CORINGA DE SEGURANÇA: Se a sessão ainda tiver o [*], passa!
+  if (user?.permissions?.includes('*')) {
+    return user;
+  }
+
+  // 3. CHECAGEM NORMAL DE USUÁRIO COMUM
+  if (!user?.permissions?.includes(permission)) {
+    throw new UnauthorizedError(`Acesso negado. Permissão necessária: ${permission}`);
+  }
+
+  return user;
 }
 
 export async function getTenantPrisma() {
@@ -37,7 +60,7 @@ export async function getTenantPrisma() {
 
   return {
     db: prisma,
-    tenantId: user.igreja_id, // 🔥 PADRONIZADO
+    tenantId: user.igreja_id, 
     user
   }
 }
