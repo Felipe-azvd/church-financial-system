@@ -20,7 +20,8 @@ export const authOptions: NextAuthOptions = {
         }
 
         const user = await prisma.usuario.findUnique({
-          where: { email: credentials.email }
+          where: { email: credentials.email },
+          include: { role: true } // 🔥 OBRIGATÓRIO: Traz a tabela Role junto!
         })
 
         console.log("USER:", user)
@@ -50,8 +51,8 @@ export const authOptions: NextAuthOptions = {
           name: user.nome,
           email: user.email,
           igreja_id: user.igreja_id,
-          role: (user as any).role || "ADMIN", 
-          permissions: (user as any).permissions || []
+          role: user.role?.nome || "MEMBRO", // 🔥 Agora ele lê o nome da tabela!
+          permissions: [] // Deixe vazio por enquanto, o MASTER não precisa disso
         }
 
         console.log("✅ RETORNANDO USER:", userReturn)
