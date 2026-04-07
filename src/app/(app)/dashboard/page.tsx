@@ -5,6 +5,7 @@ import FinancialInsights from "@/components/dashboard/FinancialInsights"
 import { getMonthlyTotals } from "@/app/actions/finance"
 import PeriodSelector from "@/components/PeriodSelector"
 import { Suspense } from "react"
+import { TrendingUp, TrendingDown, DollarSign } from 'lucide-react'
 
 export default async function DashboardPage({
   searchParams,
@@ -124,12 +125,12 @@ export default async function DashboardPage({
   const saldoPct = pctChange(saldoCurrM, saldoPrevM)
 
   return (
-    <div className="px-6 py-6 lg:px-10 flex flex-col gap-6">
+    <div className="flex flex-col gap-6">
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold mb-3">Dashboard</h1>
-          <p className="text-xs opacity-70" style={{ margin: 'var(--space-1) 0 0 0' }}>Visão geral das finanças da igreja</p>
+          <p className="text-xs opacity-70">Visão geral das finanças da igreja</p>
         </div>
         <div className="flex items-center gap-3">
           <Suspense fallback={null}>
@@ -139,55 +140,78 @@ export default async function DashboardPage({
         </div>
       </div>
 
-      {/* Key Metrics */}
+      {/* Key Metrics Premium */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        <div className="card w-full">
-          <div className="card-body gap-1">
-            <span className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-bold">Total Entradas</span>
-            <p className="text-xl font-bold" style={{ color: 'var(--success)', margin: 0 }}>
+        
+        {/* Card: Entradas */}
+        <div className="metric-card metric-card-green p-6 group">
+          <div className="flex flex-row items-center justify-between pb-4">
+            <div className="uppercase">Total Entradas</div>
+            <div className="icon-box">
+              <TrendingUp className="text-emerald-400 w-5 h-5" />
+            </div>
+          </div>
+          <div className="flex items-end justify-between">
+            <div className="text-metric text-[var(--success)]">
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalEntradas)}
-            </p>
+            </div>
             {entradasPct !== null ? (
-              <span className={`text-xs font-medium mt-1 ${entradasPct >= 0 ? 'text-success' : 'text-error'}`}>
-                {entradasPct >= 0 ? '↑' : '↓'} {Math.abs(entradasPct).toFixed(1)}% vs mês anterior
-              </span>
+              <div className={`flex items-center font-medium rounded-full border px-2 py-1 text-xs ${entradasPct >= 0 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}>
+                {entradasPct >= 0 ? '↑' : '↓'} {Math.abs(entradasPct).toFixed(1)}%
+              </div>
             ) : (
-              <span className="text-xs font-medium opacity-50 mt-1">Sem dados do mês anterior</span>
+              <div className="text-xs font-medium opacity-50">Sem dados</div>
             )}
           </div>
+          <div className="metric-blob"></div>
         </div>
 
-        <div className="card w-full">
-          <div className="card-body gap-1">
-            <span className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-bold">Total Saídas</span>
-            <p className="text-xl font-bold" style={{ color: 'var(--danger)', margin: 0 }}>
+        {/* Card: Saídas */}
+        <div className="metric-card metric-card-red p-6 group">
+          <div className="flex flex-row items-center justify-between pb-4">
+            <div className="uppercase">Total Saídas</div>
+            <div className="icon-box">
+              <TrendingDown className="text-red-400 w-5 h-5" />
+            </div>
+          </div>
+          <div className="flex items-end justify-between">
+            <div className="text-metric text-[var(--danger)]">
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalSaidas)}
-            </p>
+            </div>
             {saidasPct !== null ? (
-              <span className={`text-xs font-medium mt-1 ${saidasPct <= 0 ? 'text-success' : 'text-error'}`}>
-                {saidasPct >= 0 ? '↑' : '↓'} {Math.abs(saidasPct).toFixed(1)}% vs mês anterior
-              </span>
+              <div className={`flex items-center font-medium rounded-full border px-2 py-1 text-xs ${saidasPct <= 0 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}>
+                {saidasPct >= 0 ? '↑' : '↓'} {Math.abs(saidasPct).toFixed(1)}%
+              </div>
             ) : (
-              <span className="text-xs font-medium opacity-50 mt-1">Sem dados do mês anterior</span>
+              <div className="text-xs font-medium opacity-50">Sem dados</div>
             )}
           </div>
+          <div className="metric-blob"></div>
         </div>
 
-        <div className="card w-full">
-          <div className="card-body gap-1">
-            <span className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-bold">Saldo Atual</span>
-            <p className="text-xl font-bold" style={{ color: saldo >= 0 ? 'var(--success)' : 'var(--danger)', margin: 0 }}>
+        {/* Card: Saldo */}
+        <div className={`metric-card p-6 group ${saldo >= 0 ? 'metric-card-green' : 'metric-card-red'}`}>
+          <div className="flex flex-row items-center justify-between pb-4">
+            <div className="uppercase">Saldo Atual</div>
+            <div className="icon-box">
+              <DollarSign className="text-blue-400 w-5 h-5" />
+            </div>
+          </div>
+          <div className="flex items-end justify-between">
+            <div className={`text-metric ${saldo >= 0 ? 'text-[var(--success)]' : 'text-[var(--danger)]'}`}>
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(saldo)}
-            </p>
+            </div>
             {saldoPct !== null ? (
-              <span className={`text-xs font-medium mt-1 ${saldoPct >= 0 ? 'text-success' : 'text-error'}`}>
-                {saldoPct >= 0 ? '↑' : '↓'} {Math.abs(saldoPct).toFixed(1)}% vs mês anterior
-              </span>
+              <div className={`flex items-center font-medium rounded-full border px-2 py-1 text-xs ${saldoPct >= 0 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}>
+                {saldoPct >= 0 ? '↑' : '↓'} {Math.abs(saldoPct).toFixed(1)}%
+              </div>
             ) : (
-              <span className="text-xs font-medium opacity-50 mt-1">Sem dados do mês anterior</span>
+              <div className="text-xs font-medium opacity-50">Sem dados</div>
             )}
           </div>
+          <div className="metric-blob"></div>
         </div>
+
       </div>
 
       {/* Financial Health Indicator */}
@@ -200,12 +224,12 @@ export default async function DashboardPage({
               ? { label: 'Saúde Financeira: Atenção', badge: 'badge-warning', icon: '🟡' }
               : { label: 'Saúde Financeira: Estável', badge: 'badge-success', icon: '🟢' }
         return (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mt-2">
             <span className={`badge badge-soft ${health.badge}`} style={{ fontSize: 'var(--text-xs)', padding: 'var(--space-1) var(--space-2)' }}>
               {health.icon} {health.label}
             </span>
             {totalEntradas > 0 && (
-              <span className="text-xs" style={{ opacity: 0.6 }}>
+              <span className="text-xs opacity-60">
                 Despesas representam {(expenseRatio * 100).toFixed(0)}% das receitas
               </span>
             )}

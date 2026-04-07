@@ -1,5 +1,6 @@
 import { getTenantPrisma, checkPermission } from "@/lib/auth"
 import FinancialSummary from "@/components/reports/FinancialSummary"
+import { TrendingUp, TrendingDown, DollarSign, Calculator, CalendarPlus, CalendarMinus } from 'lucide-react'
 import IncomeByCategory from "@/components/reports/IncomeByCategory"
 import ExpensesByCategory from "@/components/reports/ExpensesByCategory"
 import IncomeByCulto from "@/components/reports/IncomeByCulto"
@@ -77,58 +78,104 @@ export default async function RelatoriosPage({
         <h2 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
           Resumo Financeiro
         </h2>
-        <div className="grid gap-6" style={{
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))'
-        }}>
-          <div className="card w-full">
-            <div className="card-body gap-2">
-              <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Entradas Totais</span>
-              <p className="text-xl font-semibold" style={{ color: 'var(--success)', margin: 0 }}>
+<div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+          
+          {/* Card: Entradas Totais */}
+          <div className="metric-card metric-card-green p-6 group">
+            <div className="flex flex-row items-center justify-between pb-4">
+              <div className="font-medium text-[var(--text-muted)] text-xs tracking-wider uppercase">Entradas Totais</div>
+              <div className="icon-box">
+                <TrendingUp className="text-emerald-400 w-5 h-5" />
+              </div>
+            </div>
+            <div className="flex items-end justify-between">
+              <div className="text-metric" style={{ color: 'var(--success)' }}>
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(summary.entradas)}
-              </p>
+              </div>
             </div>
+            <div className="metric-blob"></div>
           </div>
 
-          <div className="card w-full">
-            <div className="card-body gap-2">
-              <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Saídas Totais</span>
-              <p className="text-xl font-semibold" style={{ color: 'var(--danger)', margin: 0 }}>
+          {/* Card: Saídas Totais */}
+          <div className="metric-card metric-card-red p-6 group">
+            <div className="flex flex-row items-center justify-between pb-4">
+              <div className="font-medium text-[var(--text-muted)] text-xs tracking-wider uppercase">Saídas Totais</div>
+              <div className="icon-box">
+                <TrendingDown className="text-red-400 w-5 h-5" />
+              </div>
+            </div>
+            <div className="flex items-end justify-between">
+              <div className="text-metric" style={{ color: 'var(--danger)' }}>
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(summary.saidas)}
-              </p>
+              </div>
             </div>
+            <div className="metric-blob"></div>
           </div>
 
-          <div className="card w-full">
-            <div className="card-body gap-2">
-              <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Saldo Anual</span>
-              <p className="text-xl font-semibold" style={{ color: summary.saldo >= 0 ? 'var(--success)' : 'var(--danger)', margin: 0 }}>
+          {/* Card: Saldo Anual */}
+          <div className={`metric-card p-6 group ${summary.saldo >= 0 ? 'metric-card-green' : 'metric-card-red'}`}>
+            <div className="flex flex-row items-center justify-between pb-4">
+              <div className="font-medium text-[var(--text-muted)] text-xs tracking-wider uppercase">Saldo Anual</div>
+              <div className="icon-box">
+                <DollarSign className={summary.saldo >= 0 ? "text-emerald-400 w-5 h-5" : "text-red-400 w-5 h-5"} />
+              </div>
+            </div>
+            <div className="flex items-end justify-between">
+              <div className="text-metric" style={{ color: summary.saldo >= 0 ? 'var(--success)' : 'var(--danger)' }}>
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(summary.saldo)}
-              </p>
+              </div>
             </div>
+            <div className="metric-blob"></div>
           </div>
 
-          <div className="card w-full">
-            <div className="card-body gap-2">
-              <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Média Mensal</span>
-              <p className="text-xl font-semibold" style={{ color: 'var(--text-primary)', margin: 0 }}>
+          {/* Card: Média Mensal */}
+          <div className="metric-card metric-card-blue p-6 group">
+            <div className="flex flex-row items-center justify-between pb-4">
+              <div className="font-medium text-[var(--text-muted)] text-xs tracking-wider uppercase">Média Mensal</div>
+              <div className="icon-box">
+                <Calculator className="text-blue-400 w-5 h-5" />
+              </div>
+            </div>
+            <div className="flex items-end justify-between">
+              <div className="text-metric" style={{ color: 'var(--text-primary)' }}>
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(mediaMensal)}
-              </p>
+              </div>
             </div>
+            <div className="metric-blob"></div>
           </div>
 
-          <div className="card w-full">
-            <div className="card-body gap-2">
-              <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Melhor Mês</span>
-              <p className="text-xl font-semibold" style={{ color: 'var(--text-primary)', margin: 0 }}>{melhorMes}</p>
+          {/* Card: Melhor Mês */}
+          <div className="metric-card metric-card-purple p-6 group">
+            <div className="flex flex-row items-center justify-between pb-4">
+              <div className="font-medium text-[var(--text-muted)] text-xs tracking-wider uppercase">Melhor Mês</div>
+              <div className="icon-box">
+                <CalendarPlus className="text-emerald-400 w-5 h-5" />
+              </div>
             </div>
+            <div className="flex items-end justify-between">
+              <div className="text-metric text-2xl sm:text-3xl" style={{ color: 'var(--text-primary)' }}>
+                {melhorMes}
+              </div>
+            </div>
+            <div className="metric-blob"></div>
           </div>
 
-          <div className="card w-full">
-            <div className="card-body gap-2">
-              <span className="card-title text-xs font-medium" style={{ opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Maior Despesa</span>
-              <p className="text-xl font-semibold" style={{ color: 'var(--text-primary)', margin: 0 }}>{maiorDespesa}</p>
+          {/* Card: Maior Despesa */}
+          <div className="metric-card metric-card-orange p-6 group">
+            <div className="flex flex-row items-center justify-between pb-4">
+              <div className="font-medium text-[var(--text-muted)] text-xs tracking-wider uppercase">Maior Despesa</div>
+              <div className="icon-box">
+                <CalendarMinus className="text-orange-400 w-5 h-5" />
+              </div>
             </div>
+            <div className="flex items-end justify-between">
+              <div className="text-metric text-2xl sm:text-3xl" style={{ color: 'var(--text-primary)' }}>
+                {maiorDespesa}
+              </div>
+            </div>
+            <div className="metric-blob"></div>
           </div>
+
         </div>
       </div>
 

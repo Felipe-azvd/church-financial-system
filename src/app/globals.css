@@ -3,340 +3,264 @@
 @plugin "flyonui";
 
 :root {
-  /* BASE LIGHT */
-  --background: 255 255 255;
-  --foreground: 15 23 42;
-  --card: 249 250 251;
-  --border: 229 231 235;
-
-  /* PALETA LIGHT */
-  --primary: 132 228 136;
-  --secondary: 107 206 144;
-  --accent: 84 183 154;
-
-  /* RGB (para efeitos) */
-  --primary-rgb: 132, 228, 136;
-}
-
-.dark {
-  /* BASE DARK */
-  --background: 15 23 42;
-  --foreground: 248 250 252;
-  --card: 17 24 39;
-  --border: 31 41 55;
-
-  /* PALETA DARK */
-  --primary: 64 157 161;
-  --secondary: 47 105 139;
-  --accent: 33 58 117;
-
-  --primary-rgb: 64, 157, 161;
+  --primary-color: #3b82f6;
+  --bg-page: #020617;
+  --bg-gradient-soft: #0f172a;
+  --text-color: #f8fafc;
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-blur: 15px;
 }
 
 @theme {
-  --color-background: rgb(var(--background) / <alpha-value>);
-  --color-foreground: rgb(var(--foreground) / <alpha-value>);
-  --color-card: rgb(var(--card) / <alpha-value>);
-  --color-border: rgb(var(--border) / <alpha-value>);
-  --color-primary: rgb(var(--primary) / <alpha-value>);
-  --color-secondary: rgb(var(--secondary) / <alpha-value>);
-  --color-accent: rgb(var(--accent) / <alpha-value>);
+  --color-primary: var(--primary-color);
+  --shadow-glow: 0 0 15px rgba(59, 130, 246, 0.4);
 }
 
-:root {
-  /* Core Colors */
-  --bg-primary: rgb(var(--background));
-  --bg-secondary: rgb(var(--card));
-  --bg-tertiary: rgba(var(--card), 0.8);
+@layer base {
+  body {
+    background: radial-gradient(circle at top left, var(--bg-gradient-soft), var(--bg-page)) !important;
+    background-attachment: fixed !important;
+    color: var(--text-color) !important;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* OBRIGANDO AS TABELAS DO SISTEMA A TEREM RESPIRO */
+  table.table th {
+    color: var(--primary-color) !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    font-size: 0.75rem !important;
+    letter-spacing: 0.05em;
+    padding: 1.25rem 1.5rem !important; /* Respiro */
+    border-bottom: 1px solid var(--glass-border) !important;
+    background: transparent !important;
+  }
+
+  table.table td {
+    padding: 1.25rem 1.5rem !important; /* Respiro */
+    border-bottom: 1px solid var(--glass-border) !important;
+    background: transparent !important;
+  }
+
+  table.table-hover tbody tr:hover td {
+    background: rgba(255, 255, 255, 0.05) !important;
+  }
+
+  /* HIERARQUIA VISUAL (ISOLADA APENAS NO CONTEÚDO PRINCIPAL) */
+  /* O uso do 'main' garante que a Home, Login e Sidebar fiquem intactos */
   
-  --text-primary: rgb(var(--foreground));
-  --text-secondary: rgba(var(--foreground), 0.7);
-  --text-muted: rgba(var(--foreground), 0.5);
+  main h1 {
+    font-size: 1.5rem !important; /* 24px */
+    font-weight: 700 !important;
+    letter-spacing: -0.025em !important; /* tracking-tight para ar moderno */
+    color: var(--text-color) !important;
+    margin-bottom: 0.25rem !important;
+  }
+  @media (min-width: 768px) {
+    main h1 { font-size: 1.875rem !important; /* 30px */ }
+  }
+
+  main h2 {
+    font-size: 1.125rem !important; /* 18px */
+    font-weight: 600 !important;
+    letter-spacing: -0.025em !important;
+  }
+
+  /* Subtítulos Descritivos (Apenas dentro do main) */
+  main p[style*="opacity: 0.7"], main p.opacity-70 {
+    font-size: 0.875rem !important; /* 14px */
+    color: var(--text-muted) !important;
+    font-weight: 500 !important;
+    opacity: 1 !important; 
+    margin-top: 0.25rem !important;
+  }
+
+  /* Tipografia Limpa para Tabelas */
+  table.table th {
+    font-size: 0.75rem !important; /* 12px */
+    font-weight: 600 !important;
+    color: var(--text-muted) !important;
+    letter-spacing: 0.05em !important;
+    text-transform: uppercase !important;
+  }
+  table.table td {
+    font-size: 0.875rem !important; /* 14px */
+    font-weight: 500 !important;
+  }
+}
+
+@layer components {
+  /* =========================================
+     1. CARDS GENÉRICOS (Fundo Transparente e Borda Forte)
+     ========================================= */
+  main .card, 
+  main .card-glass {
+    background: transparent !important; 
+    backdrop-filter: blur(var(--glass-blur)) !important;
+    -webkit-backdrop-filter: blur(var(--glass-blur)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important; /* Borda ajustada para destacar */
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2) !important; 
+    border-radius: 1rem !important;
+    color: var(--text-color) !important;
+  }
+
+  main .card-body {
+    padding: 2rem !important;
+  }
+
+  /* =========================================
+     2. CARDS DE MÉTRICA (Coloridos com Iluminação)
+     ========================================= */
+  main .metric-card {
+    @apply relative overflow-hidden rounded-2xl backdrop-blur-md shadow-xl transition-all duration-300;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  }
+
+  main .metric-card-green { border-color: rgba(16, 185, 129, 0.4) !important; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.02)) !important; }
+  main .metric-card-red { border-color: rgba(239, 68, 68, 0.4) !important; background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.02)) !important; }
+  main .metric-card-blue { border-color: rgba(59, 130, 246, 0.4) !important; background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.02)) !important; }
+  main .metric-card-orange { border-color: rgba(249, 115, 22, 0.4) !important; background: linear-gradient(135deg, rgba(249, 115, 22, 0.15), rgba(249, 115, 22, 0.02)) !important; }
+  main .metric-card-purple { border-color: rgba(139, 92, 246, 0.4) !important; background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(139, 92, 246, 0.02)) !important; }
+
+  main .metric-card:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.15); 
+  }
+
+  main .metric-blob {
+    @apply absolute -bottom-10 -right-10 w-24 h-24 rounded-full blur-2xl transition-all duration-300 pointer-events-none;
+    background-color: var(--text-color); 
+    opacity: 0.03;
+  }
+  main .metric-card:hover .metric-blob {
+    opacity: 0.1; 
+  }
+
+  main .icon-box {
+    @apply rounded-lg bg-black/20 border border-[var(--glass-border)] p-2 flex items-center justify-center;
+  }
+
+  /* =========================================
+     3. TIPOGRAFIA INTERNA E COMPONENTES GERAIS
+     ========================================= */
+  main .text-metric {
+    font-size: 1.5rem !important; 
+    font-weight: 700 !important;
+    letter-spacing: -0.025em !important;
+  }
+  @media (min-width: 640px) {
+    main .text-metric { font-size: 1.875rem !important; }
+  }
+
+  main .metric-card .uppercase {
+    font-size: 0.875rem !important; 
+    font-weight: 500 !important;
+    text-transform: none !important; 
+    letter-spacing: normal !important;
+    color: var(--text-muted) !important;
+  }
+
+  main .btn {
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    letter-spacing: normal !important;
+  }
+
+  /* PADRONIZANDO BOTÕES E INPUTS COM EFEITO DE VIDRO/GLOW */
+  .btn-primary {
+    background: var(--primary-color) !important;
+    color: white !important;
+    border: none !important;
+    box-shadow: var(--shadow-glow) !important;
+  }
   
-  --accent-primary: rgb(var(--primary));
-  --accent-hover: rgb(var(--secondary));
-  
-  --success-rgb: 34, 197, 94;
-  --warning-rgb: 234, 179, 8;
-  --error-rgb: 239, 68, 68;
+  .input-field, select.input-field {
+    background: rgba(0, 0, 0, 0.2) !important;
+    border: 1px solid var(--glass-border) !important;
+    color: var(--text-color) !important;
+  }
 
-  --success: rgb(var(--success-rgb));
-  --warning: rgb(var(--warning-rgb));
-  --error: rgb(var(--error-rgb));
-  --danger: rgb(var(--error-rgb));
-  
-  --border-color: rgb(var(--border));
-  
-  /* Layout & Spacing */
-  --spacing-xs: var(--space-1);
-  --spacing-sm: var(--space-2);
-  --spacing-md: var(--space-3);
-  --spacing-lg: var(--space-4);
-  --spacing-xl: var(--space-5);
-  --spacing-2xl: 3rem;
-  
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-full: 9999px;
-  
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  
-  /* Typography */
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  /* RESTAURAÇÃO DO MENU LATERAL (PROTÓTIPO HTML) */
+  .sidebar-glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border-right: 1px solid var(--glass-border);
+  }
 
-  /* Material Design System Foundation */
-  /* Spacing (8px scale) */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 16px;
-  --space-4: 24px;
-  --space-5: 32px;
+  .logo-glow {
+    color: var(--primary-color);
+    text-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+  }
 
-  /* Typography Scale */
-  --text-xs: 12px;
-  --text-sm: 14px;
-  --text-base: 16px;
-  --text-lg: 18px;
-  --text-xl: 20px;
-  --text-2xl: 24px;
+  .nav-item {
+    padding: 12px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
 
-  /* Layout Tokens */
-  --container-width: 1200px;
-  --card-padding: 24px;
-  --card-radius: 12px;
-}
+  .nav-item.active {
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0.15), transparent);
+    color: var(--primary-color);
+    border-left: 3px solid var(--primary-color);
+    box-shadow: -10px 0 20px -10px var(--primary-color);
+  }
 
+  .nav-item:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+  }
 
+  /* =========================================
+     4. INPUTS E DROPDOWNS (Seletor de Período, Filtros, etc)
+     ========================================= */
+  main select, 
+  main .select,
+  main input.input-field {
+    background-color: rgba(0, 0, 0, 0.2) !important; 
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important; 
+    color: var(--text-color) !important;
+    border-radius: 0.5rem !important;
+    outline: none !important;
+    transition: all 0.2s ease !important;
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+    /* CORREÇÃO AQUI: Altura fixa para não achatar e cortar a fonte */
+    font-size: 0.95rem !important; 
+    height: 42px !important; 
+    padding: 0 2rem 0 1rem !important; /* Zerei o padding em cima e embaixo */
+    text-align: center !important; 
+    text-align-last: center !important; 
+    cursor: pointer !important;
+  }
 
-body {
-  background: radial-gradient(
-    circle at top left,
-    rgba(var(--primary-rgb), 0.08),
-    rgb(var(--background))
-  );
-  color: var(--text-primary);
-  font-family: var(--font-sans);
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
+  main select:focus, 
+  main .select:focus,
+  main input.input-field:focus {
+    border-color: var(--primary-color) !important; 
+  }
 
-.glass {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
+  main select option {
+    background-color: #0f172a !important; 
+    color: var(--text-color) !important;
+    text-align: center !important;
+    font-size: 0.95rem !important;
+  }
 
-.dark .glass {
-  background: rgba(255, 255, 255, 0.03);
-}
-
-.glow {
-  box-shadow:
-    0 0 5px rgb(var(--primary)),
-    0 0 20px rgba(var(--primary-rgb), 0.4);
-}
-
-.glow-hover:hover {
-  filter: brightness(1.15);
-}
-
-.ui-interactive,
-.btn,
-.nav-item,
-.card-clickable {
-  transition: all 0.2s ease;
-}
-
-.ui-hover:hover,
-.btn:not(:disabled):hover,
-.nav-item:hover,
-.card-clickable:hover {
-  filter: brightness(1.05);
-  transform: translateY(-1px);
-}
-
-.ui-active:active,
-.btn:not(:disabled):active,
-.nav-item:active,
-.card-clickable:active {
-  transform: scale(0.98);
-  filter: brightness(0.95);
-}
-
-.ui-success,
-.badge-success,
-.alert-success {
-  color: var(--success) !important;
-  background: rgb(var(--success-rgb) / 0.1) !important;
-  border: 1px solid rgb(var(--success-rgb) / 0.3) !important;
-}
-
-.ui-error,
-.badge-error,
-.alert-error {
-  color: var(--error) !important;
-  background: rgb(var(--error-rgb) / 0.1) !important;
-  border: 1px solid rgb(var(--error-rgb) / 0.3) !important;
-}
-
-.ui-warning,
-.badge-warning,
-.alert-warning {
-  color: var(--warning) !important;
-  background: rgb(var(--warning-rgb) / 0.1) !important;
-  border: 1px solid rgb(var(--warning-rgb) / 0.3) !important;
-}
-
-.ui-disabled,
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
-}
-
-/* Base Elements */
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 600;
-  line-height: 1.2;
-  color: var(--text-primary);
-}
-
-a {
-  color: var(--accent-primary);
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-a:hover {
-  color: var(--accent-hover);
-}
-
-button {
-  cursor: pointer;
-  font-family: inherit;
-}
-
-/* Base Utility Classes */
-.container {
-  width: 100%;
-  max-width: var(--container-width);
-  margin: 0 auto;
-  padding: 0 var(--spacing-md);
-}
-
-.ui-container {
-  padding: 24px;
-}
-
-.card {
-  width: 100%;
-  @apply rounded-xl shadow-sm transition-all duration-200 glass;
-}
-
-.card-body {
-  @apply p-6 flex flex-col;
-}
-
-/* Unified Tables Structure */
-.table th, .table td {
-  padding: 1rem 1.5rem !important;
-  vertical-align: middle;
-}
-
-.table-hover tbody tr {
-  transition: background-color 0.2s ease, transform 0s !important;
-  transform: none !important;
-}
-
-.table-hover tbody tr:hover {
-  background-color: var(--bg-tertiary) !important;
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-/* Button variants */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-sm) var(--spacing-lg);
-  border-radius: var(--radius-md);
-  font-weight: 500;
-  transition: all 0.2s;
-  border: none;
-  gap: var(--spacing-sm);
-}
-
-.btn-primary {
-  background-color: var(--accent-primary);
-  color: white;
-  box-shadow: 0 0 5px rgb(var(--primary)), 0 0 20px rgba(var(--primary-rgb), 0.4);
-}
-
-.btn-primary:hover {
-  background-color: var(--accent-hover);
-  filter: brightness(1.15);
-}
-
-.btn-secondary {
-  background-color: var(--bg-tertiary);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-}
-
-.btn-secondary:hover {
-  background-color: var(--border-color);
-}
-
-/* Form Elements */
-.input-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
-  margin-bottom: var(--spacing-md);
-}
-
-.input-label {
-  @apply text-xs opacity-70;
-  font-weight: 400;
-  color: var(--text-secondary);
-}
-
-.input-field {
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  font-family: inherit;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.input-field:focus {
-  outline: none;
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-/* Loading animations */
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: .5; }
-}
-
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  /* CORREÇÃO DO TEXTO "PERÍODO:" DE FORA */
+  /* Alvo exato: O texto que acompanha os filtros no topo da tela */
+  main .flex.items-center.gap-3 span,
+  main .flex.items-center.gap-3 label {
+    font-size: 0.95rem !important; /* Agora tem o mesmíssimo tamanho do texto de dentro da caixa */
+    font-weight: 500 !important;
+    color: var(--text-muted) !important;
+  }
 }
