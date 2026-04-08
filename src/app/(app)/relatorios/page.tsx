@@ -52,44 +52,56 @@ export default async function RelatoriosPage({
 
   return (
     <div className="px-6 py-6 lg:px-10 flex flex-col gap-6">
-      {/* Page Header */}
-      <div className="flex items-center justify-between">
+      
+      {/* Page Header & Filter Form Premium */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-2xl font-semibold mb-3">Relatórios</h1>
-          <p className="text-xs opacity-70" style={{ margin: 'var(--space-1) 0 0 0' }}>Análise e resumo das finanças por período</p>
+          <h1 className="text-2xl font-semibold mb-1">Relatórios</h1>
+          <p className="text-xs text-[var(--text-muted)]">Análise e resumo das finanças por período</p>
         </div>
-        <div className="flex items-center gap-3">
-          <form className="card w-full" style={{ padding: 'var(--spacing-xs) var(--spacing-sm)', display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'center' }}>
-            <label className="input-label">Ano:</label>
+        
+        <div className="flex items-center">
+          <form className="flex items-center gap-3 m-0">
+            <label htmlFor="ano" className="text-[0.95rem] font-medium text-[var(--text-muted)]">
+              Ano:
+            </label>
             <input 
               type="number" 
               name="ano" 
+              id="ano"
               defaultValue={currentYear} 
-              className="input-field" 
-              style={{ padding: 'var(--space-1)', width: '80px' }} 
+              /* Usamos classes diretas aqui para não herdar o padding da setinha do Select do Dashboard */
+              className="bg-black/20 backdrop-blur-md border border-[rgba(255,255,255,0.15)] text-[var(--text-color)] rounded-lg text-center focus:border-[#3b82f6] outline-none transition-all m-0"
+              style={{ height: '42px', width: '110px', fontSize: '0.95rem', padding: '0 0.5rem' }}
             />
-            <button type="submit" className="btn btn-secondary" style={{ padding: 'var(--space-1) var(--space-2)' }}>Ver</button>
+            <button 
+              type="submit" 
+              className="btn-primary flex-shrink-0 !rounded-lg"
+              style={{ minWidth: '100px', padding: '0 1.5rem' }}
+            >
+              Ver
+            </button>
           </form>
         </div>
       </div>
 
       {/* Executive Summary */}
       <div className="flex flex-col gap-6">
-        <h2 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
+        <h2 className="text-lg font-semibold mb-0" style={{ color: 'var(--text-primary)' }}>
           Resumo Financeiro
         </h2>
-<div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
           
           {/* Card: Entradas Totais */}
           <div className="metric-card metric-card-green p-6 group">
             <div className="flex flex-row items-center justify-between pb-4">
-              <div className="font-medium text-[var(--text-muted)] text-xs tracking-wider uppercase">Entradas Totais</div>
+              <div className="uppercase">Entradas Totais</div>
               <div className="icon-box">
                 <TrendingUp className="text-emerald-400 w-5 h-5" />
               </div>
             </div>
             <div className="flex items-end justify-between">
-              <div className="text-metric" style={{ color: 'var(--success)' }}>
+              <div className="text-metric">
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(summary.entradas)}
               </div>
             </div>
@@ -99,13 +111,13 @@ export default async function RelatoriosPage({
           {/* Card: Saídas Totais */}
           <div className="metric-card metric-card-red p-6 group">
             <div className="flex flex-row items-center justify-between pb-4">
-              <div className="font-medium text-[var(--text-muted)] text-xs tracking-wider uppercase">Saídas Totais</div>
+              <div className="uppercase">Saídas Totais</div>
               <div className="icon-box">
                 <TrendingDown className="text-red-400 w-5 h-5" />
               </div>
             </div>
             <div className="flex items-end justify-between">
-              <div className="text-metric" style={{ color: 'var(--danger)' }}>
+              <div className="text-metric">
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(summary.saidas)}
               </div>
             </div>
@@ -115,13 +127,13 @@ export default async function RelatoriosPage({
           {/* Card: Saldo Anual */}
           <div className={`metric-card p-6 group ${summary.saldo >= 0 ? 'metric-card-green' : 'metric-card-red'}`}>
             <div className="flex flex-row items-center justify-between pb-4">
-              <div className="font-medium text-[var(--text-muted)] text-xs tracking-wider uppercase">Saldo Anual</div>
+              <div className="uppercase">Saldo Anual</div>
               <div className="icon-box">
                 <DollarSign className={summary.saldo >= 0 ? "text-emerald-400 w-5 h-5" : "text-red-400 w-5 h-5"} />
               </div>
             </div>
             <div className="flex items-end justify-between">
-              <div className="text-metric" style={{ color: summary.saldo >= 0 ? 'var(--success)' : 'var(--danger)' }}>
+              <div className="text-metric">
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(summary.saldo)}
               </div>
             </div>
@@ -131,13 +143,13 @@ export default async function RelatoriosPage({
           {/* Card: Média Mensal */}
           <div className="metric-card metric-card-blue p-6 group">
             <div className="flex flex-row items-center justify-between pb-4">
-              <div className="font-medium text-[var(--text-muted)] text-xs tracking-wider uppercase">Média Mensal</div>
+              <div className="uppercase">Média Mensal</div>
               <div className="icon-box">
                 <Calculator className="text-blue-400 w-5 h-5" />
               </div>
             </div>
             <div className="flex items-end justify-between">
-              <div className="text-metric" style={{ color: 'var(--text-primary)' }}>
+              <div className="text-metric">
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(mediaMensal)}
               </div>
             </div>
@@ -147,13 +159,13 @@ export default async function RelatoriosPage({
           {/* Card: Melhor Mês */}
           <div className="metric-card metric-card-purple p-6 group">
             <div className="flex flex-row items-center justify-between pb-4">
-              <div className="font-medium text-[var(--text-muted)] text-xs tracking-wider uppercase">Melhor Mês</div>
+              <div className="uppercase">Melhor Mês</div>
               <div className="icon-box">
                 <CalendarPlus className="text-emerald-400 w-5 h-5" />
               </div>
             </div>
             <div className="flex items-end justify-between">
-              <div className="text-metric text-2xl sm:text-3xl" style={{ color: 'var(--text-primary)' }}>
+              <div className="text-metric">
                 {melhorMes}
               </div>
             </div>
@@ -163,13 +175,13 @@ export default async function RelatoriosPage({
           {/* Card: Maior Despesa */}
           <div className="metric-card metric-card-orange p-6 group">
             <div className="flex flex-row items-center justify-between pb-4">
-              <div className="font-medium text-[var(--text-muted)] text-xs tracking-wider uppercase">Maior Despesa</div>
+              <div className="uppercase">Maior Despesa</div>
               <div className="icon-box">
                 <CalendarMinus className="text-orange-400 w-5 h-5" />
               </div>
             </div>
             <div className="flex items-end justify-between">
-              <div className="text-metric text-2xl sm:text-3xl" style={{ color: 'var(--text-primary)' }}>
+              <div className="text-metric">
                 {maiorDespesa}
               </div>
             </div>

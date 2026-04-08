@@ -215,7 +215,7 @@ export default function TransactionList({
         <div className="flex items-center gap-3">
           {headerSlot}
           {canCreate && (
-            <button className="btn btn-primary" onClick={() => setIsNewModalOpen(true)}>
+            <button className="btn btn-primary !rounded-lg" onClick={() => setIsNewModalOpen(true)}>
               <Plus size={20} /> Novo lançamento
             </button>
           )}

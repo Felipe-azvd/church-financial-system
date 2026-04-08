@@ -45,7 +45,7 @@ export default function LoginForm() {
         </div>
 
         {/* Formulário Principal */}
-        <div className="card-glass p-8 mb-6" style={{ padding: '2rem' }}>
+        <div className="card-glass login-box-auth p-8 mb-6" style={{ padding: '2rem' }}>
           {error && (
             <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm text-center">
               {error}
@@ -106,7 +106,7 @@ export default function LoginForm() {
         </div>
 
         {/* Bloco de Informação */}
-        <div className="card-glass !p-4 !bg-black/20 flex gap-3 items-start">
+        <div className="!p-4 !bg-black/20 flex gap-3 items-start border border-white/20 rounded-2xl backdrop-blur-md">
           <Info className="h-5 w-5 text-[var(--text-muted)] flex-shrink-0 mt-0.5" />
           <div>
             <p className="text-sm font-medium text-white">Precisa de uma conta?</p>

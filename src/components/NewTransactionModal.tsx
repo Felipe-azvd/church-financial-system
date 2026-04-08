@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { createTransaction, updateTransaction } from '@/app/actions/finance'
+import { UploadCloud, FileText } from 'lucide-react'
 
 type Lookup = { id: string; nome: string; tipo?: string }
 
@@ -294,34 +295,28 @@ export default function NewTransactionModal({
     animation: 'fadeIn 0.2s ease-out'
   }
 
-  const modalContentStyle: React.CSSProperties = {
-    borderRadius: 'var(--radius-lg)',
-    padding: 'var(--spacing-xl)',
-    width: '90%',
-    maxWidth: '500px',
-    boxShadow: 'var(--shadow-xl)',
-    position: 'relative'
-  }
-
   return (
     <div style={modalOverlayStyle} onClick={(e) => { if (e.target === e.currentTarget) onClose() }}>
-      <div style={modalContentStyle} className="glass">
-        <h2 className="text-lg font-semibold mb-3">
+      
+      {/* Container Principal: Fundo Sólido Premium Substituindo Vidro */}
+      <div className="bg-[#1a1f2b] border border-white/10 w-[90%] max-w-[500px] p-8 relative rounded-lg animate-[fadeIn_0.2s_ease-out] shadow-2xl">
+        
+        <h2 className="text-xl font-semibold mb-6 text-white">
           {transaction ? 'Editar lançamento' : 'Novo lançamento'}
         </h2>
         
-        {error && <div className="ui-error mb-2 p-2 rounded-md font-medium text-sm">{error}</div>}
-        {successMsg && <div className="ui-success mb-2 p-2 rounded-md font-semibold text-sm">{successMsg}</div>}
+        {error && <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-medium">{error}</div>}
+        {successMsg && <div className="mb-4 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-semibold">{successMsg}</div>}
 
-        <div className="input-group" style={{ marginBottom: 'var(--spacing-md)' }}>
-          <label className="input-label" style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Entrada rápida</label>
+        <div className="flex flex-col gap-2 mb-6">
+          <label className="text-sm font-medium text-[var(--text-color)]">Entrada rápida</label>
           <input 
             type="text" 
-            className="input-field" 
+            className="input-field bg-black/20 focus:border-[#3b82f6] transition-all text-white" 
             placeholder="Ex: 50 oferta" 
             value={quickEntry}
             onChange={(e) => setQuickEntry(e.target.value)}
-            onBlur={() => handleQuickEntry(quickEntry)}
+            onBlur={() => parseQuickEntry(quickEntry)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 e.preventDefault()
@@ -331,67 +326,62 @@ export default function NewTransactionModal({
                 }, 100)
               }
             }}
-            style={{ backgroundColor: 'rgba(59, 130, 246, 0.05)', borderColor: 'rgba(59, 130, 246, 0.3)' }}
           />
         </div>
 
-        <div style={{ display: 'flex', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-xl)' }}>
+        <div className="flex gap-4 mb-6">
           <button 
             type="button"
-            style={{ flex: 1, padding: 'var(--spacing-sm)', borderRadius: 'var(--radius-md)', border: tipo === 'ENTRADA' ? '2px solid var(--success)' : '1px solid var(--border-color)', backgroundColor: tipo === 'ENTRADA' ? 'rgba(16, 185, 129, 0.1)' : 'transparent', color: tipo === 'ENTRADA' ? 'var(--success)' : 'var(--text-secondary)', cursor: 'pointer', fontWeight: 600, transition: 'all 0.2s' }}
+            className={`flex-1 py-2 rounded-lg font-semibold transition-all duration-200 border ${tipo === 'ENTRADA' ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400' : 'border-white/10 bg-transparent text-[var(--text-muted)] hover:bg-white/5'}`}
             onClick={() => setTipo('ENTRADA')}
           >
             Entrada
           </button>
           <button 
             type="button"
-            style={{ flex: 1, padding: 'var(--spacing-sm)', borderRadius: 'var(--radius-md)', border: tipo === 'SAIDA' ? '2px solid var(--danger)' : '1px solid var(--border-color)', backgroundColor: tipo === 'SAIDA' ? 'rgba(239, 68, 68, 0.1)' : 'transparent', color: tipo === 'SAIDA' ? 'var(--danger)' : 'var(--text-secondary)', cursor: 'pointer', fontWeight: 600, transition: 'all 0.2s' }}
+            className={`flex-1 py-2 rounded-lg font-semibold transition-all duration-200 border ${tipo === 'SAIDA' ? 'border-red-500 bg-red-500/10 text-red-400' : 'border-white/10 bg-transparent text-[var(--text-muted)] hover:bg-white/5'}`}
             onClick={() => setTipo('SAIDA')}
           >
             Saída
           </button>
         </div>
 
-        <form id="transaction-form" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
+        <form id="transaction-form" onSubmit={handleSubmit} className="flex flex-col gap-5">
           
-          <div className="grid grid-cols-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--spacing-md)' }}>
-            <div className="input-group col-span-1" style={{ gridColumn: 'span 1 / span 1' }}>
-              <label className="input-label">Data</label>
-              <input type="date" name="data" required className="input-field w-full" style={{ width: '100%' }} value={dataString} onChange={e => setDataString(e.target.value)} />
+          {/* Grid Coerente para Data e Valor (50/50) */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-2 col-span-1">
+              <label className="text-sm font-medium text-[var(--text-color)]">Data</label>
+              <input type="date" name="data" required className="input-field h-[42px] px-3 bg-black/20 text-white" value={dataString} onChange={e => setDataString(e.target.value)} />
             </div>
             
-            <div className="input-group col-span-2" style={{ gridColumn: 'span 2 / span 2' }}>
-              <label className="input-label" style={{ fontWeight: 600, color: 'var(--text-primary)' }}>Valor (R$)</label>
+            <div className="flex flex-col gap-2 col-span-1">
+              <label className="text-sm font-medium text-[var(--text-color)]">Valor (R$)</label>
               <input 
                 ref={valorInputRef}
                 type="text" 
                 value={valorDisplay}
                 onChange={handleValorChange}
                 required 
-                className="input-field" 
+                className="input-field h-[42px] px-4 font-bold text-lg bg-black/20 focus:border-[#3b82f6] transition-all" 
                 placeholder="R$ 0,00" 
-                style={{ 
-                  fontSize: '1.5rem', 
-                  fontWeight: 700, 
-                  backgroundColor: 'var(--bg-tertiary)',
-                  color: 'var(--text-primary)',
-                  borderColor: tipo === 'ENTRADA' ? 'rgba(16, 185, 129, 0.5)' : 'rgba(239, 68, 68, 0.5)',
-                  borderWidth: '2px',
-                  transition: 'border-color 0.2s'
+                style={{
+                  color: tipo === 'ENTRADA' ? '#34d399' : '#f87171',
+                  borderColor: tipo === 'ENTRADA' ? 'rgba(52, 211, 153, 0.4)' : 'rgba(248, 113, 113, 0.4)'
                 }}
               />
             </div>
           </div>
 
-          <div className="input-group">
-            <label className="input-label">Descrição</label>
-            <input name="descricao" required className="input-field" placeholder="Ex: Oferta de Domingo, Conta de Luz..." value={descricao} onChange={e => setDescricao(e.target.value)} />
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium text-[var(--text-color)]">Descrição</label>
+            <input name="descricao" required className="input-field h-[42px] bg-black/20 text-white" placeholder="Ex: Oferta de Domingo, Conta de Luz..." value={descricao} onChange={e => setDescricao(e.target.value)} />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-md)' }}>
-            <div className="input-group">
-              <label className="input-label">Categoria</label>
-              <select name="categoria_id" className="input-field" value={categoriaId} onChange={e => setCategoriaId(e.target.value)}>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium text-[var(--text-color)]">Categoria</label>
+              <select name="categoria_id" className="input-field h-[42px] bg-black/20 text-white" value={categoriaId} onChange={e => setCategoriaId(e.target.value)}>
                 <option value="">Nenhuma</option>
                 {lookups.categorias
                   .filter(c => c.tipo === tipo || c.tipo === 'AMBOS')
@@ -400,9 +390,9 @@ export default function NewTransactionModal({
             </div>
 
             {tipo === 'ENTRADA' && (
-              <div className="input-group">
-                <label className="input-label">Culto (Opcional)</label>
-                <select name="culto_id" className="input-field" value={cultoId} onChange={e => setCultoId(e.target.value)}>
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-[var(--text-color)]">Culto (Opcional)</label>
+                <select name="culto_id" className="input-field h-[42px] bg-black/20 text-white" value={cultoId} onChange={e => setCultoId(e.target.value)}>
                   <option value="">Nenhum</option>
                   {lookups.cultos.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
                 </select>
@@ -410,9 +400,9 @@ export default function NewTransactionModal({
             )}
 
             {tipo === 'ENTRADA' && (
-              <div className="input-group">
-                <label className="input-label">Forma de Pagamento</label>
-                <select name="payment_method" className="input-field">
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-[var(--text-color)]">Pagamento</label>
+                <select name="payment_method" className="input-field h-[42px] bg-black/20 text-white">
                   <option value="DINHEIRO">Dinheiro</option>
                   <option value="PIX">PIX</option>
                   <option value="CARTAO">Cartão</option>
@@ -423,34 +413,52 @@ export default function NewTransactionModal({
             )}
 
             {tipo === 'SAIDA' && (
-              <div className="input-group">
-                <label className="input-label">Responsável</label>
-                <input type="text" name="responsavel" className="input-field" placeholder="Nome do Responsável" />
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-[var(--text-color)]">Responsável</label>
+                <input type="text" name="responsavel" className="input-field h-[42px] bg-black/20 text-white" placeholder="Nome" />
               </div>
             )}
           </div>
 
           {tipo === 'SAIDA' && (
-             <div className="input-group">
-                <label className="input-label">Comprovante (Opcional)</label>
-                <input type="file" name="comprovante" className="input-field" accept="image/*,.pdf" style={{ padding: '7px' }} />
+             <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-[var(--text-color)]">Comprovante</label>
+                <input type="file" name="comprovante" id="comprovante" className="sr-only" accept="image/*,.pdf" />
+                
+                {/* Quadro de Anexo Centralizado Verticalmente */}
+                <label htmlFor="comprovante" className="flex items-center justify-center h-[120px] rounded-lg border-2 border-dashed border-white/10 bg-black/20 cursor-pointer hover:border-[#3b82f6]/50 hover:bg-black/30 transition-all gap-4 px-6 text-center">
+                    <UploadCloud className="h-10 w-10 text-[var(--text-muted)] flex-shrink-0" />
+                    <div>
+                        <p className="text-sm font-medium text-white">Clique ou arraste um arquivo para anexar...</p>
+                        <p className="text-xs text-[var(--text-muted)] mt-1">Formatos suportados: Imagens, PDF (Máx. 5MB)</p>
+                    </div>
+                </label>
               </div>
           )}
 
-          <div style={{ display: 'flex', gap: 'var(--spacing-md)', justifyContent: 'flex-end', marginTop: 'var(--spacing-md)', paddingTop: 'var(--spacing-md)', borderTop: '1px solid var(--border-color)' }}>
-            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-            <button type="submit" className="btn btn-primary" disabled={loading} style={{ backgroundColor: tipo === 'ENTRADA' ? 'var(--success)' : 'var(--danger)', borderColor: tipo === 'ENTRADA' ? 'var(--success)' : 'var(--danger)' }}>
+          <div className="flex justify-end gap-3 mt-4 pt-6 border-t border-white/10">
+            <button 
+              type="button" 
+              className="px-6 py-2 rounded-lg font-medium text-[var(--text-muted)] hover:text-white hover:bg-white/5 transition-all" 
+              onClick={onClose}
+            >
+              Cancelar
+            </button>
+            <button 
+              type="submit" 
+              className="btn-primary !rounded-lg !px-10 !py-2" // AJUSTE DE LARGURA (px-10) E ALTURA (py-2) AQUI
+              disabled={loading} 
+              style={{ 
+                backgroundColor: tipo === 'ENTRADA' ? '#10b981' : '#ef4444', 
+                borderColor: tipo === 'ENTRADA' ? '#10b981' : '#ef4444',
+                boxShadow: tipo === 'ENTRADA' ? '0 0 15px rgba(16, 185, 129, 0.4)' : '0 0 15px rgba(239, 68, 68, 0.4)'
+              }}
+            >
               {loading ? 'Salvando...' : (transaction ? 'Salvar alterações' : 'Salvar lançamento')}
             </button>
           </div>
         </form>
       </div>
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: scale(0.98); }
-          to { opacity: 1; transform: scale(1); }
-        }
-      `}</style>
     </div>
   )
 }
