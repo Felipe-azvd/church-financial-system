@@ -142,8 +142,10 @@ export default function TransactionList({
                 {displayTransactions.length === 0 ? (
                   <tr>
                     <td colSpan={canAct ? 8 : 7} style={{ textAlign: 'center', padding: 'var(--spacing-2xl) 0' }}>
-                      <p style={{ color: 'var(--text-muted)', fontWeight: 500, marginBottom: 'var(--spacing-md)' }}>Nenhum lançamento encontrado neste período.</p>
+                      <p style={{ color: 'var(--text-muted)', fontWeight: 500, marginBottom: 'var(--spacing-md)', paddingBottom:'1.1%'  }}>Nenhum lançamento encontrado neste período.</p>
+                      
                       {canCreate && (
+                        
                         <button className="btn btn-secondary btn-sm" onClick={() => setIsNewModalOpen(true)}>
                           <Plus size={16} /> Adicione um lançamento para começar
                         </button>

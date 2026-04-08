@@ -106,7 +106,7 @@ export default function RoleManager({
       >
         <div>
           <h2 className="text-lg font-semibold mb-3">Gerenciar Funções</h2>
-          <p className="text-xs opacity-70" style={{ margin: 'var(--space-1) 0 0 0' }}>Defina funções e controle o acesso de cada usuário</p>
+          <p className="text-xs opacity-70" style={{ margin: 'var(--space-1) 0 0 0', paddingBottom:'1.5%' }}>Defina funções e controle o acesso de cada usuário</p>
         </div>
         {!isAdding && !editingRole && (
           <button className="btn btn-primary btn-sm" onClick={() => setIsAdding(true)}>

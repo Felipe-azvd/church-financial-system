@@ -130,7 +130,7 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
                 {initialUsers.length === 0 ? (
                   <tr>
                     <td colSpan={4} style={{ textAlign: 'center', padding: 'var(--spacing-2xl) 0' }}>
-                      <p style={{ color: 'var(--text-muted)', fontWeight: 500, marginBottom: 'var(--spacing-md)' }}>Nenhum usuário encontrado no sistema.</p>
+                      <p style={{ color: 'var(--text-muted)', fontWeight: 500, marginBottom: 'var(--spacing-md)',  paddingBottom:'1.1%' }}>Nenhum usuário encontrado no sistema.</p>
                       <button className="btn btn-secondary btn-sm" onClick={() => setIsAdding(true)}>
                         Adicione um usuário para começar
                       </button>

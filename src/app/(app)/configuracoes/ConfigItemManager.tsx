@@ -48,20 +48,32 @@ export default function ConfigItemManager({
   }
 
   return (
-    <div className="card w-full">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-md)' }}>
-        <h2 className="text-lg font-semibold mb-3">{title}</h2>
+    /* Trocamos 'card' por 'card-glass' e adicionamos 'p-6' para o respiro interno perfeito */
+    <div className="card-glass w-full p-6 rounded-2xl relative">
+      
+      {/* Cabeçalho Ajustado */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold text-white">{title}</h2>
         {!isAdding && !editingItem && (
-          <button className="btn btn-secondary" style={{ padding: 'var(--space-1) var(--space-2)', fontSize: 'var(--text-xs)' }} onClick={() => setIsAdding(true)}>Adicionar</button>
+          <button 
+            className="btn-primary !rounded-lg px-5 py-2 text-sm font-medium" 
+            onClick={() => setIsAdding(true)}
+          >
+            + Adicionar
+          </button>
         )}
       </div>
 
+      {/* Formulário de Adição/Edição com fundo destacado */}
       {(isAdding || editingItem) && (
-        <form onSubmit={handleSave} style={{ display: 'flex', gap: 'var(--spacing-sm)', marginBottom: 'var(--spacing-xl)', flexWrap: 'wrap' }}>
+        <form 
+          onSubmit={handleSave} 
+          className="flex flex-wrap items-center gap-4 mb-6 bg-black/20 p-5 rounded-xl border border-white/10 animate-[fadeIn_0.2s_ease-out]"
+        >
           <input 
             name="nome" 
             required 
-            className="input input-field" 
+            className="input-field bg-black/20 text-white focus:border-[#3b82f6] transition-all h-[42px] px-4" 
             style={{ flex: 1, minWidth: '200px' }} 
             placeholder="Nome..." 
             defaultValue={editingItem?.nome}
@@ -71,7 +83,7 @@ export default function ConfigItemManager({
             <select 
               name="itemTipo" 
               required 
-              className="select input-field" 
+              className="input-field bg-black/20 text-white focus:border-[#3b82f6] transition-all h-[42px] px-4" 
               style={{ width: '150px' }}
               defaultValue={editingItem?.tipo || 'AMBOS'}
             >
@@ -80,55 +92,66 @@ export default function ConfigItemManager({
               <option value="SAIDA">Saída</option>
             </select>
           )}
-          <button type="submit" className="btn btn-primary" disabled={loading}>
-            {loading ? '...' : 'Salvar'}
-          </button>
-          <button type="button" className="btn btn-secondary" onClick={cancelAction}>Cancelar</button>
+          
+          <div className="flex items-center gap-2">
+            <button type="submit" className="btn-primary !rounded-lg px-6 py-2 h-[42px] flex items-center justify-center" disabled={loading}>
+              {loading ? 'Salvando...' : 'Salvar'}
+            </button>
+            <button 
+              type="button" 
+              className="px-4 py-2 h-[42px] rounded-lg font-medium text-[var(--text-muted)] hover:text-white hover:bg-white/5 transition-all" 
+              onClick={cancelAction}
+            >
+              Cancelar
+            </button>
+          </div>
         </form>
       )}
 
+      {/* Tabela de Listagem */}
       {(!isAdding && !editingItem) && (
-        <div style={{ overflowX: 'auto' }}>
-          <table className="table table-hover data-table" style={{ width: '100%' }}>
+        <div className="overflow-x-auto rounded-xl border border-white/5">
+          <table className="table table-hover data-table w-full">
             <thead>
               <tr>
-                <th>{type === 'categoria' ? 'Categoria' : 'Nome'}</th>
-                {type === 'categoria' && <th>Tipo</th>}
-                <th style={{ textAlign: 'right' }}>Ações</th>
+                <th className="!bg-black/20 !text-blue-400 font-semibold">{type === 'categoria' ? 'Categoria' : 'Nome'}</th>
+                {type === 'categoria' && <th className="!bg-black/20 !text-blue-400 font-semibold">Tipo</th>}
+                <th className="!bg-black/20 !text-blue-400 font-semibold" style={{ textAlign: 'right' }}>Ações</th>
               </tr>
             </thead>
             <tbody>
               {items.length === 0 ? (
                 <tr>
-                  <td colSpan={type === 'categoria' ? 3 : 2} style={{ color: 'var(--text-muted)', textAlign: 'center', padding: 'var(--spacing-md)' }}>
-                    Nenhum item cadastrado
+                  <td colSpan={type === 'categoria' ? 3 : 2} className="text-center text-[var(--text-muted)] py-8 font-medium">
+                    Nenhum item cadastrado.
                   </td>
                 </tr>
               ) : (
                 items.map(item => {
-                  let badgeData = { bg: 'transparent', label: '' }
-                  if (item.tipo === 'ENTRADA') badgeData = { bg: 'var(--success)', label: 'Entrada' }
-                  else if (item.tipo === 'SAIDA') badgeData = { bg: 'var(--danger)', label: 'Saída' }
-                  else if (item.tipo === 'AMBOS') badgeData = { bg: 'var(--accent-primary)', label: 'Ambos' }
-
                   return (
-                    <tr key={item.id}>
-                      <td style={{ fontWeight: 500 }}>{item.nome}</td>
+                    <tr key={item.id} className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
+                      <td className="font-medium text-white">{item.nome}</td>
+                      
                       {type === 'categoria' && (
                         <td>
-                          {item.tipo ? (
-                            <span className={`badge badge-soft ${item.tipo === 'ENTRADA' ? 'badge-success' : item.tipo === 'SAIDA' ? 'badge-error' : 'badge-info'}`}>
-                              {badgeData.label}
-                            </span>
-                          ) : '-'}
+                          {item.tipo === 'ENTRADA' && <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-medium border border-emerald-500/20">Entrada</span>}
+                          {item.tipo === 'SAIDA' && <span className="px-3 py-1 rounded-full bg-red-500/10 text-red-400 text-xs font-medium border border-red-500/20">Saída</span>}
+                          {(!item.tipo || item.tipo === 'AMBOS') && <span className="px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-xs font-medium border border-blue-500/20">Ambos</span>}
                         </td>
                       )}
+                      
                       <td style={{ textAlign: 'right' }}>
-                        <div style={{ display: 'flex', gap: 'var(--spacing-sm)', justifyContent: 'flex-end' }}>
-                          <button onClick={() => setEditingItem(item)} className="btn btn-soft btn-primary btn-sm">
+                        <div className="flex items-center gap-2 justify-end">
+                          <button 
+                            onClick={() => setEditingItem(item)} 
+                            className="px-3 py-1.5 rounded-lg text-sm font-medium text-blue-400 hover:bg-blue-500/10 transition-colors"
+                          >
                             Editar
                           </button>
-                          <button onClick={() => handleDelete(item.id)} className="btn btn-soft btn-error btn-sm">
+                          <button 
+                            onClick={() => handleDelete(item.id)} 
+                            className="px-3 py-1.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors"
+                          >
                             Excluir
                           </button>
                         </div>
@@ -141,6 +164,12 @@ export default function ConfigItemManager({
           </table>
         </div>
       )}
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-5px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   )
 }
