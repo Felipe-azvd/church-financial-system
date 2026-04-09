@@ -161,8 +161,8 @@ export default function Sidebar({ userPermissions = [], userName = '' }: { userP
           </button>
         </div>
 
-        {/* Rodapé - Ajuste de Respiro (px-3) aplicado aqui! */}
-        <div className={`pt-4 border-t border-[rgba(255,255,255,0.08)] flex items-center ${isCollapsed ? 'md:flex-col md:gap-4 md:justify-center' : 'justify-between px-3'}`}>
+        {/* Rodapé com respiro extra no celular (px-2) */}
+<div className={`pt-4 border-t border-[rgba(255,255,255,0.08)] flex items-center ${isCollapsed ? 'md:flex-col md:gap-4 md:justify-center' : 'justify-between px-2 md:px-0'}`}>
           <span className={`text-sm font-medium text-white opacity-70 overflow-hidden whitespace-nowrap transition-all duration-300 ${
               isCollapsed ? 'md:w-0 md:h-0 md:opacity-0' : 'w-auto opacity-70'
             }`}>

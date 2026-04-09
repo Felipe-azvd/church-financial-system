@@ -73,7 +73,7 @@ export default function PersonalizacaoPage() {
         {/* Card de Preview (Para mostrar o poder do CSS em tempo real) */}
         <div className="mt-12 p-6 rounded-xl border border-white/10 bg-black/20">
           <h3 className="text-sm font-medium text-[var(--text-muted)] mb-4 uppercase tracking-wider">Preview Instantâneo</h3>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
             <button className="btn-primary !rounded-lg px-6 py-2">
               Botão Principal
             </button>

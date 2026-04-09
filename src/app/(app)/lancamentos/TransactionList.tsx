@@ -124,8 +124,8 @@ export default function TransactionList({
           Extrato Financeiro
         </h2>
         <div className="card w-full overflow-hidden max-h-[420px] overflow-y-auto">
-          <div className="table-responsive">
-            <table className="table table-hover data-table">
+          <div className="w-full overflow-x-auto rounded-xl border border-[var(--border-tint)] bg-[var(--surface-tint)]">
+            <table className="table table-hover data-table w-full min-w-[700px]">
               <thead>
                 <tr>
                   <th>Data</th>

@@ -99,7 +99,8 @@ export default function RoleManager({
 
   return (
     <div className="w-full">
-      <div className="flex justify-between items-center mb-6">
+      {/* Cabeçalho Responsivo (Empilha no celular) */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
           <h2 className="text-2xl font-semibold mb-1 text-white">Gerenciar Funções</h2>
           <p className="text-xs text-[var(--text-muted)]">Defina funções e controle o acesso de cada usuário</p>
@@ -146,7 +147,6 @@ export default function RoleManager({
                         <summary className="flex items-center justify-between p-4 cursor-pointer select-none hover:bg-white/5 transition-colors" style={{ listStyle: 'none' }}>
                           <div className="flex items-center gap-3">
                             <span className="font-semibold text-white">{label}</span>
-                            {/* CONTADOR DE PERMISSÕES SINCRONIZADO */}
                             {selectedCount > 0 && (
                               <span 
                                 className="px-2 py-0.5 rounded-full text-xs font-semibold border"
@@ -172,7 +172,6 @@ export default function RoleManager({
                             return (
                               <label key={p.id} className="flex items-center gap-3 cursor-pointer group">
                                 <div className="relative flex items-center justify-center">
-                                  {/* CHECKBOX CUSTOMIZADO E SINCRONIZADO */}
                                   <input
                                     type="checkbox"
                                     className="peer appearance-none w-5 h-5 border border-white/20 rounded bg-black/40 transition-all cursor-pointer"
@@ -210,53 +209,52 @@ export default function RoleManager({
           </form>
         )}
 
+        {/* Tabela Responsiva com Cores do Tema */}
         {!isAdding && !editingRole && (
-          <div className="card-glass overflow-hidden rounded-2xl border border-white/10">
-            <div className="table-responsive">
-              <table className="table table-hover data-table w-full">
-                <thead>
-                  <tr>
-                    <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]">Função</th>
-                    <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]" style={{ textAlign: 'center' }}>Permissões</th>
-                    <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]" style={{ textAlign: 'right' }}>Ações</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {initialRoles.map((r) => {
-                    const isDefault = ['ADMINISTRADOR', 'TESOUREIRO', 'VISUALIZADOR'].includes(r.nome)
-                    return (
-                      <tr key={r.id} className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
-                        <td className="font-semibold text-white">{r.nome}</td>
-                        <td style={{ textAlign: 'center' }}>
-                          {isDefault ? (
-                            <span className="px-3 py-1 rounded-full bg-white/10 text-gray-300 text-xs font-medium border border-white/10">Acesso Padrão</span>
-                          ) : (
-                            <span className="px-3 py-1 rounded-full text-xs font-medium border"
-                                  style={{ backgroundColor: 'var(--primary-soft)', color: 'var(--primary-color)', borderColor: 'var(--border-tint)' }}>
-                              {r.permissions?.length || 0} permissões
-                            </span>
-                          )}
-                        </td>
-                        <td style={{ textAlign: 'right' }}>
-                          <div className="flex items-center gap-2 justify-end">
-                            <button className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors" style={{ color: 'var(--primary-color)' }} onClick={() => handleEdit(r)}>
-                              Editar
-                            </button>
-                            <button
-                              className="px-3 py-1.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
-                              onClick={() => handleDelete(r.id, r.nome)}
-                              disabled={isDefault}
-                            >
-                              Excluir
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
+          <div className="w-full overflow-x-auto rounded-2xl border border-[var(--border-tint)] bg-[var(--surface-tint)] shadow-sm">
+            <table className="table table-hover data-table w-full min-w-[700px]">
+              <thead>
+                <tr>
+                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]">Função</th>
+                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]" style={{ textAlign: 'center' }}>Permissões</th>
+                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]" style={{ textAlign: 'right' }}>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {initialRoles.map((r) => {
+                  const isDefault = ['ADMINISTRADOR', 'TESOUREIRO', 'VISUALIZADOR'].includes(r.nome)
+                  return (
+                    <tr key={r.id} className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
+                      <td className="font-semibold text-white">{r.nome}</td>
+                      <td style={{ textAlign: 'center' }}>
+                        {isDefault ? (
+                          <span className="px-3 py-1 rounded-full bg-white/10 text-gray-300 text-xs font-medium border border-white/10">Acesso Padrão</span>
+                        ) : (
+                          <span className="px-3 py-1 rounded-full text-xs font-medium border"
+                                style={{ backgroundColor: 'var(--primary-soft)', color: 'var(--primary-color)', borderColor: 'var(--border-tint)' }}>
+                            {r.permissions?.length || 0} permissões
+                          </span>
+                        )}
+                      </td>
+                      <td style={{ textAlign: 'right' }}>
+                        <div className="flex items-center gap-2 justify-end">
+                          <button className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors" style={{ color: 'var(--primary-color)' }} onClick={() => handleEdit(r)}>
+                            Editar
+                          </button>
+                          <button
+                            className="px-3 py-1.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
+                            onClick={() => handleDelete(r.id, r.nome)}
+                            disabled={isDefault}
+                          >
+                            Excluir
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
           </div>
         )}
 

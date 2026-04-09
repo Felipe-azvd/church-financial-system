@@ -26,12 +26,12 @@ export default async function LancamentosPage({
 
   const transacoes = await listarLancamentos(startOfMonth, endOfMonth)
 
-  // Split transactions
   const entradas = transacoes.filter((t: any) => t.tipo === 'ENTRADA')
   const saidas = transacoes.filter((t: any) => t.tipo === 'SAIDA')
 
   return (
-    <div className="px-6 py-6 lg:px-10 flex flex-col gap-6">
+    // Removidos os paddings fixos que conflitavam com o layout principal
+    <div className="flex flex-col gap-6 w-full">
       <TransactionList 
         entradas={entradas} 
         saidas={saidas} 

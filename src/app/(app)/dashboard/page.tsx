@@ -48,7 +48,6 @@ export default async function DashboardPage({
     ...(Object.keys(dataCondition).length > 0 && { data: dataCondition })
   }
 
-  // Fetch all transactions within the period to generate detailed charts
   const transacoes = await db.transacao.findMany({
     where: whereBase,
     include: {
@@ -61,29 +60,20 @@ export default async function DashboardPage({
   let totalEntradas = 0
   let totalSaidas = 0
 
-  // 1. Financial Evolution Data
   const evolutionMap: Record<string, { date: string, entradas: number, saidas: number }> = {}
-
-  // 2. Categories Data
   const catEntradasMap: Record<string, number> = {}
   const catSaidasMap: Record<string, number> = {}
-
-  // 3. Cultos Data
   const cultoEntradasMap: Record<string, number> = {}
 
   transacoes.forEach((t: any) => {
-    // Totals
     if (t.tipo === 'ENTRADA') totalEntradas += t.valor
     if (t.tipo === 'SAIDA') totalSaidas += t.valor
 
-    // Evolution
-    // Use UTC date string to prevent timezone shifts matching the display
-    const dateStr = t.data.toISOString().split('T')[0].split('-').slice(1).reverse().join('/') // DD/MM
+    const dateStr = t.data.toISOString().split('T')[0].split('-').slice(1).reverse().join('/')
     if (!evolutionMap[dateStr]) evolutionMap[dateStr] = { date: dateStr, entradas: 0, saidas: 0 }
     if (t.tipo === 'ENTRADA') evolutionMap[dateStr].entradas += t.valor
     if (t.tipo === 'SAIDA') evolutionMap[dateStr].saidas += t.valor
 
-    // Categories
     const catName = t.categoria?.nome || 'Sem Categoria'
     if (t.tipo === 'ENTRADA') {
       catEntradasMap[catName] = (catEntradasMap[catName] || 0) + t.valor
@@ -91,7 +81,6 @@ export default async function DashboardPage({
       catSaidasMap[catName] = (catSaidasMap[catName] || 0) + t.valor
     }
 
-    // Cultos
     if (t.tipo === 'ENTRADA') {
       const cultoName = t.culto?.nome || 'Outros / Sem Culto'
       cultoEntradasMap[cultoName] = (cultoEntradasMap[cultoName] || 0) + t.valor
@@ -107,8 +96,7 @@ export default async function DashboardPage({
   const currentYear = now.getFullYear()
   const monthlyTotals = await getMonthlyTotals(currentYear)
 
-  // Comparison indicators — compare current month vs previous month from monthlyTotals
-  const currentMonthIdx = now.getMonth()  // 0-based
+  const currentMonthIdx = now.getMonth()
   const prevMonthIdx = currentMonthIdx > 0 ? currentMonthIdx - 1 : null
   const currM = monthlyTotals[currentMonthIdx] ?? { entradas: 0, saidas: 0 }
   const prevM = prevMonthIdx !== null ? monthlyTotals[prevMonthIdx] : null
@@ -125,14 +113,14 @@ export default async function DashboardPage({
   const saldoPct = pctChange(saldoCurrM, saldoPrevM)
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Page Header */}
-      <div className="flex items-center justify-between">
+    <div className="flex flex-col gap-6 w-full overflow-hidden">
+      {/* Page Header Responsivo */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold mb-3">Dashboard</h1>
+          <h1 className="text-2xl font-semibold mb-1">Dashboard</h1>
           <p className="text-xs opacity-70">Visão geral das finanças da igreja</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
           <Suspense fallback={null}>
             <PeriodSelector />
           </Suspense>
@@ -140,73 +128,73 @@ export default async function DashboardPage({
         </div>
       </div>
 
-      {/* Key Metrics Premium */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      {/* Key Metrics Premium Responsivo */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 w-full">
         
         {/* Card: Entradas */}
-        <div className="metric-card metric-card-green p-6 group">
-          <div className="flex flex-row items-center justify-between pb-4">
-            <div className="uppercase">Total Entradas</div>
+        <div className="metric-card metric-card-green p-5 md:p-6 group">
+          <div className="flex flex-row items-center justify-between pb-2 md:pb-4">
+            <div className="uppercase text-xs md:text-sm">Total Entradas</div>
             <div className="icon-box">
-              <TrendingUp className="text-emerald-400 w-5 h-5" />
+              <TrendingUp className="text-emerald-400 w-4 h-4 md:w-5 md:h-5" />
             </div>
           </div>
           <div className="flex items-end justify-between">
-            <div className="text-metric text-[var(--success)]">
+            <div className="text-xl md:text-2xl lg:text-3xl font-bold text-[var(--success)] truncate pr-2">
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalEntradas)}
             </div>
             {entradasPct !== null ? (
-              <div className={`flex items-center font-medium rounded-full border px-2 py-1 text-xs ${entradasPct >= 0 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}>
+              <div className={`flex items-center font-medium rounded-full border px-2 py-1 text-[10px] md:text-xs whitespace-nowrap ${entradasPct >= 0 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}>
                 {entradasPct >= 0 ? '↑' : '↓'} {Math.abs(entradasPct).toFixed(1)}%
               </div>
             ) : (
-              <div className="text-xs font-medium opacity-50">Sem dados</div>
+              <div className="text-[10px] md:text-xs font-medium opacity-50 whitespace-nowrap">Sem dados</div>
             )}
           </div>
           <div className="metric-blob"></div>
         </div>
 
         {/* Card: Saídas */}
-        <div className="metric-card metric-card-red p-6 group">
-          <div className="flex flex-row items-center justify-between pb-4">
-            <div className="uppercase">Total Saídas</div>
+        <div className="metric-card metric-card-red p-5 md:p-6 group">
+          <div className="flex flex-row items-center justify-between pb-2 md:pb-4">
+            <div className="uppercase text-xs md:text-sm">Total Saídas</div>
             <div className="icon-box">
-              <TrendingDown className="text-red-400 w-5 h-5" />
+              <TrendingDown className="text-red-400 w-4 h-4 md:w-5 md:h-5" />
             </div>
           </div>
           <div className="flex items-end justify-between">
-            <div className="text-metric text-[var(--danger)]">
+            <div className="text-xl md:text-2xl lg:text-3xl font-bold text-[var(--danger)] truncate pr-2">
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalSaidas)}
             </div>
             {saidasPct !== null ? (
-              <div className={`flex items-center font-medium rounded-full border px-2 py-1 text-xs ${saidasPct <= 0 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}>
+              <div className={`flex items-center font-medium rounded-full border px-2 py-1 text-[10px] md:text-xs whitespace-nowrap ${saidasPct <= 0 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}>
                 {saidasPct >= 0 ? '↑' : '↓'} {Math.abs(saidasPct).toFixed(1)}%
               </div>
             ) : (
-              <div className="text-xs font-medium opacity-50">Sem dados</div>
+              <div className="text-[10px] md:text-xs font-medium opacity-50 whitespace-nowrap">Sem dados</div>
             )}
           </div>
           <div className="metric-blob"></div>
         </div>
 
         {/* Card: Saldo */}
-        <div className={`metric-card p-6 group ${saldo >= 0 ? 'metric-card-green' : 'metric-card-red'}`}>
-          <div className="flex flex-row items-center justify-between pb-4">
-            <div className="uppercase">Saldo Atual</div>
+        <div className={`metric-card p-5 md:p-6 group sm:col-span-2 xl:col-span-1 ${saldo >= 0 ? 'metric-card-green' : 'metric-card-red'}`}>
+          <div className="flex flex-row items-center justify-between pb-2 md:pb-4">
+            <div className="uppercase text-xs md:text-sm">Saldo Atual</div>
             <div className="icon-box">
-              <DollarSign className="text-blue-400 w-5 h-5" />
+              <DollarSign className="text-blue-400 w-4 h-4 md:w-5 md:h-5" />
             </div>
           </div>
           <div className="flex items-end justify-between">
-            <div className={`text-metric ${saldo >= 0 ? 'text-[var(--success)]' : 'text-[var(--danger)]'}`}>
+            <div className={`text-xl md:text-2xl lg:text-3xl font-bold truncate pr-2 ${saldo >= 0 ? 'text-[var(--success)]' : 'text-[var(--danger)]'}`}>
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(saldo)}
             </div>
             {saldoPct !== null ? (
-              <div className={`flex items-center font-medium rounded-full border px-2 py-1 text-xs ${saldoPct >= 0 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}>
+              <div className={`flex items-center font-medium rounded-full border px-2 py-1 text-[10px] md:text-xs whitespace-nowrap ${saldoPct >= 0 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}>
                 {saldoPct >= 0 ? '↑' : '↓'} {Math.abs(saldoPct).toFixed(1)}%
               </div>
             ) : (
-              <div className="text-xs font-medium opacity-50">Sem dados</div>
+              <div className="text-[10px] md:text-xs font-medium opacity-50 whitespace-nowrap">Sem dados</div>
             )}
           </div>
           <div className="metric-blob"></div>
@@ -214,37 +202,39 @@ export default async function DashboardPage({
 
       </div>
 
-      {/* Financial Health Indicator */}
+      {/* Financial Health Indicator Responsivo */}
       {(() => {
         const expenseRatio = totalEntradas > 0 ? totalSaidas / totalEntradas : 1
         const health =
           saldo < 0
-            ? { label: 'Saúde Financeira: Crítica', badge: 'badge-error', icon: '🔴' }
+            ? { label: 'Crítica', badge: 'badge-error', icon: '🔴' }
             : expenseRatio > 0.8
-              ? { label: 'Saúde Financeira: Atenção', badge: 'badge-warning', icon: '🟡' }
-              : { label: 'Saúde Financeira: Estável', badge: 'badge-success', icon: '🟢' }
+              ? { label: 'Atenção', badge: 'badge-warning', icon: '🟡' }
+              : { label: 'Estável', badge: 'badge-success', icon: '🟢' }
         return (
-          <div className="flex items-center gap-2 mt-2">
+          <div className="flex flex-wrap items-center gap-2 mt-1">
             <span className={`badge badge-soft ${health.badge}`} style={{ fontSize: 'var(--text-xs)', padding: 'var(--space-1) var(--space-2)' }}>
-              {health.icon} {health.label}
+              {health.icon} <span className="hidden sm:inline">Saúde Financeira:</span> {health.label}
             </span>
             {totalEntradas > 0 && (
-              <span className="text-xs opacity-60">
-                Despesas representam {(expenseRatio * 100).toFixed(0)}% das receitas
+              <span className="text-[10px] md:text-xs opacity-60">
+                Despesas são {(expenseRatio * 100).toFixed(0)}% das receitas
               </span>
             )}
           </div>
         )
       })()}
 
-      {/* Dashboard Charts Interleaving Insights */}
-      <DashboardCharts
-        evolutionData={evolutionData}
-        pieEntradasData={pieEntradasData}
-        pieSaidasData={pieSaidasData}
-        barCultoData={barCultoData}
-        insightsSlot={<FinancialInsights monthlyTotals={monthlyTotals} />}
-      />
+      {/* Dashboard Charts Interleaving Insights - A magia da responsividade dos gráficos está dentro do componente DashboardCharts */}
+      <div className="w-full overflow-hidden">
+        <DashboardCharts
+          evolutionData={evolutionData}
+          pieEntradasData={pieEntradasData}
+          pieSaidasData={pieSaidasData}
+          barCultoData={barCultoData}
+          insightsSlot={<FinancialInsights monthlyTotals={monthlyTotals} />}
+        />
+      </div>
     </div>
   )
 }
