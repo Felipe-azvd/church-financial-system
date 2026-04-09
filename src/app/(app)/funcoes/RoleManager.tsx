@@ -98,50 +98,43 @@ export default function RoleManager({
   }
 
   return (
-    <div className="card w-full">
-      {/* Card header */}
-      <div
-        className="card-body"
-        style={{ borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-      >
+    <div className="w-full">
+      <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-lg font-semibold mb-3">Gerenciar Funções</h2>
-          <p className="text-xs opacity-70" style={{ margin: 'var(--space-1) 0 0 0', paddingBottom:'1.5%' }}>Defina funções e controle o acesso de cada usuário</p>
+          <h2 className="text-2xl font-semibold mb-1 text-white">Gerenciar Funções</h2>
+          <p className="text-xs text-[var(--text-muted)]">Defina funções e controle o acesso de cada usuário</p>
         </div>
         {!isAdding && !editingRole && (
-          <button className="btn btn-primary btn-sm" onClick={() => setIsAdding(true)}>
+          <button className="btn-primary !rounded-lg px-4 py-2" onClick={() => setIsAdding(true)}>
             + Adicionar Função
           </button>
         )}
       </div>
 
-      <div className="card-body">
-
-        {/* Add / Edit form */}
+      <div className="w-full">
         {(isAdding || editingRole) && (
-          <form onSubmit={handleSave} style={{ marginBottom: 'var(--spacing-xl)' }}>
-            <div className="card w-full">
-              <div className="card-body">
-              <h3 className="text-sm font-medium mb-3">
+          <form onSubmit={handleSave} className="mb-8">
+            <div className="card-glass p-8 relative rounded-2xl animate-[fadeIn_0.2s_ease-out]">
+              
+              <h3 className="text-xl font-semibold mb-6 text-white border-b border-white/10 pb-4">
                 {editingRole ? 'Editar Função' : 'Nova Função'}
               </h3>
 
-              <div className="input-group">
-                <label className="input-label">Nome da Função</label>
+              <div className="flex flex-col gap-2 mb-8">
+                <label className="text-sm font-medium text-[var(--text-color)]">Nome da Função</label>
                 <input
                   name="nome"
                   required
-                  className="input input-field"
+                  className="input-field bg-black/20 focus:border-[var(--primary-color)] transition-all text-white h-[42px] px-4"
                   placeholder="Ex: Auxiliar Administrativo"
                   defaultValue={editingRole?.nome}
                   autoFocus
                 />
               </div>
 
-              {/* Permissions Accordion */}
-              <div style={{ marginTop: 'var(--spacing-lg)' }}>
-                <p className="input-label" style={{ marginBottom: 'var(--spacing-sm)' }}>Permissões do Sistema</p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
+              <div>
+                <p className="text-sm font-medium text-[var(--text-color)] mb-4">Permissões do Sistema</p>
+                <div className="flex flex-col gap-4">
                   {Object.entries(groupedPermissions).map(([module, perms]) => {
                     const allSelected = perms.every(p => selectedPermissions.includes(p.id))
                     const someSelected = perms.some(p => selectedPermissions.includes(p.id))
@@ -149,62 +142,55 @@ export default function RoleManager({
                     const label = MODULE_LABELS[module] || module.charAt(0).toUpperCase() + module.slice(1)
 
                     return (
-                      <details key={module} className="card w-full" open={someSelected}>
-                        {/* Summary is the accordion header */}
-                        <summary
-                          style={{
-                            padding: 'var(--spacing-sm) var(--spacing-md)',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            listStyle: 'none',
-                            userSelect: 'none',
-                            borderRadius: 'var(--radius-lg)',
-                          }}
-                        >
-                          <div className="flex items-center gap-2">
-                            <span style={{ fontWeight: 600, fontSize: 'var(--text-sm)' }}>{label}</span>
+                      <details key={module} className="bg-black/20 border border-white/10 rounded-xl overflow-hidden" open={someSelected}>
+                        <summary className="flex items-center justify-between p-4 cursor-pointer select-none hover:bg-white/5 transition-colors" style={{ listStyle: 'none' }}>
+                          <div className="flex items-center gap-3">
+                            <span className="font-semibold text-white">{label}</span>
+                            {/* CONTADOR DE PERMISSÕES SINCRONIZADO */}
                             {selectedCount > 0 && (
-                              <span className="badge badge-soft badge-primary text-xs">
+                              <span 
+                                className="px-2 py-0.5 rounded-full text-xs font-semibold border"
+                                style={{ backgroundColor: 'var(--primary-soft)', color: 'var(--primary-color)', borderColor: 'var(--border-tint)' }}
+                              >
                                 {selectedCount}/{perms.length}
                               </span>
                             )}
                           </div>
                           <button
                             type="button"
-                            className={`btn btn-xs btn-soft ${allSelected ? 'btn-error' : 'btn-success'}`}
-                            style={{ fontSize: 'var(--text-xs)' }}
+                            className={`text-sm font-medium transition-colors ${allSelected ? 'text-red-400 hover:text-red-300' : 'text-blue-400 hover:text-blue-300'}`}
+                            style={{ color: !allSelected ? 'var(--primary-color)' : '' }}
                             onClick={(e) => { e.preventDefault(); toggleModule(perms, allSelected) }}
                           >
                             {allSelected ? 'Remover todos' : 'Selecionar todos'}
                           </button>
                         </summary>
 
-                        {/* Checkbox list */}
-                        <div
-                          style={{
-                            padding: 'var(--spacing-sm) var(--spacing-md) var(--spacing-md)',
-                            borderTop: '1px solid var(--border-color)',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 'var(--spacing-sm)',
-                          }}
-                        >
-                          {perms.map(p => (
-                            <label
-                              key={p.id}
-                              style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)', cursor: 'pointer', fontSize: '0.875rem' }}
-                            >
-                              <input
-                                type="checkbox"
-                                className="checkbox checkbox-sm"
-                                checked={selectedPermissions.includes(p.id)}
-                                onChange={(e) => togglePermission(p.id, e.target.checked)}
-                              />
-                              <span style={{ color: 'var(--text-primary)' }}>{p.description}</span>
-                            </label>
-                          ))}
+                        <div className="flex flex-col gap-3 p-5 border-t border-white/10 bg-black/10">
+                          {perms.map(p => {
+                            const isChecked = selectedPermissions.includes(p.id)
+                            return (
+                              <label key={p.id} className="flex items-center gap-3 cursor-pointer group">
+                                <div className="relative flex items-center justify-center">
+                                  {/* CHECKBOX CUSTOMIZADO E SINCRONIZADO */}
+                                  <input
+                                    type="checkbox"
+                                    className="peer appearance-none w-5 h-5 border border-white/20 rounded bg-black/40 transition-all cursor-pointer"
+                                    style={{ 
+                                      backgroundColor: isChecked ? 'var(--primary-color)' : '', 
+                                      borderColor: isChecked ? 'var(--primary-color)' : '' 
+                                    }}
+                                    checked={isChecked}
+                                    onChange={(e) => togglePermission(p.id, e.target.checked)}
+                                  />
+                                  <svg className="absolute w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1 5L4.5 8.5L13 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                  </svg>
+                                </div>
+                                <span className="text-sm text-gray-300 group-hover:text-white transition-colors">{p.description}</span>
+                              </label>
+                            )
+                          })}
                         </div>
                       </details>
                     )
@@ -212,68 +198,75 @@ export default function RoleManager({
                 </div>
               </div>
 
-              <div className="flex items-center gap-2" style={{ marginTop: 'var(--spacing-lg)' }}>
-                <button type="submit" className="btn btn-primary" disabled={loading}>
-                  {loading ? 'Salvando...' : 'Salvar'}
+              <div className="flex gap-3 mt-8 pt-6 border-t border-white/10">
+                <button type="submit" className="btn-primary !rounded-lg px-8 py-2" disabled={loading}>
+                  {loading ? 'Salvando...' : 'Salvar Função'}
                 </button>
-                <button type="button" className="btn btn-secondary" onClick={cancelAction}>
+                <button type="button" className="px-6 py-2 rounded-lg font-medium text-[var(--text-muted)] hover:text-white hover:bg-white/5 transition-all border border-transparent hover:border-white/10" onClick={cancelAction}>
                   Cancelar
                 </button>
-              </div>
               </div>
             </div>
           </form>
         )}
 
-        {/* Roles table */}
         {!isAdding && !editingRole && (
-          <div className="table-responsive">
-            <table className="table table-hover data-table">
-              <thead>
-                <tr>
-                  <th>Função</th>
-                  <th style={{ textAlign: 'center' }}>Permissões</th>
-                  <th style={{ textAlign: 'right' }}>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {initialRoles.map((r) => {
-                  const isDefault = ['ADMINISTRADOR', 'TESOUREIRO', 'VISUALIZADOR'].includes(r.nome)
-                  return (
-                    <tr key={r.id}>
-                      <td style={{ fontWeight: 600 }}>{r.nome}</td>
-                      <td style={{ textAlign: 'center' }}>
-                        {isDefault ? (
-                          <span className="badge badge-soft badge-neutral text-xs">Acesso Padrão</span>
-                        ) : (
-                          <span className="badge badge-soft badge-neutral text-xs">
-                            {r.permissions?.length || 0} permissão(ões)
-                          </span>
-                        )}
-                      </td>
-                      <td style={{ textAlign: 'right' }}>
-                        <div className="flex items-center gap-2 justify-end">
-                          <button className="btn btn-soft btn-primary btn-sm" onClick={() => handleEdit(r)}>
-                            Editar
-                          </button>
-                          <button
-                            className="btn btn-soft btn-error btn-sm"
-                            onClick={() => handleDelete(r.id, r.nome)}
-                            disabled={isDefault}
-                          >
-                            Excluir
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+          <div className="card-glass overflow-hidden rounded-2xl border border-white/10">
+            <div className="table-responsive">
+              <table className="table table-hover data-table w-full">
+                <thead>
+                  <tr>
+                    <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]">Função</th>
+                    <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]" style={{ textAlign: 'center' }}>Permissões</th>
+                    <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]" style={{ textAlign: 'right' }}>Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {initialRoles.map((r) => {
+                    const isDefault = ['ADMINISTRADOR', 'TESOUREIRO', 'VISUALIZADOR'].includes(r.nome)
+                    return (
+                      <tr key={r.id} className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
+                        <td className="font-semibold text-white">{r.nome}</td>
+                        <td style={{ textAlign: 'center' }}>
+                          {isDefault ? (
+                            <span className="px-3 py-1 rounded-full bg-white/10 text-gray-300 text-xs font-medium border border-white/10">Acesso Padrão</span>
+                          ) : (
+                            <span className="px-3 py-1 rounded-full text-xs font-medium border"
+                                  style={{ backgroundColor: 'var(--primary-soft)', color: 'var(--primary-color)', borderColor: 'var(--border-tint)' }}>
+                              {r.permissions?.length || 0} permissões
+                            </span>
+                          )}
+                        </td>
+                        <td style={{ textAlign: 'right' }}>
+                          <div className="flex items-center gap-2 justify-end">
+                            <button className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors" style={{ color: 'var(--primary-color)' }} onClick={() => handleEdit(r)}>
+                              Editar
+                            </button>
+                            <button
+                              className="px-3 py-1.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
+                              onClick={() => handleDelete(r.id, r.nome)}
+                              disabled={isDefault}
+                            >
+                              Excluir
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
 
       </div>
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   )
 }

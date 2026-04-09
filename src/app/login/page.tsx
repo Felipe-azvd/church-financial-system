@@ -32,20 +32,20 @@ export default function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Luzes de fundo (Blobs) para dar o tom da imagem 3 */}
-      <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-[var(--primary-color)] opacity-[0.07] rounded-full blur-[100px] -translate-x-1/3 -translate-y-1/3 pointer-events-none"></div>
-      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[var(--primary-color)] opacity-[0.05] rounded-full blur-[100px] translate-x-1/3 translate-y-1/3 pointer-events-none"></div>
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[var(--bg-page)] text-[var(--text-color)] transition-colors duration-500">
+      {/* Luzes de fundo sincronizadas com o tema */}
+      <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-[var(--primary-color)] opacity-[0.07] rounded-full blur-[100px] -translate-x-1/3 -translate-y-1/3 pointer-events-none transition-colors duration-500"></div>
+      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[var(--primary-color)] opacity-[0.05] rounded-full blur-[100px] translate-x-1/3 translate-y-1/3 pointer-events-none transition-colors duration-500"></div>
 
       <div className="w-full max-w-md relative z-10">
         {/* Cabeçalho */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2 text-white logo-glow">ChurchFin</h1>
+          <h1 className="text-3xl font-bold mb-2 text-[var(--primary-color)] drop-shadow-[0_0_15px_var(--primary-glow)] transition-colors duration-500">ChurchFin</h1>
           <p className="text-[var(--text-muted)]">Entre para acessar sua plataforma</p>
         </div>
 
-        {/* Formulário Principal */}
-        <div className="card-glass login-box-auth p-8 mb-6" style={{ padding: '2rem' }}>
+        {/* Formulário Principal - Fundo Sincronizado */}
+        <div className="rounded-2xl border border-[var(--border-tint)] bg-[var(--surface-tint)] p-8 mb-6 shadow-2xl backdrop-blur-md transition-colors duration-500">
           {error && (
             <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm text-center">
               {error}
@@ -60,7 +60,7 @@ export default function LoginForm() {
                 <input
                   id="email"
                   type="email"
-                  className="input-field w-full pl-10 py-3 rounded-lg text-sm"
+                  className="input-field w-full pl-10 py-3 rounded-lg text-sm bg-black/20 focus:border-[var(--primary-color)] transition-all"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -76,7 +76,7 @@ export default function LoginForm() {
                 <input
                   id="password"
                   type="password"
-                  className="input-field w-full pl-10 py-3 rounded-lg text-sm"
+                  className="input-field w-full pl-10 py-3 rounded-lg text-sm bg-black/20 focus:border-[var(--primary-color)] transition-all"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -93,7 +93,7 @@ export default function LoginForm() {
 
             <button 
               type="submit" 
-              className="btn btn-primary btn-glow h-12 w-full flex items-center justify-center gap-2 text-base rounded-lg"
+              className="btn-primary h-12 w-full flex items-center justify-center gap-2 text-base !rounded-lg"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -105,9 +105,9 @@ export default function LoginForm() {
           </form>
         </div>
 
-        {/* Bloco de Informação */}
-        <div className="!p-4 !bg-black/20 flex gap-3 items-start border border-white/20 rounded-2xl backdrop-blur-md">
-          <Info className="h-5 w-5 text-[var(--text-muted)] flex-shrink-0 mt-0.5" />
+        {/* Bloco de Informação - Sincronizado */}
+        <div className="!p-4 bg-[var(--surface-tint)] flex gap-3 items-start border border-[var(--border-tint)] rounded-2xl backdrop-blur-md transition-colors duration-500">
+          <Info className="h-5 w-5 text-[var(--primary-color)] flex-shrink-0 mt-0.5 transition-colors duration-500" />
           <div>
             <p className="text-sm font-medium text-white">Precisa de uma conta?</p>
             <p className="text-xs text-[var(--text-muted)] mt-1 leading-relaxed">

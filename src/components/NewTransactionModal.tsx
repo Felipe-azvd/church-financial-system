@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { createTransaction, updateTransaction } from '@/app/actions/finance'
-import { UploadCloud, FileText } from 'lucide-react'
+import { UploadCloud } from 'lucide-react'
 
 type Lookup = { id: string; nome: string; tipo?: string }
 
@@ -46,7 +46,6 @@ export default function NewTransactionModal({
   const [valorDisplay, setValorDisplay] = useState<string>('')
   const valorInputRef = useRef<HTMLInputElement>(null)
 
-  // Load initial data if editing, or reset if creating
   useEffect(() => {
     if (isOpen) {
       if (transaction) {
@@ -73,34 +72,22 @@ export default function NewTransactionModal({
   }, [isOpen, transaction])
 
   const normalize = (text: string) => {
-    return text
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
+    return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
   }
 
-  // 1. Cache/Precompute normalized categories and cultos
   const normalizedCategorias = useMemo(() => {
-    return lookups.categorias.map((c: any) => ({
-      ...c,
-      normalized: normalize(c.nome)
-    }))
+    return lookups.categorias.map((c: any) => ({ ...c, normalized: normalize(c.nome) }))
   }, [lookups.categorias])
 
   const normalizedCultos = useMemo(() => {
-    return lookups.cultos.map((c: any) => ({
-      ...c,
-      normalized: normalize(c.nome)
-    }))
+    return lookups.cultos.map((c: any) => ({ ...c, normalized: normalize(c.nome) }))
   }, [lookups.cultos])
 
   const parseQuickEntry = useCallback((text: string) => {
     if (!text.trim()) return
-
     const tokens = text.trim().split(/\s+/)
     if (tokens.length === 0) return
 
-    // Extract first number
     const numericTokenIndex = tokens.findIndex((t: string) => /^\d+(?:[.,]\d+)?$/.test(t))
     
     if (numericTokenIndex !== -1) {
@@ -121,11 +108,8 @@ export default function NewTransactionModal({
         if (catToken) {
           const normalizedToken = normalize(catToken)
           const validCats = normalizedCategorias.filter((c: any) => c.tipo === tipo || c.tipo === 'AMBOS')
-          
           let partialCat = validCats.find((c: any) => c.normalized.startsWith(normalizedToken))
-          if (!partialCat) {
-            partialCat = validCats.find((c: any) => c.normalized.includes(normalizedToken))
-          }
+          if (!partialCat) partialCat = validCats.find((c: any) => c.normalized.includes(normalizedToken))
 
           if (partialCat) {
             matchedCatId = partialCat.id
@@ -137,14 +121,11 @@ export default function NewTransactionModal({
         let matchedCultoId = ''
         let cultoTokenMatched = ''
 
-        // Search for culto in the tokens after the category token
         const potentialCultoTokens = remainingTokens.slice(1)
         for (const token of potentialCultoTokens) {
           const normalizedCultoToken = normalize(token)
           let partialCulto = normalizedCultos.find((c: any) => c.normalized.startsWith(normalizedCultoToken))
-          if (!partialCulto) {
-            partialCulto = normalizedCultos.find((c: any) => c.normalized.includes(normalizedCultoToken))
-          }
+          if (!partialCulto) partialCulto = normalizedCultos.find((c: any) => c.normalized.includes(normalizedCultoToken))
           
           if (partialCulto) {
             matchedCultoId = partialCulto.id
@@ -154,47 +135,24 @@ export default function NewTransactionModal({
         }
         setCultoId(matchedCultoId)
 
-        // Description becomes the remaining text, minus the matched tokens to keep it clean
         let descTokens = [...remainingTokens]
-        if (catTokenMatched) {
-          descTokens = descTokens.filter((t: string) => t !== catTokenMatched)
-        }
-        if (cultoTokenMatched) {
-          descTokens = descTokens.filter((t: string) => t !== cultoTokenMatched)
-        }
+        if (catTokenMatched) descTokens = descTokens.filter((t: string) => t !== catTokenMatched)
+        if (cultoTokenMatched) descTokens = descTokens.filter((t: string) => t !== cultoTokenMatched)
         setDescricao(descTokens.join(' '))
       }
     }
   }, [normalizedCategorias, normalizedCultos, tipo])
 
-  // 2. Parse Quick Entry instantly with debounce
-  const handleQuickEntry = useMemo(() => {
-    let timeout: NodeJS.Timeout
-    return (text: string) => {
-      clearTimeout(timeout)
-      timeout = setTimeout(() => {
-        parseQuickEntry(text)
-      }, 120)
-    }
-  }, [parseQuickEntry])
-
   const handleQuickEntrySubmit = () => {
     if (!valorRaw || valorRaw <= 0) return
-
     const form = document.getElementById('transaction-form') as HTMLFormElement
-    if (form) {
-      form.requestSubmit()
-    }
+    if (form) form.requestSubmit()
   }
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value)
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value)
   }
 
-  // Format value as local currency when typing
   const handleValorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, '')
     if (!value) {
@@ -207,18 +165,14 @@ export default function NewTransactionModal({
     setValorDisplay(formatCurrency(numericValue))
   }
 
-  // Handle ESC key to close
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose()
-      }
+      if (e.key === 'Escape' && isOpen) onClose()
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isOpen, onClose])
 
-  // Focus on the first input ("Valor") when modal opens
   useEffect(() => {
     if (isOpen && valorInputRef.current) {
       setTimeout(() => valorInputRef.current?.focus(), 50)
@@ -229,17 +183,11 @@ export default function NewTransactionModal({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    
-    if (valorRaw <= 0) {
-      setError('O valor deve ser maior que zero')
-      return
-    }
-
+    if (valorRaw <= 0) { setError('O valor deve ser maior que zero'); return }
     setLoading(true)
     setError('')
 
     const formData = new FormData(e.currentTarget)
-    
     try {
       const payload = {
         descricao: formData.get('descricao') as string,
@@ -250,19 +198,13 @@ export default function NewTransactionModal({
         culto_id: (tipo === 'ENTRADA') ? (formData.get('culto_id') as string || null) : null,
       }
       
-      if (onSaveOptimistic) {
-        onSaveOptimistic({ ...payload, id: transaction?.id })
-      }
+      if (onSaveOptimistic) onSaveOptimistic({ ...payload, id: transaction?.id })
 
       let res;
-      if (transaction) {
-        res = await updateTransaction(transaction.id, payload)
-      } else {
-        res = await createTransaction(payload)
-      }
+      if (transaction) res = await updateTransaction(transaction.id, payload)
+      else res = await createTransaction(payload)
 
       if (!res.success) throw new Error(res.error || 'Erro ao registrar lançamento')
-      
       setSuccessMsg(transaction ? '✓ Lançamento atualizado com sucesso' : '✓ Lançamento salvo com sucesso')
 
       setTimeout(() => {
@@ -270,37 +212,25 @@ export default function NewTransactionModal({
         onClose()
       }, 1000)
     } catch (err: any) {
-      if (onErrorRevert) {
-        onErrorRevert()
-      }
+      if (onErrorRevert) onErrorRevert()
       setError(err.message || 'Erro ao registrar lançamentos')
     } finally {
       setLoading(false)
     }
   }
 
-  // Common UI styles
   const modalOverlayStyle: React.CSSProperties = {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    width: '100vw',
-    height: '100vh',
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    backdropFilter: 'blur(4px)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 9999,
-    animation: 'fadeIn 0.2s ease-out'
+    position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(4px)',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    zIndex: 9999, animation: 'fadeIn 0.2s ease-out'
   }
 
   return (
     <div style={modalOverlayStyle} onClick={(e) => { if (e.target === e.currentTarget) onClose() }}>
       
-      {/* Container Principal: Fundo Sólido Premium Substituindo Vidro */}
-      <div className="bg-[#1a1f2b] border border-white/10 w-[90%] max-w-[500px] p-8 relative rounded-lg animate-[fadeIn_0.2s_ease-out] shadow-2xl">
-        
+      {/* CORREÇÃO: Fundo Sólido (bg-page) para o Modal */}
+        <div className="bg-[var(--bg-page)] border border-[var(--border-tint)] w-[95%] sm:w-[90%] max-w-[500px] p-5 sm:p-8 relative rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.6)] transition-colors duration-500 max-h-[95vh] overflow-y-auto">        
         <h2 className="text-xl font-semibold mb-6 text-white">
           {transaction ? 'Editar lançamento' : 'Novo lançamento'}
         </h2>
@@ -312,7 +242,7 @@ export default function NewTransactionModal({
           <label className="text-sm font-medium text-[var(--text-color)]">Entrada rápida</label>
           <input 
             type="text" 
-            className="input-field bg-black/20 focus:border-[#3b82f6] transition-all text-white" 
+            className="input-field bg-black/20 focus:border-[var(--primary-color)] transition-all text-white" 
             placeholder="Ex: 50 oferta" 
             value={quickEntry}
             onChange={(e) => setQuickEntry(e.target.value)}
@@ -321,9 +251,7 @@ export default function NewTransactionModal({
               if (e.key === 'Enter') {
                 e.preventDefault()
                 parseQuickEntry(quickEntry)
-                setTimeout(() => {
-                  handleQuickEntrySubmit()
-                }, 100)
+                setTimeout(() => handleQuickEntrySubmit(), 100)
               }
             }}
           />
@@ -348,8 +276,7 @@ export default function NewTransactionModal({
 
         <form id="transaction-form" onSubmit={handleSubmit} className="flex flex-col gap-5">
           
-          {/* Grid Coerente para Data e Valor (50/50) */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-2 col-span-1">
               <label className="text-sm font-medium text-[var(--text-color)]">Data</label>
               <input type="date" name="data" required className="input-field h-[42px] px-3 bg-black/20 text-white" value={dataString} onChange={e => setDataString(e.target.value)} />
@@ -375,26 +302,28 @@ export default function NewTransactionModal({
 
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium text-[var(--text-color)]">Descrição</label>
-            <input name="descricao" required className="input-field h-[42px] bg-black/20 text-white" placeholder="Ex: Oferta de Domingo, Conta de Luz..." value={descricao} onChange={e => setDescricao(e.target.value)} />
+            <input name="descricao" required className="input-field h-[42px] bg-black/20 text-white focus:border-[var(--primary-color)] transition-all" placeholder="Ex: Oferta de Domingo, Conta de Luz..." value={descricao} onChange={e => setDescricao(e.target.value)} />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium text-[var(--text-color)]">Categoria</label>
-              <select name="categoria_id" className="input-field h-[42px] bg-black/20 text-white" value={categoriaId} onChange={e => setCategoriaId(e.target.value)}>
-                <option value="">Nenhuma</option>
+              <select name="categoria_id" className="input-field h-[42px] bg-black/20 text-white focus:border-[var(--primary-color)] transition-all" value={categoriaId} onChange={e => setCategoriaId(e.target.value)}>
+                {/* CORREÇÃO: Forçando fundo sólido e texto branco nas opções */}
+                <option value="" className="bg-[var(--bg-page)] text-white">Nenhuma</option>
                 {lookups.categorias
                   .filter(c => c.tipo === tipo || c.tipo === 'AMBOS')
-                  .map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
+                  .map(c => <option key={c.id} value={c.id} className="bg-[var(--bg-page)] text-white">{c.nome}</option>)}
               </select>
             </div>
 
             {tipo === 'ENTRADA' && (
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-medium text-[var(--text-color)]">Culto (Opcional)</label>
-                <select name="culto_id" className="input-field h-[42px] bg-black/20 text-white" value={cultoId} onChange={e => setCultoId(e.target.value)}>
-                  <option value="">Nenhum</option>
-                  {lookups.cultos.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
+                <select name="culto_id" className="input-field h-[42px] bg-black/20 text-white focus:border-[var(--primary-color)] transition-all" value={cultoId} onChange={e => setCultoId(e.target.value)}>
+                  {/* CORREÇÃO AQUI TAMBÉM */}
+                  <option value="" className="bg-[var(--bg-page)] text-white">Nenhum</option>
+                  {lookups.cultos.map(c => <option key={c.id} value={c.id} className="bg-[var(--bg-page)] text-white">{c.nome}</option>)}
                 </select>
               </div>
             )}
@@ -402,12 +331,13 @@ export default function NewTransactionModal({
             {tipo === 'ENTRADA' && (
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-medium text-[var(--text-color)]">Pagamento</label>
-                <select name="payment_method" className="input-field h-[42px] bg-black/20 text-white">
-                  <option value="DINHEIRO">Dinheiro</option>
-                  <option value="PIX">PIX</option>
-                  <option value="CARTAO">Cartão</option>
-                  <option value="BOLETO">Boleto</option>
-                  <option value="TRANSFERENCIA">Transferência</option>
+                <select name="payment_method" className="input-field h-[42px] bg-black/20 text-white focus:border-[var(--primary-color)] transition-all">
+                  {/* CORREÇÃO AQUI TAMBÉM */}
+                  <option value="DINHEIRO" className="bg-[var(--bg-page)] text-white">Dinheiro</option>
+                  <option value="PIX" className="bg-[var(--bg-page)] text-white">PIX</option>
+                  <option value="CARTAO" className="bg-[var(--bg-page)] text-white">Cartão</option>
+                  <option value="BOLETO" className="bg-[var(--bg-page)] text-white">Boleto</option>
+                  <option value="TRANSFERENCIA" className="bg-[var(--bg-page)] text-white">Transferência</option>
                 </select>
               </div>
             )}
@@ -415,7 +345,7 @@ export default function NewTransactionModal({
             {tipo === 'SAIDA' && (
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-medium text-[var(--text-color)]">Responsável</label>
-                <input type="text" name="responsavel" className="input-field h-[42px] bg-black/20 text-white" placeholder="Nome" />
+                <input type="text" name="responsavel" className="input-field h-[42px] bg-black/20 text-white focus:border-[var(--primary-color)] transition-all" placeholder="Nome" />
               </div>
             )}
           </div>
@@ -425,8 +355,7 @@ export default function NewTransactionModal({
                 <label className="text-sm font-medium text-[var(--text-color)]">Comprovante</label>
                 <input type="file" name="comprovante" id="comprovante" className="sr-only" accept="image/*,.pdf" />
                 
-                {/* Quadro de Anexo Centralizado Verticalmente */}
-                <label htmlFor="comprovante" className="flex items-center justify-center h-[120px] rounded-lg border-2 border-dashed border-white/10 bg-black/20 cursor-pointer hover:border-[#3b82f6]/50 hover:bg-black/30 transition-all gap-4 px-6 text-center">
+                <label htmlFor="comprovante" className="flex items-center justify-center h-[120px] rounded-lg border-2 border-dashed border-white/10 bg-black/20 cursor-pointer hover:border-[var(--primary-color)] hover:bg-black/30 transition-all gap-4 px-6 text-center">
                     <UploadCloud className="h-10 w-10 text-[var(--text-muted)] flex-shrink-0" />
                     <div>
                         <p className="text-sm font-medium text-white">Clique ou arraste um arquivo para anexar...</p>
@@ -446,11 +375,11 @@ export default function NewTransactionModal({
             </button>
             <button 
               type="submit" 
-              className="btn-primary !rounded-lg !px-10 !py-2" // AJUSTE DE LARGURA (px-10) E ALTURA (py-2) AQUI
+              className="!rounded-lg !px-10 !py-2 font-semibold text-white transition-all duration-300" 
               disabled={loading} 
               style={{ 
                 backgroundColor: tipo === 'ENTRADA' ? '#10b981' : '#ef4444', 
-                borderColor: tipo === 'ENTRADA' ? '#10b981' : '#ef4444',
+                border: 'none',
                 boxShadow: tipo === 'ENTRADA' ? '0 0 15px rgba(16, 185, 129, 0.4)' : '0 0 15px rgba(239, 68, 68, 0.4)'
               }}
             >
@@ -459,6 +388,13 @@ export default function NewTransactionModal({
           </div>
         </form>
       </div>
+      
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   )
 }

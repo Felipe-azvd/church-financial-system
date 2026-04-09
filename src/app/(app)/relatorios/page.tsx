@@ -7,16 +7,17 @@ import IncomeByCulto from "@/components/reports/IncomeByCulto"
 import MonthlyEvolutionReport from "@/components/reports/MonthlyEvolutionReport"
 import { getFinancialSummary, getIncomeByCategory, getExpensesByCategory, getIncomeByCulto, getMonthlyEvolution, getMonthlyTotals } from "@/app/actions/finance"
 
-export default async function RelatoriosPage({
-  searchParams,
-}: {
-  searchParams: { ano?: string }
+export default async function RelatoriosPage({ 
+  searchParams 
+}: { 
+  searchParams: Promise<{ ano?: string }> 
 }) {
   const { db, tenantId, user } = await getTenantPrisma()
   
   await checkPermission('relatorios.visualizar')
 
-  const currentYear = searchParams.ano ? parseInt(searchParams.ano) : new Date().getFullYear()
+  const sp = await searchParams;
+  const currentYear = sp.ano ? parseInt(sp.ano) : new Date().getFullYear();
 
   const [summary, incomeByCategory, expensesByCategory, incomeByCulto, evolutionData, monthlyTotals] = await Promise.all([
     getFinancialSummary(currentYear),

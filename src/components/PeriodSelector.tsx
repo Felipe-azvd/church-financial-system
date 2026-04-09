@@ -21,12 +21,10 @@ export default function PeriodSelector() {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  // Sincroniza com a URL
   useEffect(() => {
     setValue(currentFilter)
   }, [currentFilter])
 
-  // Lógica para fechar o dropdown ao clicar fora dele
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -39,13 +37,12 @@ export default function PeriodSelector() {
 
   const handleChange = (newValue: string) => {
     setValue(newValue)
-    setIsOpen(false) // Fecha o menu ao selecionar
+    setIsOpen(false)
     const params = new URLSearchParams(searchParams.toString())
     params.set('filter', newValue)
     router.push(`/dashboard?${params.toString()}`)
   }
 
-  // Only render on dashboard
   if (!pathname.startsWith('/dashboard')) return null
 
   const selectedLabel = PERIOD_OPTIONS.find(opt => opt.value === value)?.label || 'Selecione'
@@ -56,14 +53,12 @@ export default function PeriodSelector() {
         Período:
       </label>
       
-      {/* Container Relativo para ancorar o Dropdown */}
       <div className="relative">
-        
-        {/* Botão Gatilho Sólido (Sem efeito vidro) */}
+        {/* Botão Sólido usando bg-page */}
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center justify-between gap-3 bg-[#1a1f2b] border border-white/10 text-white rounded-lg hover:border-[#3b82f6] transition-all outline-none"
+          className="flex items-center justify-between gap-3 bg-[var(--bg-page)] border border-[var(--border-tint)] text-white rounded-lg hover:border-[var(--primary-color)] transition-all outline-none shadow-md"
           style={{ height: '42px', minWidth: '160px', padding: '0 1rem', fontSize: '0.95rem' }}
         >
           <span className="flex-1 text-center font-medium">{selectedLabel}</span>
@@ -73,22 +68,26 @@ export default function PeriodSelector() {
           />
         </button>
 
-        {/* Menu Flutuante de Opções (Fundo Sólido) */}
+        {/* Menu Flutuante Sólido usando bg-page */}
         {isOpen && (
-          <div className="absolute top-full left-0 mt-2 w-full bg-[#1a1f2b] border border-white/10 rounded-lg shadow-2xl overflow-hidden z-50 animate-[fadeIn_0.1s_ease-out]">
-            {PERIOD_OPTIONS.map(opt => (
-              <button
-                key={opt.value}
-                onClick={() => handleChange(opt.value)}
-                className={`w-full block text-center px-4 py-3 text-[0.95rem] font-medium transition-colors ${
-                  value === opt.value
-                    ? 'bg-blue-500/10 text-blue-400' 
-                    : 'text-gray-300 hover:bg-white/5 hover:text-white'
-                }`}
-              >
-                {opt.label}
-              </button>
-            ))}
+          <div className="absolute top-full left-0 mt-2 w-full bg-[var(--bg-page)] border border-[var(--border-tint)] rounded-lg shadow-2xl overflow-hidden z-50 animate-[fadeIn_0.1s_ease-out]">
+            {PERIOD_OPTIONS.map(opt => {
+              const isSelected = value === opt.value
+              return (
+                <button
+                  key={opt.value}
+                  onClick={() => handleChange(opt.value)}
+                  className={`w-full block text-center px-4 py-3 text-[0.95rem] font-medium transition-colors ${
+                    isSelected
+                      ? 'text-[var(--primary-color)]' 
+                      : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                  }`}
+                  style={{ backgroundColor: isSelected ? 'var(--primary-soft)' : 'transparent' }}
+                >
+                  {opt.label}
+                </button>
+              )
+            })}
           </div>
         )}
       </div>
