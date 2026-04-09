@@ -114,40 +114,40 @@ export default function TransactionList({
     return { ...t, balance: currentBalance }
   })
 
-  // Optionally show newest first after cumulative processing
   const displayTransactions = [...transactionsWithBalance].reverse()
 
   const renderTimeline = () => {
     return (
-      <div>
+      <div className="w-full">
         <h2 className="text-lg font-semibold mb-3">
           Extrato Financeiro
         </h2>
-        <div className="card w-full overflow-hidden max-h-[420px] overflow-y-auto">
-          <div className="w-full overflow-x-auto rounded-xl border border-[var(--border-tint)] bg-[var(--surface-tint)]">
-            <table className="table table-hover data-table w-full min-w-[700px]">
+        {/* CORREÇÃO 1: Fundo responsivo e rolagem para a tabela não estourar a tela */}
+        <div className="w-full overflow-hidden max-h-[500px] overflow-y-auto rounded-2xl border border-[var(--border-tint)] bg-[var(--surface-tint)] shadow-sm">
+          <div className="w-full overflow-x-auto">
+            <table className="table table-hover data-table w-full min-w-[800px]">
               <thead>
                 <tr>
-                  <th>Data</th>
-                  <th>Descrição</th>
-                  <th>Categoria</th>
-                  <th>Culto</th>
-                  <th style={{ textAlign: 'center' }}>Tipo</th>
-                  <th style={{ textAlign: 'right' }}>Valor</th>
-                  <th style={{ textAlign: 'right' }}>Saldo Corrente</th>
-                  {canAct && <th style={{ textAlign: 'center' }}>Ações</th>}
+                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]">Data</th>
+                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]">Descrição</th>
+                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]">Categoria</th>
+                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]">Culto</th>
+                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]" style={{ textAlign: 'center' }}>Tipo</th>
+                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]" style={{ textAlign: 'right' }}>Valor</th>
+                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]" style={{ textAlign: 'right' }}>Saldo Corrente</th>
+                  {canAct && <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]" style={{ textAlign: 'center' }}>Ações</th>}
                 </tr>
               </thead>
               <tbody>
                 {displayTransactions.length === 0 ? (
                   <tr>
-                    <td colSpan={canAct ? 8 : 7} style={{ textAlign: 'center', padding: 'var(--spacing-2xl) 0' }}>
-                      <p style={{ color: 'var(--text-muted)', fontWeight: 500, marginBottom: 'var(--spacing-md)', paddingBottom:'1.1%'  }}>Nenhum lançamento encontrado neste período.</p>
-                      
+                    <td colSpan={canAct ? 8 : 7} style={{ textAlign: 'center', padding: '3rem 1rem' }}>
+                      <p className="text-[var(--text-muted)] font-medium mb-4">Nenhum lançamento encontrado neste período.</p>
                       {canCreate && (
-                        
-                        <button className="btn btn-secondary btn-sm" onClick={() => setIsNewModalOpen(true)}>
-                          <Plus size={16} /> Adicione um lançamento para começar
+                        <button className="btn-primary !rounded-lg px-4 py-2" onClick={() => setIsNewModalOpen(true)}>
+                          <span className="flex items-center gap-2">
+                            <Plus size={16} /> Adicione um lançamento para começar
+                          </span>
                         </button>
                       )}
                     </td>
@@ -157,42 +157,42 @@ export default function TransactionList({
                     const isEntrada = t.tipo === 'ENTRADA'
                     const color = isEntrada ? 'var(--success)' : 'var(--danger)'
                     return (
-                      <tr key={t.id}>
-                        <td>{new Date(t.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</td>
-                        <td>{t.descricao}</td>
-                        <td>{t.categoria?.nome || '-'}</td>
-                        <td>{t.culto?.nome || '-'}</td>
+                      <tr key={t.id} className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
+                        <td className="text-white whitespace-nowrap">{new Date(t.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</td>
+                        <td className="font-semibold text-white">{t.descricao}</td>
+                        <td className="text-[var(--text-muted)]">{t.categoria?.nome || '-'}</td>
+                        <td className="text-[var(--text-muted)]">{t.culto?.nome || '-'}</td>
                         <td style={{ textAlign: 'center' }}>
-                          <span 
-                            className={`badge badge-soft ${isEntrada ? 'badge-success' : 'badge-error'}`}
+                          <span className="px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium border"
+                            style={{ 
+                              backgroundColor: isEntrada ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                              color: isEntrada ? '#10b981' : '#ef4444',
+                              borderColor: isEntrada ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)'
+                            }}
                           >
                             {isEntrada ? 'Entrada' : 'Saída'}
                           </span>
                         </td>
-                        <td style={{ textAlign: 'right', fontWeight: 600, color }}>
+                        <td style={{ textAlign: 'right', fontWeight: 600, color, whiteSpace: 'nowrap' }}>
                           {isEntrada ? '+' : '-'} R$ {t.valor.toFixed(2).replace('.', ',')}
                         </td>
-                        <td style={{ textAlign: 'right', fontWeight: 600, color: 'var(--text-primary)' }}>
+                        <td style={{ textAlign: 'right', fontWeight: 600, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>
                           R$ {t.balance.toFixed(2).replace('.', ',')}
                         </td>
                         {canAct && (
                           <td style={{ textAlign: 'center' }}>
-                            {canEdit && (
-                              <button 
-                                className="btn btn-soft btn-primary btn-sm" 
-                                onClick={() => setEditingTx(t)}
-                              >
-                                Editar
-                              </button>
-                            )}
-                            {canDelete && (
-                              <button 
-                                className="btn btn-soft btn-error btn-sm"
-                                onClick={() => handleDelete(t.id)}
-                              >
-                                Excluir
-                              </button>
-                            )}
+                            <div className="flex items-center gap-2 justify-center">
+                              {canEdit && (
+                                <button className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors hover:bg-white/10" style={{ color: 'var(--primary-color)' }} onClick={() => setEditingTx(t)}>
+                                  Editar
+                                </button>
+                              )}
+                              {canDelete && (
+                                <button className="px-3 py-1.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors" onClick={() => handleDelete(t.id)}>
+                                  Excluir
+                                </button>
+                              )}
+                            </div>
                           </td>
                         )}
                       </tr>
@@ -208,17 +208,20 @@ export default function TransactionList({
   }
 
   return (
-    <>
-      <div className="flex items-center justify-between mb-8">
+    <div className="w-full">
+      {/* CORREÇÃO 2: Cabeçalho Empilhável (flex-col sm:flex-row) */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 w-full">
         <div>
-          <h1 className="text-2xl font-semibold mb-3">Lançamentos</h1>
-          <p className="text-xs opacity-70" style={{ margin: 'var(--space-1) 0 0 0' }}>Registro e acompanhamento de transações financeiras</p>
+          <h1 className="text-2xl font-semibold mb-1">Lançamentos</h1>
+          <p className="text-xs opacity-70">Registro e acompanhamento de transações financeiras</p>
         </div>
-        <div className="flex items-center gap-3">
+        
+        {/* Agrupamento dos controles: Seletor de mês e botão alinham juntos */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
           {headerSlot}
           {canCreate && (
-            <button className="btn btn-primary !rounded-lg" onClick={() => setIsNewModalOpen(true)}>
-              <Plus size={20} /> Novo lançamento
+            <button className="btn-primary !rounded-lg flex items-center justify-center gap-2 px-4 py-2 w-full sm:w-auto whitespace-nowrap" onClick={() => setIsNewModalOpen(true)}>
+              <Plus size={20} /> <span className="hidden sm:inline">Novo lançamento</span><span className="sm:hidden">Lançamento</span>
             </button>
           )}
         </div>
@@ -250,9 +253,9 @@ export default function TransactionList({
         onSaveOptimistic={(tx) => handleUpdateOptimistic(tx, false)}
         onErrorRevert={() => setOptimisticTxs(allDbTransactions)}
       />
-      <div style={{ paddingBottom: 'var(--spacing-2xl)' }}>
+      <div className="w-full pb-8">
         {renderTimeline()}
       </div>
-    </>
+    </div>
   )
 }

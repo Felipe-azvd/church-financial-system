@@ -83,14 +83,15 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
 
   return (
     <>
-      <div className="flex items-center justify-between mb-8">
+      {/* CORREÇÃO AQUI: flex-col no mobile, sm:flex-row no desktop */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-semibold mb-3 text-white">Usuários</h1>
+          <h1 className="text-2xl font-semibold mb-1 text-white">Usuários</h1>
           <p className="text-xs text-[var(--text-muted)]">Gerencie os usuários e seus acessos</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center w-full sm:w-auto">
           {(!isAdding && !editingUser) && (
-            <button className="btn-primary !rounded-lg px-4 py-2" onClick={() => setIsAdding(true)}>+ Novo Usuário</button>
+            <button className="btn-primary !rounded-lg px-4 py-2 w-full sm:w-auto" onClick={() => setIsAdding(true)}>+ Novo Usuário</button>
           )}
         </div>
       </div>
@@ -122,7 +123,6 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
             <div className="flex flex-col gap-2 bg-black/20 p-4 rounded-xl border border-white/5">
               <label className="text-sm font-medium text-[var(--text-color)]">Cargo / Função</label>
               
-              {/* Dropdown Customizado (Substitui o antigo Select Nativo) */}
               <div className="relative" ref={roleDropdownRef}>
                 <button
                   type="button"
@@ -134,7 +134,6 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
                   <ChevronDown size={16} className={`text-[var(--text-muted)] transition-transform duration-200 ${roleDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
 
-                {/* CORREÇÃO: Fundo Sólido (bg-page) para não virar vidro */}
                 {roleDropdownOpen && (
                   <div className="absolute top-full left-0 mt-2 w-full bg-[var(--bg-page)] border border-[var(--border-tint)] rounded-lg shadow-2xl overflow-hidden z-50 animate-[fadeIn_0.1s_ease-out]">
                     {initialRoles.map(r => {
@@ -170,52 +169,50 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
         </form>
       )}
 
+      {/* CORREÇÃO AQUI: Tabela responsiva com rolagem horizontal */}
       {(!isAdding && !editingUser) && (
-        <div className="card-glass overflow-hidden rounded-2xl border border-white/10 max-h-[500px] overflow-y-auto">
-          <div className="table-responsive">
-            <table className="table table-hover data-table w-full">
-              <thead>
+        <div className="w-full overflow-x-auto rounded-2xl border border-[var(--border-tint)] bg-[var(--surface-tint)] shadow-sm max-h-[500px] overflow-y-auto">
+          <table className="table table-hover data-table w-full min-w-[700px]">
+            <thead>
+              <tr>
+                <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]">Nome</th>
+                <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]">Email</th>
+                <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]">Perfil</th>
+                <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]" style={{ textAlign: 'right' }}>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {initialUsers.length === 0 ? (
                 <tr>
-                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]">Nome</th>
-                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]">Email</th>
-                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]">Perfil</th>
-                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]" style={{ textAlign: 'right' }}>Ações</th>
+                  <td colSpan={4} style={{ textAlign: 'center', padding: 'var(--spacing-2xl) 0' }}>
+                    <p style={{ color: 'var(--text-muted)', fontWeight: 500, marginBottom: 'var(--spacing-xl)', paddingBottom:"1.1%" }}>Nenhum usuário encontrado no sistema.</p>
+                    <button className="btn btn-secondary !rounded-lg px-4 py-2 text-sm" onClick={() => setIsAdding(true)}>
+                      Adicione um usuário para começar
+                    </button>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {initialUsers.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} style={{ textAlign: 'center', padding: 'var(--spacing-2xl) 0' }}>
-                      <p style={{ color: 'var(--text-muted)', fontWeight: 500, marginBottom: 'var(--spacing-xl)', paddingBottom:"1.1%" }}>Nenhum usuário encontrado no sistema.</p>
-                      <button className="btn btn-secondary !rounded-lg px-4 py-2 text-sm" onClick={() => setIsAdding(true)}>
-                        Adicione um usuário para começar
-                      </button>
+              ) : (
+                initialUsers.map((u) => (
+                  <tr key={u.id} className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
+                    <td className="font-semibold text-white">{u.nome}</td>
+                    <td style={{ color: 'var(--text-secondary)' }}>{u.email}</td>
+                    <td>
+                      <span className="px-3 py-1 rounded-full text-xs font-medium border"
+                            style={{ backgroundColor: 'var(--primary-soft)', color: 'var(--primary-color)', borderColor: 'var(--border-tint)' }}>
+                        {u.role_nome.toUpperCase()}
+                      </span>
+                    </td>
+                    <td style={{ textAlign: 'right' }}>
+                      <div className="flex items-center gap-2 justify-end">
+                        <button onClick={() => setEditingUser(u)} className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors" style={{ color: 'var(--primary-color)' }}>Editar</button>
+                        <button onClick={() => handleDelete(u.id)} className="px-3 py-1.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors">Excluir</button>
+                      </div>
                     </td>
                   </tr>
-                ) : (
-                  initialUsers.map((u) => (
-                    <tr key={u.id} className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
-                      <td className="font-semibold text-white">{u.nome}</td>
-                      <td style={{ color: 'var(--text-secondary)' }}>{u.email}</td>
-                      <td>
-                        {/* BADGES DOS USUÁRIOS SINCRONIZADAS */}
-                        <span className="px-3 py-1 rounded-full text-xs font-medium border"
-                              style={{ backgroundColor: 'var(--primary-soft)', color: 'var(--primary-color)', borderColor: 'var(--border-tint)' }}>
-                          {u.role_nome.toUpperCase()}
-                        </span>
-                      </td>
-                      <td style={{ textAlign: 'right' }}>
-                        <div className="flex items-center gap-2 justify-end">
-                          <button onClick={() => setEditingUser(u)} className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors" style={{ color: 'var(--primary-color)' }}>Editar</button>
-                          <button onClick={() => handleDelete(u.id)} className="px-3 py-1.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors">Excluir</button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       )}
       <style>{`
