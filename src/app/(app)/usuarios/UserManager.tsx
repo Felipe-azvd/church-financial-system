@@ -49,11 +49,22 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
     }
 
     try {
+      let res;
       if (editingUser) {
-        await updateUser(editingUser.id, data)
+        res = await updateUser(editingUser.id, data)
+      } else {
+        res = await createUser(data)
+      }
+
+      // Se a resposta vier com success: false, disparamos a mensagem de erro para a caixinha vermelha!
+      if (res && !res.success) {
+        throw new Error(res.error)
+      }
+
+      // Se deu tudo certo, limpamos a tela
+      if (editingUser) {
         setEditingUser(null)
       } else {
-        await createUser(data)
         setIsAdding(false)
       }
     } catch (err: any) {
@@ -66,7 +77,10 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
   const handleDelete = async (id: string) => {
     if (confirm('Tem certeza que deseja excluir permanentemente este usuário?')) {
       try {
-        await deleteUser(id)
+        const res = await deleteUser(id)
+        if (res && !res.success) {
+          throw new Error(res.error)
+        }
       } catch (err: any) {
         alert(err.message || 'Não foi possível excluir o usuário permanentemente.')
       }

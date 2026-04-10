@@ -5,9 +5,13 @@ import ThemeProvider from '@/components/ThemeProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
+// AQUI: Injetamos o Favicon e o Slogan Oficial!
 export const metadata: Metadata = {
-  title: 'Church Financial System',
-  description: 'Gestão Financeira para Igrejas',
+  title: 'ChurchFin | Inovação com propósito',
+  description: 'Gestão inteligente para igrejas modernas',
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({
