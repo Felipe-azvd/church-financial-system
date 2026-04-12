@@ -38,10 +38,10 @@ export default function LoginForm() {
       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[var(--primary-color)] opacity-[0.05] rounded-full blur-[100px] translate-x-1/3 translate-y-1/3 pointer-events-none transition-colors duration-500"></div>
 
       <div className="w-full max-w-md relative z-10">
-        {/* Cabeçalho */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2 text-[var(--primary-color)] drop-shadow-[0_0_15px_var(--primary-glow)] transition-colors duration-500">ChurchFin</h1>
-          <p className="text-[var(--text-muted)]">Entre para acessar sua plataforma</p>
+        {/* Cabeçalho com Logo PNG */}
+        <div className="text-center mb-10 flex flex-col items-center">
+          <img src="/logo-c.png" alt="ChurchFin Logo" className="w-[280px] h-auto object-contain drop-shadow-[0_0_15px_var(--primary-glow)] transition-all duration-500 mb-3" />
+          <p className="text-[var(--text-muted)] mt-2">Inovação com propósito.</p>
         </div>
 
         {/* Formulário Principal - Fundo Sincronizado */}

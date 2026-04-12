@@ -58,11 +58,11 @@ export default function Sidebar({ userPermissions = [], userName = '' }: { userP
         } ${isCollapsed ? 'md:w-20 md:px-3' : 'w-64 px-5'}`}
         style={{ paddingBottom: '2rem', paddingTop: '2rem' }}
       >
-        {/* Header do Menu (Logo e Botão Fechar Mobile) */}
+        {/* Header do Menu (Logo PNG) */}
         <div className={`mb-10 flex items-center h-8 transition-all duration-300 ${isCollapsed ? 'md:justify-center' : 'justify-between'}`}>
-          <span className="text-2xl font-bold logo-glow whitespace-nowrap overflow-hidden" style={{ color: 'var(--primary-color)' }}>
-            {isCollapsed ? <span className="hidden md:inline">C</span> : 'ChurchFin'}
-          </span>
+          <div className="flex items-center gap-3 overflow-hidden">
+            <img src="/logo-c.png" alt="ChurchFin Logo" className={`h-auto object-contain flex-shrink-0 transition-all duration-300 ease-in-out ${isCollapsed ? 'md:w-0 md:opacity-0' : 'w-[160px] opacity-100'}`} />
+          </div>
           <button className="md:hidden p-1 text-[var(--text-muted)] hover:text-white" onClick={() => setIsMobileOpen(false)}>
             <X className="w-6 h-6" />
           </button>

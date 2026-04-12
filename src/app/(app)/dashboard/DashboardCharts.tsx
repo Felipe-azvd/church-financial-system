@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { 
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, 
   LineChart, Line, XAxis, YAxis, CartesianGrid, 
@@ -32,6 +33,15 @@ export default function DashboardCharts({
   barCultoData: ChartData[]
   insightsSlot?: React.ReactNode
 }) {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   const formatCurrency = (value: number) => `R$ ${value.toFixed(2).replace('.', ',')}`
   const tooltipStyle = { 
     borderRadius: 'var(--radius-md)', 
@@ -77,9 +87,9 @@ export default function DashboardCharts({
         <div className="card-body">
           {chartHeader('Evolução Financeira')}
           {monthlyEvolutionData.length === 0 ? emptyState : (
-            <div className="w-full h-[320px]">
+            <div className="w-full min-w-0 overflow-hidden h-[320px]">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={monthlyEvolutionData} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
+                <LineChart data={monthlyEvolutionData} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
                   <XAxis dataKey="month" stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
                   <YAxis stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `R$${val}`} width={80} />
@@ -108,7 +118,7 @@ export default function DashboardCharts({
           <div className="card-body">
             {chartHeader('Entradas por Categoria')}
             {pieEntradasData.length === 0 ? emptyState : (
-              <div className="w-full h-[320px]">
+              <div className="w-full min-w-0 overflow-hidden h-[320px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie data={pieEntradasData} cx="50%" cy="50%" innerRadius={70} outerRadius={110} paddingAngle={2} dataKey="value">
@@ -117,7 +127,7 @@ export default function DashboardCharts({
                       ))}
                     </Pie>
                     <Tooltip formatter={(value: any) => formatCurrency(Number(value))} contentStyle={{ ...tooltipStyle, color: '#fff' }} itemStyle={{ color: '#fff' }} labelStyle={{ color: '#fff' }} />
-                    <Legend layout="vertical" verticalAlign="middle" align="right" formatter={(value, entry: any) => `${value} — ${formatCurrency(entry.payload.value)}`} />
+                    <Legend layout={isMobile ? 'horizontal' : 'vertical'} verticalAlign={isMobile ? 'bottom' : 'middle'} align={isMobile ? 'center' : 'right'} formatter={(value, entry: any) => `${value} — ${formatCurrency(entry.payload.value)}`} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
@@ -129,7 +139,7 @@ export default function DashboardCharts({
           <div className="card-body">
             {chartHeader('Despesas por Categoria')}
             {pieSaidasData.length === 0 ? emptyState : (
-              <div className="w-full h-[320px]">
+              <div className="w-full min-w-0 overflow-hidden h-[320px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie data={pieSaidasData} cx="50%" cy="50%" innerRadius={70} outerRadius={110} paddingAngle={2} dataKey="value">
@@ -138,7 +148,7 @@ export default function DashboardCharts({
                       ))}
                     </Pie>
                     <Tooltip formatter={(value: any) => formatCurrency(Number(value))} contentStyle={{ ...tooltipStyle, color: '#fff' }} itemStyle={{ color: '#fff' }} labelStyle={{ color: '#fff' }} />
-                    <Legend layout="vertical" verticalAlign="middle" align="right" formatter={(value, entry: any) => `${value} — ${formatCurrency(entry.payload.value)}`} />
+                    <Legend layout={isMobile ? 'horizontal' : 'vertical'} verticalAlign={isMobile ? 'bottom' : 'middle'} align={isMobile ? 'center' : 'right'} formatter={(value, entry: any) => `${value} — ${formatCurrency(entry.payload.value)}`} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
@@ -153,14 +163,14 @@ export default function DashboardCharts({
         <div className="card-body">
           {chartHeader('Entradas por Culto')}
           {barCultoData.length === 0 ? emptyState : (
-            <div className="w-full h-[320px]">
+            <div className="w-full min-w-0 overflow-hidden h-[320px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={barCultoData} margin={{ top: 30, right: 30, left: 20, bottom: 5 }}>
+                <BarChart data={barCultoData} margin={{ top: 30, right: 10, left: 0, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
                   <XAxis dataKey="name" stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
                   <YAxis stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `R$${val}`} width={80} />
                   <Tooltip formatter={(value: any) => formatCurrency(Number(value))} contentStyle={{ ...tooltipStyle, color: '#fff' }} itemStyle={{ color: '#fff' }} labelStyle={{ color: '#fff' }} cursor={{ fill: 'var(--bg-tertiary)' }} />
-                  <Bar dataKey="value" name="Entradas" radius={[4, 4, 0, 0]} label={{ position: 'top', fill: '#E2E8F0', fontWeight: 500, formatter: (val: any) => formatCurrency(Number(val)) }}>
+                  <Bar dataKey="value" name="Entradas" radius={[4, 4, 0, 0]}>
                     {barCultoData.map((_, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS_CULTO[index % COLORS_CULTO.length]} />
                     ))}

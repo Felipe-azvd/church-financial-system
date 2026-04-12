@@ -1,9 +1,15 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Sulphur_Point } from 'next/font/google';
 import './globals.css';
 import ThemeProvider from '@/components/ThemeProvider'; 
 
 const inter = Inter({ subsets: ['latin'] });
+const sulphurPoint = Sulphur_Point({
+  weight: ['400', '700'],
+  subsets: ['latin'],
+  variable: '--font-sulphur-point',
+  display: 'swap',
+});
 
 // AQUI: Injetamos o Favicon e o Slogan Oficial!
 export const metadata: Metadata = {
@@ -20,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
+    <html lang="pt-BR" suppressHydrationWarning className={sulphurPoint.variable}>
       <body className={inter.className}>
         <ThemeProvider>
           {/* Fundo dinâmico da página inteira (Pega no Login e no App) */}
