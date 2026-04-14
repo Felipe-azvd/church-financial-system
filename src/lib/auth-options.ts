@@ -54,6 +54,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
+        token.id = user.id; // 🔥 AQUI: Repassa o ID para o token
         token.igreja_id = (user as any).igreja_id;
         token.is_master = (user as any).is_master;
         token.role = (user as any).role;
@@ -63,6 +64,7 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (session.user) {
+        (session.user as any).id = token.id || token.sub; // 🔥 AQUI: Repassa o ID do token para a sessão do navegador
         (session.user as any).igreja_id = token.igreja_id;
         (session.user as any).is_master = token.is_master;
         (session.user as any).role = token.role;
