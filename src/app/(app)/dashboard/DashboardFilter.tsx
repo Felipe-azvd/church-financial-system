@@ -16,40 +16,72 @@ export default function DashboardFilter() {
     setCustomRange(currentFilter === 'custom')
   }, [currentFilter])
 
-  const handleFilterChange = (filter: string) => {
-    if (filter === 'custom') {
-      setCustomRange(true)
-      return
-    }
-    
-    setCustomRange(false)
-    const params = new URLSearchParams()
-    params.set('filter', filter)
-    router.push(`/dashboard?${params.toString()}`)
-  }
-
   const handleCustomSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
-    const params = new URLSearchParams()
+    const params = new URLSearchParams(searchParams)
     params.set('filter', 'custom')
     if (formData.get('inicio')) params.set('inicio', formData.get('inicio') as string)
     if (formData.get('fim')) params.set('fim', formData.get('fim') as string)
     router.push(`/dashboard?${params.toString()}`)
   }
 
+  const handleCancel = () => {
+    setCustomRange(false)
+    const params = new URLSearchParams(searchParams)
+    params.set('filter', 'mes') // Retorna para a visão mensal padrão
+    params.delete('inicio')
+    params.delete('fim')
+    router.push(`/dashboard?${params.toString()}`)
+  }
+
   if (!customRange) return null
 
   return (
-    <div className="card w-full mb-8">
-      <form onSubmit={handleCustomSubmit} className="card-body" style={{ display: 'flex', gap: 'var(--spacing-sm)', alignItems: 'center', flexWrap: 'wrap', flexDirection: 'row' }}>
-        <label className="input-label" style={{ marginBottom: 0 }}>De:</label>
-        <input type="date" name="inicio" defaultValue={inicio} required className="input-field" style={{ padding: 'var(--space-1) var(--space-2)', width: 'auto' }} />
-        <span style={{ color: 'var(--text-muted)' }}>até</span>
-        <input type="date" name="fim" defaultValue={fim} required className="input-field" style={{ padding: 'var(--space-1) var(--space-2)', width: 'auto' }} />
-        <button type="submit" className="btn btn-secondary" style={{ padding: 'var(--space-1) var(--space-2)', fontSize: 'var(--text-xs)' }}>Aplicar</button>
-        <button type="button" className="btn btn-secondary" style={{ padding: 'var(--space-1) var(--space-2)', fontSize: 'var(--text-xs)' }} onClick={() => setCustomRange(false)}>Cancelar</button>
-      </form>
-    </div>
+    <form 
+      onSubmit={handleCustomSubmit} 
+      className="flex flex-wrap items-center gap-3 ml-0 sm:ml-3 animate-in fade-in slide-in-from-right-4 duration-300"
+    >
+      {/* Campo Data Inicial */}
+      <div className="flex items-center gap-2">
+        <span className="text-sm font-medium text-[var(--text-muted)]">De:</span>
+        <input 
+          type="date" 
+          name="inicio"
+          defaultValue={inicio} 
+          required 
+          className="bg-black/20 border border-[var(--border-tint)] rounded-lg px-3 py-1.5 text-sm text-white outline-none focus:border-[#10b981] transition-all cursor-pointer [&::-webkit-calendar-picker-indicator]:invert" 
+        />
+      </div>
+
+      {/* Campo Data Final */}
+      <div className="flex items-center gap-2">
+        <span className="text-sm font-medium text-[var(--text-muted)]">Até:</span>
+        <input 
+          type="date" 
+          name="fim"
+          defaultValue={fim} 
+          required 
+          className="bg-black/20 border border-[var(--border-tint)] rounded-lg px-3 py-1.5 text-sm text-white outline-none focus:border-[#10b981] transition-all cursor-pointer [&::-webkit-calendar-picker-indicator]:invert" 
+        />
+      </div>
+
+      {/* Botões */}
+      <div className="flex items-center gap-2 ml-1">
+        <button 
+          type="button"
+          onClick={handleCancel}
+          className="bg-transparent border border-white/10 text-[var(--text-muted)] hover:bg-white/5 hover:text-white px-4 py-1.5 rounded-lg text-sm font-medium transition-all"
+        >
+          Cancelar
+        </button>
+        <button 
+          type="submit"
+          className="bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/30 hover:bg-[#10b981]/20 px-4 py-1.5 rounded-lg text-sm font-medium transition-all shadow-[0_0_10px_rgba(16,185,129,0.1)]"
+        >
+          Aplicar
+        </button>
+      </div>
+    </form>
   )
 }

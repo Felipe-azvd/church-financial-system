@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { createTransaction, updateTransaction } from '@/app/actions/finance'
-import { UploadCloud } from 'lucide-react'
+import { UploadCloud, ChevronDown } from 'lucide-react'
 
 type Lookup = { id: string; nome: string; tipo?: string }
 
@@ -14,6 +14,51 @@ export type TransactionEditData = {
   tipo: string
   categoria_id?: string | null
   culto_id?: string | null
+}
+
+// 🔥 COMPONENTE CUSTOMIZADO (Sem dependências externas)
+function CustomSelect({ value, onChange, options, placeholder = "Selecione" }: any) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const selectedLabel = options.find((o: any) => o.value === value)?.label;
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="input-field w-full h-[42px] px-3 bg-black/20 text-white focus:border-[var(--primary-color)] transition-all flex items-center justify-between text-left border border-white/5"
+      >
+        <span className={selectedLabel ? "text-white" : "text-[var(--text-muted)]"}>
+          {selectedLabel || placeholder}
+        </span>
+        <ChevronDown className={`w-4 h-4 text-[var(--text-muted)] transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+
+      {open && (
+        <div className="absolute z-[9999] w-full mt-1 bg-[var(--bg-page)] border border-white/10 rounded-lg shadow-2xl max-h-56 overflow-y-auto">
+          {options.map((opt: any) => (
+            <div
+              key={opt.value}
+              onClick={() => { onChange(opt.value); setOpen(false); }}
+              className={`px-4 py-2.5 cursor-pointer text-sm transition-colors ${value === opt.value ? 'bg-white/10 text-white font-medium' : 'text-[var(--text-muted)] hover:bg-white/5 hover:text-white'}`}
+            >
+              {opt.label}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function NewTransactionModal({
@@ -39,8 +84,9 @@ export default function NewTransactionModal({
   const [successMsg, setSuccessMsg] = useState('')
   const [quickEntry, setQuickEntry] = useState('')
   const [descricao, setDescricao] = useState('')
-  const [categoriaId, setCategoriaId] = useState('')
-  const [cultoId, setCultoId] = useState('')
+  const [categoriaId, setCategoriaId] = useState('none') 
+  const [cultoId, setCultoId] = useState('none') 
+  const [paymentMethod, setPaymentMethod] = useState('DINHEIRO') // Novo State
   const [dataString, setDataString] = useState(new Date().toISOString().split('T')[0])
   const [valorRaw, setValorRaw] = useState<number>(0)
   const [valorDisplay, setValorDisplay] = useState<string>('')
@@ -53,16 +99,17 @@ export default function NewTransactionModal({
         setValorRaw(transaction.valor)
         setValorDisplay(formatCurrency(transaction.valor))
         setDescricao(transaction.descricao)
-        setCategoriaId(transaction.categoria_id || '')
-        setCultoId(transaction.culto_id || '')
+        setCategoriaId(transaction.categoria_id || 'none')
+        setCultoId(transaction.culto_id || 'none')
         setDataString(transaction.data)
       } else {
         setTipo('ENTRADA')
         setValorRaw(0)
         setValorDisplay('')
         setDescricao('')
-        setCategoriaId('')
-        setCultoId('')
+        setCategoriaId('none')
+        setCultoId('none')
+        setPaymentMethod('DINHEIRO')
         setQuickEntry('')
         setDataString(new Date().toISOString().split('T')[0])
       }
@@ -101,7 +148,7 @@ export default function NewTransactionModal({
       const remainingTokens = tokens.filter((_: any, idx: number) => idx !== numericTokenIndex)
       
       if (remainingTokens.length > 0) {
-        let matchedCatId = ''
+        let matchedCatId = 'none'
         let catTokenMatched = ''
         
         const catToken = remainingTokens[0]
@@ -118,7 +165,7 @@ export default function NewTransactionModal({
         }
         setCategoriaId(matchedCatId)
 
-        let matchedCultoId = ''
+        let matchedCultoId = 'none'
         let cultoTokenMatched = ''
 
         const potentialCultoTokens = remainingTokens.slice(1)
@@ -188,14 +235,22 @@ export default function NewTransactionModal({
     setError('')
 
     const formData = new FormData(e.currentTarget)
+    
+    // Captura os valores dos inputs ocultos vinculados ao CustomSelect
+    const rawCat = formData.get('categoria_id') as string
+    const rawCulto = formData.get('culto_id') as string
+    
+    const finalCategoriaId = (!rawCat || rawCat === 'none') ? null : rawCat;
+    const finalCultoId = (!rawCulto || rawCulto === 'none') ? null : rawCulto;
+
     try {
       const payload = {
         descricao: formData.get('descricao') as string,
         valor: valorRaw,
         data: formData.get('data') as string,
         tipo: tipo,
-        categoria_id: formData.get('categoria_id') as string || null,
-        culto_id: (tipo === 'ENTRADA') ? (formData.get('culto_id') as string || null) : null,
+        categoria_id: finalCategoriaId,
+        culto_id: (tipo === 'ENTRADA') ? finalCultoId : null,
       }
       
       if (onSaveOptimistic) onSaveOptimistic({ ...payload, id: transaction?.id })
@@ -229,7 +284,6 @@ export default function NewTransactionModal({
   return (
     <div style={modalOverlayStyle} onClick={(e) => { if (e.target === e.currentTarget) onClose() }}>
       
-      {/* CORREÇÃO: Fundo Sólido (bg-page) para o Modal */}
         <div className="bg-[var(--bg-page)] border border-[var(--border-tint)] w-[95%] sm:w-[90%] max-w-[500px] p-5 sm:p-8 relative rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.6)] transition-colors duration-500 max-h-[95vh] overflow-y-auto">        
         <h2 className="text-xl font-semibold mb-6 text-white">
           {transaction ? 'Editar lançamento' : 'Novo lançamento'}
@@ -279,7 +333,15 @@ export default function NewTransactionModal({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-2 col-span-1">
               <label className="text-sm font-medium text-[var(--text-color)]">Data</label>
-              <input type="date" name="data" required className="input-field h-[42px] px-3 bg-black/20 text-white" value={dataString} onChange={e => setDataString(e.target.value)} />
+              {/* 🔥 CLASSE MAGICA INVERT ADICIONADA AQUI: */}
+              <input 
+                type="date" 
+                name="data" 
+                required 
+                className="input-field h-[42px] px-3 bg-black/20 text-white [&::-webkit-calendar-picker-indicator]:invert" 
+                value={dataString} 
+                onChange={e => setDataString(e.target.value)} 
+              />
             </div>
             
             <div className="flex flex-col gap-2 col-span-1">
@@ -308,37 +370,50 @@ export default function NewTransactionModal({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium text-[var(--text-color)]">Categoria</label>
-              <select name="categoria_id" className="input-field h-[42px] bg-black/20 text-white focus:border-[var(--primary-color)] transition-all" value={categoriaId} onChange={e => setCategoriaId(e.target.value)}>
-                {/* CORREÇÃO: Forçando fundo sólido e texto branco nas opções */}
-                <option value="" className="bg-[var(--bg-page)] text-white">Nenhuma</option>
-                {lookups.categorias
-                  .filter(c => c.tipo === tipo || c.tipo === 'AMBOS')
-                  .map(c => <option key={c.id} value={c.id} className="bg-[var(--bg-page)] text-white">{c.nome}</option>)}
-              </select>
+              <CustomSelect 
+                value={categoriaId} 
+                onChange={setCategoriaId} 
+                options={[
+                  { value: 'none', label: 'Nenhuma' },
+                  ...lookups.categorias
+                    .filter(c => c.tipo === tipo || c.tipo === 'AMBOS')
+                    .map(c => ({ value: c.id, label: c.nome }))
+                ]}
+              />
+              {/* Oculto, apenas para passar o valor no formData nativo do React */}
+              <input type="hidden" name="categoria_id" value={categoriaId} />
             </div>
 
             {tipo === 'ENTRADA' && (
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-medium text-[var(--text-color)]">Culto (Opcional)</label>
-                <select name="culto_id" className="input-field h-[42px] bg-black/20 text-white focus:border-[var(--primary-color)] transition-all" value={cultoId} onChange={e => setCultoId(e.target.value)}>
-                  {/* CORREÇÃO AQUI TAMBÉM */}
-                  <option value="" className="bg-[var(--bg-page)] text-white">Nenhum</option>
-                  {lookups.cultos.map(c => <option key={c.id} value={c.id} className="bg-[var(--bg-page)] text-white">{c.nome}</option>)}
-                </select>
+                <CustomSelect 
+                  value={cultoId} 
+                  onChange={setCultoId} 
+                  options={[
+                    { value: 'none', label: 'Nenhum' },
+                    ...lookups.cultos.map(c => ({ value: c.id, label: c.nome }))
+                  ]}
+                />
+                <input type="hidden" name="culto_id" value={cultoId} />
               </div>
             )}
 
             {tipo === 'ENTRADA' && (
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-medium text-[var(--text-color)]">Pagamento</label>
-                <select name="payment_method" className="input-field h-[42px] bg-black/20 text-white focus:border-[var(--primary-color)] transition-all">
-                  {/* CORREÇÃO AQUI TAMBÉM */}
-                  <option value="DINHEIRO" className="bg-[var(--bg-page)] text-white">Dinheiro</option>
-                  <option value="PIX" className="bg-[var(--bg-page)] text-white">PIX</option>
-                  <option value="CARTAO" className="bg-[var(--bg-page)] text-white">Cartão</option>
-                  <option value="BOLETO" className="bg-[var(--bg-page)] text-white">Boleto</option>
-                  <option value="TRANSFERENCIA" className="bg-[var(--bg-page)] text-white">Transferência</option>
-                </select>
+                <CustomSelect 
+                  value={paymentMethod} 
+                  onChange={setPaymentMethod} 
+                  options={[
+                    { value: 'DINHEIRO', label: 'Dinheiro' },
+                    { value: 'PIX', label: 'PIX' },
+                    { value: 'CARTAO', label: 'Cartão' },
+                    { value: 'BOLETO', label: 'Boleto' },
+                    { value: 'TRANSFERENCIA', label: 'Transferência' }
+                  ]}
+                />
+                <input type="hidden" name="payment_method" value={paymentMethod} />
               </div>
             )}
 
