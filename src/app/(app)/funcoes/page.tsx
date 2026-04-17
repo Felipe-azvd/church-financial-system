@@ -25,6 +25,7 @@ export default async function FuncoesPage() {
   }))
 
   const availablePermissions = await db.permission.findMany({
+    where: { key: { not: '*' } }, // 🔥 Impede que a permissão "Modo Deus" apareça na lista
     orderBy: { key: 'asc' }
   })
 

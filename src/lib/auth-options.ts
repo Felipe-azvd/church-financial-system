@@ -16,9 +16,20 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
+        // 🔥 AJUSTE 1: Agora ele puxa as permissões conectadas à função (Role) do usuário
         const user = await prisma.usuario.findUnique({
           where: { email: credentials.email },
-          include: { role: true }
+          include: { 
+            role: {
+              include: {
+                role_permissions: {
+                  include: {
+                    permission: true
+                  }
+                }
+              }
+            }
+          }
         })
 
         if (!user) {
@@ -34,9 +45,14 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
-        // Prepara a devolução do usuário
         const cargo = user.role?.nome || "MEMBRO";
         const isMaster = user.is_master === true; 
+        const isSuperAdmin = user.is_superadmin === true; // 🔥 Identifica se é Você (Dono do SaaS)
+
+        // 🔥 AJUSTE 2: Dá a chave mestra pra você. Para os outros, entrega as permissões exatas que o cargo tem.
+        const permissoes = isSuperAdmin 
+          ? ["*"] 
+          : user.role?.role_permissions.map(rp => rp.permission.key) || [];
         
         return {
           id: user.id,
@@ -44,8 +60,9 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           igreja_id: user.igreja_id,
           role: cargo,
-          permissions: isMaster ? ["*"] : [],
-          is_master: isMaster 
+          permissions: permissoes, 
+          is_master: isMaster,
+          is_superadmin: isSuperAdmin // 🔥 Salva o status de Deus
         };
       }
     })
@@ -54,9 +71,10 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id; // 🔥 AQUI: Repassa o ID para o token
+        token.id = user.id;
         token.igreja_id = (user as any).igreja_id;
         token.is_master = (user as any).is_master;
+        token.is_superadmin = (user as any).is_superadmin; // 🔥 Repassa pro Token
         token.role = (user as any).role;
         token.permissions = (user as any).permissions;
       }
@@ -64,9 +82,10 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (session.user) {
-        (session.user as any).id = token.id || token.sub; // 🔥 AQUI: Repassa o ID do token para a sessão do navegador
+        (session.user as any).id = token.id || token.sub;
         (session.user as any).igreja_id = token.igreja_id;
         (session.user as any).is_master = token.is_master;
+        (session.user as any).is_superadmin = token.is_superadmin; // 🔥 Repassa pra Sessão
         (session.user as any).role = token.role;
         (session.user as any).permissions = token.permissions;
       }

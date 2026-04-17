@@ -25,7 +25,6 @@ export async function checkPermission(arg1: any, arg2?: string) {
   let user;
   let permission;
 
-  // Resolve se a página mandou (user, permissao) ou apenas ('permissao')
   if (typeof arg1 === 'string') {
     user = await getCurrentUser();
     permission = arg1;
@@ -34,12 +33,12 @@ export async function checkPermission(arg1: any, arg2?: string) {
     permission = arg2;
   }
 
-  // 1. O GOD MODE ABSOLUTO: Se for master, passa direto e ignora tudo!
-  if (user?.is_master === true) {
+  // 1. O GOD MODE ABSOLUTO GLOBAL (Agora usa is_superadmin, exclusivo seu!)
+  if (user?.is_superadmin === true) {
     return user;
   }
 
-  // 2. CORINGA DE SEGURANÇA: Se a sessão ainda tiver o [*], passa!
+  // 2. CORINGA DE SEGURANÇA: Se a sessão tiver o [*]
   if (user?.permissions?.includes('*')) {
     return user;
   }
@@ -61,7 +60,8 @@ export async function getTenantPrisma() {
 
   let tenantId = user.igreja_id;
 
-  if ((user as any).is_master) {
+  // 🔥 AJUSTE AQUI: Se for Super Admin, ele pode olhar pelo "buraco da fechadura" usando o cookie
+  if ((user as any).is_superadmin) {
     const cookieStore = await cookies();
     const masterTenantId = cookieStore.get('master_tenant_id')?.value;
     if (masterTenantId) {

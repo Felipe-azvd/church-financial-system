@@ -3,8 +3,9 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, ReceiptText, PieChart, Settings, Users, LogOut, Key, Menu, ChevronRight, X } from 'lucide-react'
+import { LayoutDashboard, ReceiptText, PieChart, Settings, Users, LogOut, Key, Menu, ChevronRight, X, Crown } from 'lucide-react'
 import { signOut } from 'next-auth/react'
+import { sairModoSuporte } from '@/app/actions/superadmin'
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -15,7 +16,15 @@ const navItems = [
   { href: '/configuracoes', label: 'Configurações', icon: Settings },
 ]
 
-export default function Sidebar({ userPermissions = [], userName = '' }: { userPermissions?: string[], userName?: string }) {
+export default function Sidebar({ 
+  userPermissions = [], 
+  userName = '',
+  churchName = 'Sua Igreja'
+}: { 
+  userPermissions?: string[], 
+  userName?: string,
+  churchName?: string
+}) {
   const pathname = usePathname()
   
   const [isCollapsed, setIsCollapsed] = useState(false)
@@ -33,7 +42,7 @@ export default function Sidebar({ userPermissions = [], userName = '' }: { userP
 
   return (
     <>
-      {/* BARRA DE TOPO MOBILE (Visível apenas em telas pequenas) */}
+      {/* BARRA DE TOPO MOBILE */}
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-[var(--bg-page)] border-b border-[var(--border-tint)] z-40 flex items-center justify-between px-5 backdrop-blur-md shadow-md">
         <span className="text-xl font-bold text-[var(--primary-color)] drop-shadow-[0_0_10px_var(--primary-glow)]">
           ChurchFin
@@ -43,7 +52,7 @@ export default function Sidebar({ userPermissions = [], userName = '' }: { userP
         </button>
       </div>
 
-      {/* OVERLAY MOBILE (Fundo escuro quando o menu abre) */}
+      {/* OVERLAY MOBILE */}
       {isMobileOpen && (
         <div 
           className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity animate-[fadeIn_0.2s_ease-out]" 
@@ -68,7 +77,7 @@ export default function Sidebar({ userPermissions = [], userName = '' }: { userP
           </button>
         </div>
 
-        {/* Navegação */}
+        {/* Navegação Principal */}
         <nav className="flex flex-col gap-2 flex-1 overflow-x-hidden overflow-y-auto no-scrollbar">
           {navItems.map((item) => {
             const isMaster = userPermissions[0] === '*'
@@ -150,8 +159,51 @@ export default function Sidebar({ userPermissions = [], userName = '' }: { userP
           })}
         </nav>
 
+        {/* 🔥 BOTÃO DE SAIR DO SUPORTE (Fundo Transparente & Centralizado) */}
+        {userPermissions[0] === '*' && churchName !== 'Ministério Sol da Justiça' && (
+          <div className="px-0 md:px-0 mb-4 mt-2 flex justify-center">
+            <form action={sairModoSuporte} className="flex justify-center w-full">
+              <button
+                type="submit"
+                title={isCollapsed ? "Sair do Suporte" : undefined}
+                className={`flex items-center justify-center rounded-lg transition-all duration-300 bg-transparent text-rose-400 border border-transparent hover:bg-rose-500/10 hover:border-rose-500/30 hover:shadow-[0_0_10px_rgba(244,63,94,0.15)] ${
+                  isCollapsed ? 'p-2' : 'px-5 py-2 text-sm'
+                }`}
+              >
+                <LogOut className="w-4 h-4 flex-shrink-0 rotate-180" />
+                <span className={`font-medium whitespace-nowrap transition-all duration-300 ease-in-out ${
+                  isCollapsed ? 'w-0 opacity-0 ml-0 overflow-hidden' : 'opacity-100 ml-2'
+                }`}>
+                  Sair do Suporte
+                </span>
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* 🔥 BOTÃO SUPER ADMIN (Fundo Transparente & Centralizado) */}
+        {userPermissions[0] === '*' && churchName === 'Ministério Sol da Justiça' && (
+          <div className="px-0 md:px-0 mb-4 mt-2 flex justify-center">
+            <Link
+              href="/super-admin"
+              onClick={handleLinkClick}
+              title={isCollapsed ? "Painel Master" : undefined}
+              className={`flex items-center justify-center rounded-lg transition-all duration-300 bg-transparent text-amber-500 border border-transparent hover:bg-amber-500/10 hover:border-amber-500/30 hover:shadow-[0_0_10px_rgba(245,158,11,0.15)] ${
+                isCollapsed ? 'p-2' : 'px-5 py-2 text-sm'
+              }`}
+            >
+              <Crown className="w-4 h-4 flex-shrink-0" />
+              <span className={`font-medium whitespace-nowrap transition-all duration-300 ease-in-out ${
+                isCollapsed ? 'w-0 opacity-0 ml-0 overflow-hidden' : 'opacity-100 ml-2'
+              }`}>
+                Painel Master
+              </span>
+            </Link>
+          </div>
+        )}
+
         {/* Botão de Toggle Antigravidade (Apenas Desktop) */}
-        <div className={`hidden md:flex mt-4 mb-4 ${isCollapsed ? 'justify-center' : 'justify-end'}`}>
+        <div className={`hidden md:flex mb-4 ${isCollapsed ? 'justify-center' : 'justify-end'}`}>
           <button 
             onClick={() => { setIsCollapsed(!isCollapsed); if(!isCollapsed) setIsConfigOpen(false); }}
             className="p-2 rounded-lg text-[var(--text-muted)] hover:text-white hover:bg-white/10 transition-colors"
@@ -161,13 +213,19 @@ export default function Sidebar({ userPermissions = [], userName = '' }: { userP
           </button>
         </div>
 
-        {/* Rodapé com respiro extra no celular (px-2) */}
-<div className={`pt-4 border-t border-[rgba(255,255,255,0.08)] flex items-center ${isCollapsed ? 'md:flex-col md:gap-4 md:justify-center' : 'justify-between px-2 md:px-0'}`}>
-          <span className={`text-sm font-medium text-white opacity-70 overflow-hidden whitespace-nowrap transition-all duration-300 ${
-              isCollapsed ? 'md:w-0 md:h-0 md:opacity-0' : 'w-auto opacity-70'
+        {/* RODAPÉ: Usuário e Nome da Igreja */}
+        <div className={`pt-4 border-t border-[rgba(255,255,255,0.08)] flex items-center ${isCollapsed ? 'md:flex-col md:gap-4 md:justify-center' : 'justify-between px-2 md:px-0'}`}>
+          <div className={`flex flex-col overflow-hidden transition-all duration-300 ${
+              isCollapsed ? 'md:w-0 md:h-0 md:opacity-0' : 'w-[150px] opacity-100'
             }`}>
-            {userName}
-          </span>
+            <span className="text-sm font-semibold text-white truncate">
+              {userName}
+            </span>
+            <span className="text-[11px] font-medium text-[var(--text-muted)] truncate mt-0.5">
+              {churchName}
+            </span>
+          </div>
+
           <button 
             onClick={() => signOut({ callbackUrl: '/login' })}
             className="p-2 rounded-lg text-red-400 hover:bg-red-400/10 transition-colors flex-shrink-0"

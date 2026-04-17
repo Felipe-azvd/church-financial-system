@@ -6,8 +6,9 @@ export default async function UsuariosPage() {
   
   await checkPermission('usuarios.visualizar')
   
+  // 🔥 CORREÇÃO: Esconde apenas o Super Admin (Você), e mostra todos da igreja (inclusive o Master dela)
   const usuariosRaw = await db.usuario.findMany({
-    where: { igreja_id: tenantId, is_master: false },
+    where: { igreja_id: tenantId, is_superadmin: false },
     orderBy: { nome: 'asc' },
     select: {
       id: true,

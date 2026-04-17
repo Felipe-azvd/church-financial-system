@@ -12,6 +12,7 @@ model Igreja {
   id           String      @id @default(cuid())
   nome         String
   cidade       String?
+  ativo        Boolean     @default(true) // 🔥 ADICIONADO: Para bloquear/desbloquear igrejas
   data_criacao DateTime    @default(now())
   
   usuarios     Usuario[]
@@ -24,19 +25,22 @@ model Igreja {
 }
 
 model Usuario {
-  id        String   @id @default(cuid())
-  nome      String
-  email     String   @unique
-  senha     String
-  role_id   String
-  igreja_id String
-  is_master Boolean  @default(false) 
+  id            String   @id @default(cuid())
+  nome          String
+  email         String   @unique
+  senha         String
+  role_id       String
+  igreja_id     String
+  is_master     Boolean  @default(false) 
+  is_superadmin Boolean  @default(false) // 🔥 ADICIONADO: Para não dar erro na Action
   
-  igreja    Igreja   @relation(fields: [igreja_id], references: [id], onDelete: Cascade)
-  role      Role     @relation(fields: [role_id], references: [id], onDelete: Restrict)
+  igreja   Igreja   @relation(fields: [igreja_id], references: [id], onDelete: Cascade)
+  role     Role     @relation(fields: [role_id], references: [id], onDelete: Restrict)
   transacoes Transacao[]
 
   @@map("usuarios")
+  resetToken       String?
+  resetTokenExpiry DateTime?
 }
 
 model Role {
@@ -110,10 +114,10 @@ model Transacao {
   igreja_id    String
   usuario_id   String
 
-  culto        Culto?     @relation(fields: [culto_id], references: [id], onDelete: SetNull)
-  categoria    Categoria? @relation(fields: [categoria_id], references: [id], onDelete: SetNull)
-  igreja       Igreja     @relation(fields: [igreja_id], references: [id], onDelete: Cascade)
-  usuario      Usuario    @relation(fields: [usuario_id], references: [id], onDelete: Restrict)
+  culto      Culto?     @relation(fields: [culto_id], references: [id], onDelete: SetNull)
+  categoria  Categoria? @relation(fields: [categoria_id], references: [id], onDelete: SetNull)
+  igreja     Igreja     @relation(fields: [igreja_id], references: [id], onDelete: Cascade)
+  usuario    Usuario    @relation(fields: [usuario_id], references: [id], onDelete: Restrict)
 
   @@map("transacoes")
 }

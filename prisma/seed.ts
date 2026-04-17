@@ -15,6 +15,7 @@ async function main() {
       data: {
         nome: 'Igreja Sede',
         cidade: 'São Paulo',
+        ativo: true, // 🔥 Garantindo que ela nasça ativa
       },
     })
     console.log('Created Igreja Sede')
@@ -22,6 +23,7 @@ async function main() {
 
   // 2. Ensure Permissions exist
   const systemPermissions = [
+    { key: '*', description: 'Acesso total e irrestrito (Modo Deus)' }, 
     { key: 'dashboard.visualizar', description: 'Visualizar Dashboard' },
     { key: 'lancamentos.visualizar', description: 'Visualizar Lançamentos' },
     { key: 'lancamentos.criar', description: 'Criar Lançamentos' },
@@ -51,7 +53,8 @@ async function main() {
   const allPermissions = await prisma.permission.findMany()
 
   // 3. Ensure default roles exist with specific permissions
-  const defaultRoles = ['ADMINISTRADOR', 'TESOUREIRO', 'VISUALIZADOR']
+  const defaultRoles = ['MASTER', 'ADMINISTRADOR', 'TESOUREIRO', 'VISUALIZADOR'] 
+  
   for (const roleName of defaultRoles) {
     let role = await prisma.role.findFirst({
       where: { nome: roleName, igreja_id: igreja.id }
@@ -66,8 +69,10 @@ async function main() {
     // Assign specific permissions to these roles
     let keysToAssign: string[] = []
     
-    if (roleName === 'ADMINISTRADOR') {
-      keysToAssign = systemPermissions.map(p => p.key)
+    if (roleName === 'MASTER') {
+      keysToAssign = ['*'] 
+    } else if (roleName === 'ADMINISTRADOR') {
+      keysToAssign = systemPermissions.filter(p => p.key !== '*').map(p => p.key) 
     } else if (roleName === 'TESOUREIRO') {
       keysToAssign = [
         'dashboard.visualizar', 
@@ -94,15 +99,17 @@ async function main() {
   }
 
   const adminRole = await prisma.role.findFirst({
-    where: { nome: 'ADMINISTRADOR', igreja_id: igreja.id }
+    where: { nome: 'MASTER', igreja_id: igreja.id }
   })
 
   if (!adminRole) {
-    throw new Error('Administrador role could not be created or found.')
+    throw new Error('MASTER role could not be created or found.')
   }
 
-  // 3. Ensure admin user exists
-  const hashedPassword = await bcrypt.hash('admin123', 10)
+  // 4. Ensure admin user exists
+  // 🔥 Senha atualizada aqui
+  const senhaPadrao = 'Feh&bete173006'
+  const hashedPassword = await bcrypt.hash(senhaPadrao, 10)
   
   const adminEmail = 'felipeabreu.1994@gmail.com'
   let admin = await prisma.usuario.findUnique({
@@ -117,21 +124,26 @@ async function main() {
         senha: hashedPassword,
         role_id: adminRole.id,
         igreja_id: igreja.id,
+        is_master: true,      
+        is_superadmin: true,  
       },
     })
     console.log('Created Admin User (Felipe Azevedo)')
   } else {
-    // Ensure role sync without overwriting the password
+    // 🔥 Atualizando a senha e as roles caso o usuário já exista
     await prisma.usuario.update({
       where: { id: admin.id },
-      data: { role_id: adminRole.id }
+      data: { 
+        senha: hashedPassword,
+        role_id: adminRole.id,
+        is_master: true,
+        is_superadmin: true
+      }
     })
-    console.log('Updated Admin User role for Felipe Azevedo')
+    console.log('Updated Admin User role and password for Felipe Azevedo to MASTER')
   }
 
-
-
-  // 4. Ensure Default Categories exist
+  // 5. Ensure Default Categories exist
   const categoriasEntrada = [
     'Dízimo', 'Oferta', 'Doação', 'Oferta Especial',
     'Contribuição Missionária', 'Venda de Produtos', 
@@ -162,7 +174,7 @@ async function main() {
   for (const c of categoriasSaida) await upsertCategoria(c, 'SAIDA')
   for (const c of categoriasAmbos) await upsertCategoria(c, 'AMBOS')
 
-  // 5. Ensure Default Cultos exist
+  // 6. Ensure Default Cultos exist
   const defaultCultos = [
     'Domingo Manhã', 'Domingo Noite', 'Quarta-feira', 
     'Culto de Oração', 'Vigília'
@@ -181,7 +193,8 @@ async function main() {
 
   console.log('Seed completed successfully.')
   console.log('Admin Email: felipeabreu.1994@gmail.com')
-  console.log('(Se a conta foi criada agora, a senha padrão é: admin123)')
+  // 🔥 Log atualizado
+  console.log(`(A senha padrão foi definida como: ${senhaPadrao})`)
 }
 
 main()
