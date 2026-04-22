@@ -1,5 +1,6 @@
 'use server'
 
+import { registrarLog } from "@/lib/logger"
 import { getTenantPrisma } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
 
@@ -20,6 +21,7 @@ export async function createRole(nome: string, permission_ids: string[] = []) {
     }
   })
 
+  await registrarLog("CRIAR_FUNCAO", `Função ${nome} criada`, "Role", null)
   revalidatePath('/funcoes')
   revalidatePath('/usuarios')
 }
@@ -47,6 +49,7 @@ export async function updateRole(id: string, nome: string, permission_ids: strin
     }
   })
 
+  await registrarLog("EDITAR_FUNCAO", `Função ${nome} atualizada`, "Role", id)
   revalidatePath('/funcoes')
   revalidatePath('/usuarios')
 }
@@ -68,6 +71,7 @@ export async function deleteRole(id: string) {
     where: { id, igreja_id: tenantId }
   })
 
+  await registrarLog("EXCLUIR_FUNCAO", `Função excluída`, "Role", id)
   revalidatePath('/funcoes')
   revalidatePath('/usuarios')
 }

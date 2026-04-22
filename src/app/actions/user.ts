@@ -1,8 +1,10 @@
 'use server'
 
+import { registrarLog } from "@/lib/logger"
 import { getTenantPrisma } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
 import bcrypt from 'bcryptjs'
+import { cookies } from "next/headers"
 
 export async function createUser(data: { nome: string; email: string; senha?: string; role_id: string }) {
   try {
@@ -33,6 +35,7 @@ export async function createUser(data: { nome: string; email: string; senha?: st
       }
     })
 
+    await registrarLog("CRIAR_USUARIO", `Usuário ${data.nome} criado`, "Usuario", null)
     revalidatePath('/usuarios')
     return { success: true }
   } catch (err: any) {
@@ -76,6 +79,7 @@ export async function updateUser(id: string, data: { nome: string; email: string
       data: updateData
     })
 
+    await registrarLog("EDITAR_USUARIO", `Usuário ${data.nome} atualizado`, "Usuario", id)
     revalidatePath('/usuarios')
     return { success: true }
   } catch (err: any) {
@@ -106,9 +110,17 @@ export async function deleteUser(id: string) {
       where: { id }
     })
 
+    await registrarLog("EXCLUIR_USUARIO", `Usuário excluído`, "Usuario", id)
     revalidatePath('/usuarios')
     return { success: true }
   } catch (err: any) {
     return { success: false, error: 'Erro interno ao excluir usuário. Tente novamente.' }
   }
+}
+
+export async function alternarIgrejaAtiva(novaIgrejaId: string) {
+  const cookieStore = await cookies()
+  cookieStore.set('igreja_id', novaIgrejaId, { path: '/' })
+  
+  return { success: true }
 }

@@ -1,9 +1,9 @@
 import { prisma } from "@/lib/prisma"
-import { Crown, Building2, Users } from "lucide-react"
+import { Crown, Building2, Users, Calendar, LineChart } from "lucide-react"
 import NewChurchButton from "@/components/NewChurchButton"
-import { alternarStatusIgreja, acessarIgrejaCliente } from "@/app/actions/superadmin"
-import { getCurrentUser } from "@/lib/auth" // 🔥 Adicionado
-import { redirect } from "next/navigation"  // 🔥 Adicionado
+import { getCurrentUser } from "@/lib/auth"
+import { redirect } from "next/navigation"
+import Link from "next/link"
 
 export default async function SuperAdminPage() {
   const user = await getCurrentUser()
@@ -13,15 +13,31 @@ export default async function SuperAdminPage() {
     redirect('/dashboard')
   }
 
-  const igrejas = await prisma.igreja.findMany({
-    orderBy: { data_criacao: 'desc' }
-  })
-  
+  const totaisAtivas = await prisma.igreja.count({ where: { ativo: true } })
   const totalUsuarios = await prisma.usuario.count()
 
+  const trintaDiasAtras = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+  const igrejasUltimos30Dias = await prisma.igreja.count({ 
+    where: { data_criacao: { gte: trintaDiasAtras } } 
+  })
+  
+  const mediaUsuarios = totaisAtivas > 0 ? Math.round(totalUsuarios / totaisAtivas) : 0
+
+  const ultimasIgrejas = await prisma.igreja.findMany({
+    orderBy: { data_criacao: 'desc' },
+    take: 5,
+    include: { 
+      usuarios: { 
+        where: { is_master: true }, 
+        select: { nome: true } 
+      } 
+    }
+  })
+  
   return (
     <div className="flex flex-col gap-6 animate-[fadeIn_0.2s_ease-out]">
       
+      {/* CABEÇALHO */}
       <div className="flex items-center gap-4 mb-2">
         <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.15)]">
           <Crown className="w-6 h-6 text-amber-500" />
@@ -32,116 +48,142 @@ export default async function SuperAdminPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-4">
-        <div className="rounded-2xl border border-white/10 bg-black/20 backdrop-blur-md p-6 shadow-xl flex items-center gap-5">
-          <div className="p-4 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400">
-            <Building2 className="w-7 h-7" />
+      {/* BLOCO 1: Indicadores Principais */}
+      <div>
+        <h2 className="text-lg font-semibold text-white mb-4">Indicadores Principais</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="rounded-2xl border border-white/10 bg-black/20 backdrop-blur-md p-6 shadow-xl flex items-center gap-5 hover:bg-white/[0.02] transition-colors">
+            <div className="p-4 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400">
+              <Building2 className="w-7 h-7" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-[var(--text-muted)] uppercase tracking-wider text-xs">Igrejas Ativas</p>
+              <h3 className="text-3xl font-bold text-white mt-1">{totaisAtivas}</h3>
+            </div>
           </div>
-          <div>
-            <p className="text-sm font-medium text-[var(--text-muted)] uppercase tracking-wider">Igrejas Ativas</p>
-            <h3 className="text-3xl font-bold text-white mt-1">{igrejas.filter(i => i.ativo).length}</h3>
-          </div>
-        </div>
 
-        <div className="rounded-2xl border border-white/10 bg-black/20 backdrop-blur-md p-6 shadow-xl flex items-center gap-5">
-          <div className="p-4 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-            <Users className="w-7 h-7" />
+          <div className="rounded-2xl border border-white/10 bg-black/20 backdrop-blur-md p-6 shadow-xl flex items-center gap-5 hover:bg-white/[0.02] transition-colors">
+            <div className="p-4 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+              <Users className="w-7 h-7" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-[var(--text-muted)] uppercase tracking-wider text-xs">Usuários Globais</p>
+              <h3 className="text-3xl font-bold text-white mt-1">{totalUsuarios}</h3>
+            </div>
           </div>
-          <div>
-            <p className="text-sm font-medium text-[var(--text-muted)] uppercase tracking-wider">Usuários Globais</p>
-            <h3 className="text-3xl font-bold text-white mt-1">{totalUsuarios}</h3>
+
+          <div className="rounded-2xl border border-white/10 bg-black/20 backdrop-blur-md p-6 shadow-xl flex items-center gap-5 hover:bg-white/[0.02] transition-colors">
+            <div className="p-4 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400">
+              <Calendar className="w-7 h-7" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-[var(--text-muted)] uppercase tracking-wider text-xs">Novas Igrejas (30d)</p>
+              <h3 className="text-3xl font-bold text-white mt-1">{igrejasUltimos30Dias}</h3>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-black/20 backdrop-blur-md p-6 shadow-xl flex items-center gap-5 hover:bg-white/[0.02] transition-colors">
+            <div className="p-4 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400">
+              <LineChart className="w-7 h-7" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-[var(--text-muted)] uppercase tracking-wider text-xs">Média Usuários/Igreja</p>
+              <h3 className="text-3xl font-bold text-white mt-1">{mediaUsuarios}</h3>
+            </div>
           </div>
         </div>
       </div>
 
+      {/* BLOCO: Crescimento da Plataforma (Gráfico Nativo) */}
       <div className="rounded-2xl border border-white/10 bg-[#0B1121]/50 backdrop-blur-md p-6 shadow-2xl relative overflow-hidden">
-        <div className="flex items-center justify-between mb-6 relative z-10">
-          <h2 className="text-lg font-semibold text-white">Organizações Cadastradas</h2>
-          <NewChurchButton />
-        </div>
+        <h2 className="text-lg font-semibold text-white mb-6">Crescimento da Plataforma</h2>
+        
+        <div className="flex items-end justify-between sm:justify-around h-48 pt-4 pb-2 border-b border-white/10 relative">
+          
+          {/* Linhas de grade (opcional, visual) */}
+          <div className="absolute inset-x-0 bottom-1/2 border-b border-white/5 w-full pointer-events-none"></div>
+          <div className="absolute inset-x-0 top-0 border-b border-white/5 w-full pointer-events-none"></div>
 
-        <div className="overflow-x-auto relative z-10">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-white/10 text-sm font-medium text-[var(--text-muted)]">
-                <th className="pb-3 pl-2">ID</th>
-                <th className="pb-3">Nome da Igreja</th>
-                <th className="pb-3">Status</th>
-                <th className="pb-3 text-right pr-2">Ações</th>
-              </tr>
-            </thead>
-            <tbody className="text-sm">
-              {igrejas.map((igreja) => {
-
-                // Prepara a ação do formulário com os parâmetros corretos
-                const toggleAction = async (formData: FormData) => {
-                  "use server"
-                  await alternarStatusIgreja(igreja.id, !igreja.ativo)
-                }
-
-                return (
-                  <tr key={igreja.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group">
-                    <td className="py-4 pl-2 font-mono text-xs text-[var(--text-muted)] tracking-wider">
-                      {igreja.id.length < 5 ? `#${igreja.id.padStart(4, '0')}` : `#${igreja.id.slice(1, 9).toUpperCase()}`}
-                    </td>
-                    <td className="py-4 font-semibold text-white">{igreja.nome}</td>
-                    <td className="py-4">
-                      {igreja.ativo ? (
-                        <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                          Ativo
-                        </span>
-                      ) : (
-                        <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-red-500/10 text-red-400 border border-red-500/20">
-                          Bloqueada
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-4 text-right pr-2">
-                      <div className="flex items-center justify-end gap-2">
-                        <form action={async () => {
-                          "use server"
-                            await acessarIgrejaCliente(igreja.id)
-                            redirect('/dashboard') // Redireciona na hora pro dashboard do cliente
-                        }}>
-                          <button 
-                              type="submit"
-                              disabled={!igreja.ativo}
-                              className="text-xs px-3 py-1.5 rounded-lg font-semibold bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 border border-blue-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                              title="Entrar no painel desta igreja"
-                            >
-                              Acessar
-                          </button>
-                        </form>
-
-                        <form action={toggleAction}>
-                          <button 
-                            type="submit"
-                            className={`text-xs px-3 py-1.5 rounded-lg font-semibold transition-all ${
-                              igreja.ativo 
-                              ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20' 
-                              : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20'
-                            }`}
-                          >
-                            {igreja.ativo ? 'Bloquear' : 'Liberar'}
-                          </button>
-                        </form>
-                      </div>
-                    </td>
-                  </tr>
-                )
-              })}
-              
-              {igrejas.length === 0 && (
-                <tr>
-                  <td colSpan={4} className="py-8 text-center text-[var(--text-muted)]">
-                    Nenhuma igreja encontrada. Adicione a primeira!
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+          {/* Barras do Gráfico */}
+          <div className="flex flex-col items-center gap-2 z-10 w-1/6">
+            <div className="w-full max-w-[40px] bg-amber-500/80 hover:bg-amber-400 transition-colors rounded-t-lg h-[30%]"></div>
+            <span className="text-xs text-[var(--text-muted)] mt-1">M1</span>
+          </div>
+          <div className="flex flex-col items-center gap-2 z-10 w-1/6">
+            <div className="w-full max-w-[40px] bg-amber-500/80 hover:bg-amber-400 transition-colors rounded-t-lg h-[45%]"></div>
+            <span className="text-xs text-[var(--text-muted)] mt-1">M2</span>
+          </div>
+          <div className="flex flex-col items-center gap-2 z-10 w-1/6">
+            <div className="w-full max-w-[40px] bg-amber-500/80 hover:bg-amber-400 transition-colors rounded-t-lg h-[60%]"></div>
+            <span className="text-xs text-[var(--text-muted)] mt-1">M3</span>
+          </div>
+          <div className="flex flex-col items-center gap-2 z-10 w-1/6">
+            <div className="w-full max-w-[40px] bg-amber-500/80 hover:bg-amber-400 transition-colors rounded-t-lg h-[75%]"></div>
+            <span className="text-xs text-[var(--text-muted)] mt-1">M4</span>
+          </div>
+          <div className="flex flex-col items-center gap-2 z-10 w-1/6">
+            <div className="w-full max-w-[40px] bg-amber-500/80 hover:bg-amber-400 transition-colors rounded-t-lg h-[90%]"></div>
+            <span className="text-xs text-[var(--text-muted)] mt-1">M5</span>
+          </div>
+          <div className="flex flex-col items-center gap-2 z-10 w-1/6">
+            <div className="w-full max-w-[40px] bg-amber-500/90 hover:bg-amber-400 transition-colors rounded-t-lg h-[100%] shadow-[0_0_15px_rgba(245,158,11,0.4)]"></div>
+            <span className="text-xs text-[var(--text-muted)] font-semibold text-amber-500 mt-1">Atual</span>
+          </div>
         </div>
       </div>
+
+      {/* BLOCO 2: Igrejas Cadastradas Recentemente */}
+      <div className="rounded-2xl border border-white/10 bg-[#0B1121]/50 backdrop-blur-md p-6 shadow-2xl relative overflow-hidden mt-2">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 relative z-10">
+          <h2 className="text-lg font-semibold text-white">Igrejas Cadastradas Recentemente</h2>
+          <div className="flex items-center gap-4">
+            <Link 
+              href="/super-admin/igrejas" 
+              className="text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors uppercase tracking-wide"
+            >
+              Ver Tabela Completa
+            </Link>
+            <NewChurchButton />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-3 relative z-10">
+          {ultimasIgrejas.map((igreja) => {
+            const masterName = igreja.usuarios?.[0]?.nome
+
+            return (
+            <div key={igreja.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-5 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors gap-4">
+              <div>
+                <h4 className="text-base font-semibold text-white">{igreja.nome}</h4>
+                {masterName && (
+                  <p className="text-xs font-medium text-amber-500/90 mt-0.5">Admin: {masterName}</p>
+                )}
+                <p className="text-sm text-[var(--text-muted)] mt-1">
+                  Criada em {new Intl.DateTimeFormat('pt-BR').format(igreja.data_criacao)}
+                </p>
+              </div>
+              <div>
+                {igreja.ativo ? (
+                  <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    Ativa
+                  </span>
+                ) : (
+                  <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-red-500/10 text-red-400 border border-red-500/20">
+                    Bloqueada
+                  </span>
+                )}
+              </div>
+            </div>
+          )})}
+          
+          {ultimasIgrejas.length === 0 && (
+            <div className="py-8 text-center text-[var(--text-muted)]">
+              Nenhuma igreja encontrada. Adicione a primeira!
+            </div>
+          )}
+        </div>
+      </div>
+      
     </div>
   )
 }

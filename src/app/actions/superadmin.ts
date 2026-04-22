@@ -1,5 +1,6 @@
 'use server'
 
+import { registrarLog } from "@/lib/logger"
 import { prisma } from "@/lib/prisma"
 import { getCurrentUser } from "@/lib/auth"
 import { hash } from "bcryptjs"
@@ -95,6 +96,7 @@ export async function criarNovaIgreja(formData: FormData) {
       })
     })
 
+    await registrarLog("CRIAR_IGREJA_TENANT", `Nova igreja ${nomeIgreja} criada`, "Igreja", null)
     revalidatePath('/super-admin')
     return { success: true }
     
@@ -118,6 +120,7 @@ export async function alternarStatusIgreja(igrejaId: string, novoStatus: boolean
       data: { ativo: novoStatus }
     })
     
+    await registrarLog("ALTERAR_STATUS_IGREJA", `Status da igreja alterado para ${novoStatus}`, "Igreja", igrejaId)
     revalidatePath('/super-admin')
     return { success: true }
   } catch (error) {
@@ -143,6 +146,7 @@ export async function acessarIgrejaCliente(igrejaId: string) {
   })
 
   // 3. Redireciona você para o Dashboard, mas agora vendo os dados do cliente!
+  await registrarLog("ACESSAR_IGREJA_CLIENTE", `Master acessou a igreja ${igrejaId}`, "Igreja", igrejaId)
   return { success: true }
 }
 
@@ -152,7 +156,40 @@ export async function sairModoSuporte() {
   // Apaga o rastro do teletransporte
   cookieStore.delete('master_tenant_id')
   
+  await registrarLog("SAIR_MODO_SUPORTE", `Master encerrou acesso de suporte`, "Usuario", null)
   // Revalida tudo e volta para a central
   revalidatePath('/')
   redirect('/super-admin')
+}
+
+export async function alterarPlanoIgreja(igrejaId: string, novoPlano: string, novoVencimento?: number) {
+  try {
+    const igrejaAnterior = await prisma.igreja.findUnique({
+      where: { id: igrejaId },
+      select: { plano: true }
+    });
+
+    const igrejaAtualizada = await prisma.igreja.update({
+      where: { id: igrejaId },
+      data: { 
+        plano: novoPlano,
+        ...(novoVencimento && { dia_vencimento: novoVencimento })
+      }
+    });
+
+    // 🔥 REGISTRO NA AUDITORIA QUE CRIAMOS
+    await registrarLog(
+      "UPGRADE_PLANO",
+      `Plano alterado de ${igrejaAnterior?.plano} para ${novoPlano}`,
+      "Igreja",
+      igrejaId
+    );
+
+    revalidatePath('/super-admin/financeiro');
+    revalidatePath('/super-admin/igrejas');
+    
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: "Falha ao atualizar plano." };
+  }
 }

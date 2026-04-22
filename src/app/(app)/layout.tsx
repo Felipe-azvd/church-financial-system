@@ -13,13 +13,35 @@ export default async function AppLayout({
     redirect("/login")
   }
 
-  // 🔥 BUSCA O NOME REAL DA IGREJA NO BANCO DE DADOS
+  // 🔥 BUSCA A REDE DA IGREJA E O NOME REAL
   const { db, tenantId } = await getTenantPrisma()
   const igreja = await db.igreja.findUnique({
     where: { id: tenantId },
-    select: { nome: true }
+    select: { id: true, nome: true, plano: true, matriz_id: true }
   })
   
+  let churchNetwork: { id: string, nome: string, isMatriz: boolean }[] = []
+  
+  if (igreja) {
+    if (igreja.plano === 'PREMIUM') {
+      if (igreja.matriz_id === null) {
+        // É a matriz
+        const filiais = await db.igreja.findMany({ where: { matriz_id: igreja.id }, select: { id: true, nome: true }, orderBy: { nome: 'asc' } })
+        churchNetwork = [{ id: igreja.id, nome: igreja.nome, isMatriz: true }, ...filiais.map(f => ({ id: f.id, nome: f.nome, isMatriz: false }))]
+      } else {
+        // É uma filial
+        const matriz = await db.igreja.findUnique({ where: { id: igreja.matriz_id }, select: { id: true, nome: true } })
+        const outrasFiliais = await db.igreja.findMany({ where: { matriz_id: igreja.matriz_id }, select: { id: true, nome: true }, orderBy: { nome: 'asc' } })
+        
+        if (matriz) churchNetwork.push({ id: matriz.id, nome: matriz.nome, isMatriz: true })
+        churchNetwork.push(...outrasFiliais.map(f => ({ id: f.id, nome: f.nome, isMatriz: false })))
+      }
+    } else {
+      // Plano normal
+      churchNetwork = [{ id: igreja.id, nome: igreja.nome, isMatriz: true }]
+    }
+  }
+
   // Se tiver nome no banco, usa ele. Se não, mostra um aviso.
   const nomeDaIgreja = igreja?.nome || "Igreja não configurada"
 
@@ -30,7 +52,8 @@ export default async function AppLayout({
       <Sidebar 
         userPermissions={user.permissions} 
         userName={user.name || 'Usuário'} 
-        churchName={nomeDaIgreja} // 🔥 PASSA O NOME REAL PARA A SIDEBAR
+        churchName={nomeDaIgreja} 
+        churchNetwork={churchNetwork} // 🔥 NOVO: PASSA A REDE DE IGREJAS
       />
 
       {/* Conteúdo Principal: Responsividade aplicada no padding */}

@@ -4,6 +4,7 @@ import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Mail, Lock, ArrowRight, Info } from 'lucide-react'
+import Link from 'next/link'
 
 export default function LoginForm() {
   const router = useRouter()
@@ -27,7 +28,11 @@ export default function LoginForm() {
       setError('Credenciais inválidas. Tente novamente.')
       setIsLoading(false)
     } else {
-      router.push('/dashboard')
+      if (email === 'felipeabreu.1994@gmail.com') {
+        router.push('/super-admin')
+      } else {
+        router.push('/dashboard')
+      }
     }
   }
 
@@ -86,9 +91,9 @@ export default function LoginForm() {
             </div>
 
             <div className="flex justify-end mt-1 mb-2">
-              <button type="button" className="text-sm text-[var(--primary-color)] hover:brightness-125 transition-all">
+              <Link href="/esqueci-senha" className="text-sm text-[var(--primary-color)] hover:brightness-125 transition-all">
                 Esqueci minha senha
-              </button>
+              </Link>
             </div>
 
             <button 

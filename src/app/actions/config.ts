@@ -1,5 +1,6 @@
 'use server'
 
+import { registrarLog } from "@/lib/logger"
 import { getTenantPrisma, checkPermission } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
 
@@ -12,6 +13,7 @@ export async function createConfigItem(type: 'categoria' | 'culto', nome: string
   } else if (type === 'culto') {
     await db.culto.create({ data: { nome, igreja_id: tenantId } })
   }
+  await registrarLog("CRIAR_CONFIGURACAO", `Criado ${type} ${nome}`, type === 'categoria' ? 'Categoria' : 'Culto', null)
   revalidatePath('/configuracoes')
 }
 
@@ -30,6 +32,7 @@ export async function updateConfigItem(type: 'categoria' | 'culto', id: string, 
       data: { nome } 
     })
   }
+  await registrarLog("EDITAR_CONFIGURACAO", `Editado ${type} ${nome}`, type === 'categoria' ? 'Categoria' : 'Culto', id)
   revalidatePath('/configuracoes')
 }
 
@@ -42,6 +45,7 @@ export async function deleteConfigItem(type: 'categoria' | 'culto', id: string) 
   } else if (type === 'culto') {
     await db.culto.deleteMany({ where: { id, igreja_id: tenantId } })
   }
+  await registrarLog("EXCLUIR_CONFIGURACAO", `Excluído ${type}`, type === 'categoria' ? 'Categoria' : 'Culto', id)
   revalidatePath('/configuracoes')
 }
 
@@ -68,6 +72,7 @@ export async function updateChurchName(formData: FormData) {
       where: { id: tenantId },
       data: { nome: nome.trim() }
     })
+    await registrarLog("ATUALIZAR_IGREJA", `Nome da igreja atualizado para ${nome.trim()}`, "Igreja", tenantId)
     // Atualiza o menu lateral na hora
     revalidatePath('/', 'layout')
     revalidatePath('/configuracoes/personalizacao')

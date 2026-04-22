@@ -1,5 +1,6 @@
 'use server'
 
+import { registrarLog } from "@/lib/logger"
 import { checkPermission, getTenantPrisma } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
 import * as lancamentoService from "@/services/lancamentos.service"
@@ -33,6 +34,7 @@ export async function createTransaction(data: {
       categoria_id: parsedData.categoria_id,
       culto_id: parsedData.culto_id
     })
+    await registrarLog("CRIAR_TRANSACAO", `Lançamento de R$ ${parsedData.valor} adicionado`, "Lancamento", null)
 
     revalidatePath('/lancamentos')
     revalidatePath('/dashboard')
@@ -71,6 +73,7 @@ export async function updateTransaction(id: string, data: {
       categoria_id: parsedData.categoria_id,
       culto_id: parsedData.culto_id
     })
+    await registrarLog("EDITAR_TRANSACAO", `Lançamento de R$ ${parsedData.valor} atualizado`, "Lancamento", id)
 
     revalidatePath('/lancamentos')
     revalidatePath('/dashboard')
@@ -89,6 +92,7 @@ export async function deleteTransaction(id: string): Promise<ActionResponse> {
     await checkPermission('lancamentos.excluir')
 
     await lancamentoService.deletarLancamento(id)
+    await registrarLog("EXCLUIR_TRANSACAO", `Lançamento excluído`, "Lancamento", id)
 
     revalidatePath('/lancamentos')
     revalidatePath('/dashboard')

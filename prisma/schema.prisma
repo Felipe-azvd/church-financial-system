@@ -9,45 +9,57 @@ datasource db {
 }
 
 model Igreja {
-  id           String      @id @default(cuid())
+  id           String   @id @default(cuid())
   nome         String
   cidade       String?
-  ativo        Boolean     @default(true) // 🔥 ADICIONADO: Para bloquear/desbloquear igrejas
-  data_criacao DateTime    @default(now())
-  
-  usuarios     Usuario[]
-  cultos       Culto[]
-  categorias   Categoria[]
-  transacoes   Transacao[]
-  roles        Role[]
+  ativo        Boolean  @default(true) // 🔥 ADICIONADO: Para bloquear/desbloquear igrejas
+  data_criacao DateTime @default(now())
+  plano            String   @default("START") // Ex: START, PRO, PREMIUM
+  dia_vencimento   Int      @default(10)      // Dia do mês que vence
+  status_pagamento String   @default("EM_DIA") // EM_DIA, PENDENTE, ATRASADO
+  matriz_id String?
+  matriz    Igreja?  @relation("MatrizFilial", fields: [matriz_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  filiais   Igreja[] @relation("MatrizFilial")
+
+  usuarios       Usuario[]
+  cultos         Culto[]
+  categorias     Categoria[]
+  transacoes     Transacao[]
+  roles          Role[]
+  logs_auditoria LogAuditoria[] // 🔥 Adicione esta linha dentro do model Igreja
 
   @@map("igrejas")
 }
 
 model Usuario {
-  id            String   @id @default(cuid())
+  id            String  @id @default(cuid())
   nome          String
-  email         String   @unique
+  email         String  @unique
   senha         String
   role_id       String
   igreja_id     String
-  is_master     Boolean  @default(false) 
-  is_superadmin Boolean  @default(false) // 🔥 ADICIONADO: Para não dar erro na Action
-  
-  igreja   Igreja   @relation(fields: [igreja_id], references: [id], onDelete: Cascade)
-  role     Role     @relation(fields: [role_id], references: [id], onDelete: Restrict)
-  transacoes Transacao[]
+  is_master     Boolean @default(false)
+  is_superadmin Boolean @default(false)
 
-  @@map("usuarios")
+  // Campos de recuperação de senha (agora dentro do model)
   resetToken       String?
   resetTokenExpiry DateTime?
+
+  igreja     Igreja      @relation(fields: [igreja_id], references: [id], onDelete: Cascade)
+  role       Role        @relation(fields: [role_id], references: [id], onDelete: Restrict)
+  transacoes Transacao[]
+
+  // Relação com a auditoria
+  logs_auditoria LogAuditoria[]
+
+  @@map("usuarios")
 }
 
 model Role {
-  id               String           @id @default(cuid())
-  nome             String
-  igreja_id        String
-  createdAt        DateTime         @default(now())
+  id        String   @id @default(cuid())
+  nome      String
+  igreja_id String
+  createdAt DateTime @default(now())
 
   igreja           Igreja           @relation(fields: [igreja_id], references: [id], onDelete: Cascade)
   usuarios         Usuario[]
@@ -57,9 +69,9 @@ model Role {
 }
 
 model Permission {
-  id               String           @id @default(cuid())
-  key              String           @unique // e.g. "dashboard.visualizar"
-  description      String
+  id          String @id @default(cuid())
+  key         String @unique // e.g. "dashboard.visualizar"
+  description String
 
   role_permissions RolePermission[]
 
@@ -67,57 +79,74 @@ model Permission {
 }
 
 model RolePermission {
-  id            String     @id @default(cuid())
+  id            String @id @default(cuid())
   role_id       String
   permission_id String
 
-  role          Role       @relation(fields: [role_id], references: [id], onDelete: Cascade)
-  permission    Permission @relation(fields: [permission_id], references: [id], onDelete: Cascade)
+  role       Role       @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permission_id], references: [id], onDelete: Cascade)
 
   @@unique([role_id, permission_id])
   @@map("role_permissions")
 }
 
 model Culto {
-  id        String   @id @default(cuid())
+  id        String @id @default(cuid())
   nome      String
   igreja_id String
 
-  igreja    Igreja   @relation(fields: [igreja_id], references: [id], onDelete: Cascade)
+  igreja     Igreja      @relation(fields: [igreja_id], references: [id], onDelete: Cascade)
   transacoes Transacao[]
 
   @@map("cultos")
 }
 
 model Categoria {
-  id        String   @id @default(cuid())
+  id        String @id @default(cuid())
   nome      String
-  tipo      String   @default("AMBOS") // ENTRADA, SAIDA, AMBOS
+  tipo      String @default("AMBOS") // ENTRADA, SAIDA, AMBOS
   igreja_id String
 
-  igreja    Igreja   @relation(fields: [igreja_id], references: [id], onDelete: Cascade)
+  igreja     Igreja      @relation(fields: [igreja_id], references: [id], onDelete: Cascade)
   transacoes Transacao[]
 
   @@map("categorias")
 }
 
 model Transacao {
-  id           String   @id @default(cuid())
-  data         DateTime
-  descricao    String
-  valor        Float
-  criado_em    DateTime @default(now())
-  
+  id        String   @id @default(cuid())
+  data      DateTime
+  descricao String
+  valor     Float
+  criado_em DateTime @default(now())
+
   culto_id     String?
-  tipo         String   // ENTRADA | SAIDA
+  tipo         String // ENTRADA | SAIDA
   categoria_id String?
   igreja_id    String
   usuario_id   String
 
-  culto      Culto?     @relation(fields: [culto_id], references: [id], onDelete: SetNull)
-  categoria  Categoria? @relation(fields: [categoria_id], references: [id], onDelete: SetNull)
-  igreja     Igreja     @relation(fields: [igreja_id], references: [id], onDelete: Cascade)
-  usuario    Usuario    @relation(fields: [usuario_id], references: [id], onDelete: Restrict)
+  culto     Culto?     @relation(fields: [culto_id], references: [id], onDelete: SetNull)
+  categoria Categoria? @relation(fields: [categoria_id], references: [id], onDelete: SetNull)
+  igreja    Igreja     @relation(fields: [igreja_id], references: [id], onDelete: Cascade)
+  usuario   Usuario    @relation(fields: [usuario_id], references: [id], onDelete: Restrict)
 
   @@map("transacoes")
+}
+
+model LogAuditoria {
+  id         String   @id @default(cuid())
+  acao       String // Ex: "LOGIN", "EXCLUIR_LANCAMENTO"
+  descricao  String
+  entidade   String   @default("SISTEMA")
+  entidadeId String?
+  criado_em  DateTime @default(now())
+
+  usuario_id String
+  usuario    Usuario @relation(fields: [usuario_id], references: [id])
+
+  igreja_id String
+  igreja    Igreja @relation(fields: [igreja_id], references: [id])
+
+  @@map("logs_auditoria")
 }
