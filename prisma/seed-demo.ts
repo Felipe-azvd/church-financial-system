@@ -18,12 +18,7 @@ function getRandomValue(min: number, max: number) {
 }
 
 async function main() {
-  if (IGREJA_ID === "COLE_O_ID_AQUI") {
-    console.error("❌ ERRO: Você esqueceu de colocar o ID da Igreja na linha 6 do script!")
-    process.exit(1)
-  }
-
-  console.log(`🌱 Iniciando a criação da Vitrine (Golden Tenant) para a igreja: ${IGREJA_ID}`)
+   console.log(`🌱 Iniciando a criação da Vitrine (Golden Tenant) para a igreja: ${IGREJA_ID}`)
 
   // 0. PREPARANDO A IGREJA PARA A VENDA (O "Wow Factor")
   console.log('✨ Atualizando o perfil da igreja para a apresentação...')
