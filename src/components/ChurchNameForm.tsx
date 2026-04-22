@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { updateChurchName } from '@/app/actions/settings'
+import { updateChurchName } from '@/app/actions/config'
 
 export default function ChurchNameForm({ initialName }: { initialName: string }) {
   const [nome, setNome] = useState(initialName)
