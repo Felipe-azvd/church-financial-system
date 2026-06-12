@@ -53,8 +53,8 @@ export default async function ManageChurchesPage() {
 
         {/* TABELA */}
         <div className="overflow-x-auto relative z-10 w-full">
-          <table className="w-full text-left border-collapse min-w-[700px]">
-            <thead>
+          <table className="w-full text-left border-collapse block md:table md:min-w-[700px]">
+            <thead className="hidden md:table-header-group">
               <tr className="border-b border-white/10 text-sm font-medium text-[var(--text-muted)] bg-white/[0.01]">
                 <th className="py-4 pl-6 font-semibold">ID</th>
                 <th className="py-4 font-semibold">Nome da Igreja</th>
@@ -64,7 +64,7 @@ export default async function ManageChurchesPage() {
                 <th className="py-4 text-right pr-6 font-semibold">Ações</th>
               </tr>
             </thead>
-            <tbody className="text-sm">
+            <tbody className="block md:table-row-group text-sm">
               {igrejas.map((igreja) => {
                 const master = igreja.usuarios?.[0]
                 
@@ -74,14 +74,19 @@ export default async function ManageChurchesPage() {
                 }
 
                 return (
-                  <tr key={igreja.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group">
-                    <td className="py-4 pl-6 font-mono text-xs text-[var(--text-muted)] tracking-wider">
-                      {igreja.id.length < 5 ? `#${igreja.id.padStart(4, '0')}` : `#${igreja.id.slice(1, 9).toUpperCase()}`}
+                  <tr key={igreja.id} className="flex flex-col mb-4 border border-white/10 rounded-xl p-4 bg-white/[0.02] md:bg-transparent shadow-sm md:table-row md:mb-0 md:border-b md:border-white/5 md:p-0 md:shadow-none hover:bg-white/[0.04] md:hover:bg-white/[0.02] transition-colors group">
+                    <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 md:pl-6 font-mono text-xs text-[var(--text-muted)] tracking-wider">
+                      <span className="md:hidden font-semibold text-white/70">ID</span>
+                      <span>{igreja.id.length < 5 ? `#${igreja.id.padStart(4, '0')}` : `#${igreja.id.slice(1, 9).toUpperCase()}`}</span>
                     </td>
-                    <td className="py-4 font-semibold text-white">{igreja.nome}</td>
-                    <td className="py-4">
+                    <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 font-semibold text-white">
+                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Igreja</span>
+                      <span>{igreja.nome}</span>
+                    </td>
+                    <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4">
+                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Administrador</span>
                       {master ? (
-                        <div className="flex flex-col">
+                        <div className="flex flex-col md:block text-right md:text-left">
                           <span className="text-sm font-semibold text-white">{master.nome}</span>
                           <span className="text-xs text-[var(--text-muted)]">{master.email}</span>
                         </div>
@@ -89,10 +94,12 @@ export default async function ManageChurchesPage() {
                         <span className="text-sm italic text-[var(--text-muted)]">Sem admin</span>
                       )}
                     </td>
-                    <td className="py-4 font-medium text-[var(--text-muted)]">
-                      {igreja._count.usuarios}
+                    <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 font-medium text-[var(--text-muted)]">
+                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Usuários</span>
+                      <span>{igreja._count.usuarios}</span>
                     </td>
-                    <td className="py-4">
+                    <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4">
+                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Status</span>
                       {igreja.ativo ? (
                         <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]">
                           Ativa
@@ -103,8 +110,9 @@ export default async function ManageChurchesPage() {
                         </span>
                       )}
                     </td>
-                    <td className="py-4 text-right pr-6">
-                      <div className="flex items-center justify-end gap-3 opacity-90 group-hover:opacity-100 transition-opacity">
+                    <td className="flex justify-between items-center py-4 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 md:text-right md:pr-6">
+                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Ações</span>
+                      <div className="flex items-center justify-end gap-3 opacity-100 md:opacity-90 md:group-hover:opacity-100 transition-opacity">
                         <form action={async () => {
                           "use server"
                           await acessarIgrejaCliente(igreja.id)

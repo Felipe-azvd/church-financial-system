@@ -124,31 +124,33 @@ export default function TransactionList({
         </h2>
         {/* CORREÇÃO 1: Fundo responsivo e rolagem para a tabela não estourar a tela */}
         <div className="w-full overflow-hidden max-h-[500px] overflow-y-auto rounded-2xl border border-[var(--border-tint)] bg-[var(--surface-tint)] shadow-sm">
-          <div className="w-full overflow-x-auto">
-            <table className="table table-hover data-table w-full min-w-[800px]">
-              <thead>
+          <div className="w-full overflow-x-auto md:overflow-visible">
+            <table className="table table-hover data-table w-full block md:table md:min-w-[800px]">
+              <thead className="hidden md:table-header-group">
                 <tr>
                   <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]">Data</th>
                   <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]">Descrição</th>
                   <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]">Categoria</th>
                   <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]">Culto</th>
-                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]" style={{ textAlign: 'center' }}>Tipo</th>
-                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]" style={{ textAlign: 'right' }}>Valor</th>
-                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]" style={{ textAlign: 'right' }}>Saldo Corrente</th>
-                  {canAct && <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]" style={{ textAlign: 'center' }}>Ações</th>}
+                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)] text-center">Tipo</th>
+                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)] text-right">Valor</th>
+                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)] text-right">Saldo Corrente</th>
+                  {canAct && <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)] text-center">Ações</th>}
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="block md:table-row-group">
                 {displayTransactions.length === 0 ? (
-                  <tr>
-                    <td colSpan={canAct ? 8 : 7} style={{ textAlign: 'center', padding: '3rem 1rem' }}>
+                  <tr className="block md:table-row">
+                    <td colSpan={canAct ? 8 : 7} style={{ padding: '3rem 1rem' }} className="block md:table-cell text-center">
                       <p className="text-[var(--text-muted)] font-medium mb-4">Nenhum lançamento encontrado neste período.</p>
                       {canCreate && (
-                        <button className="btn-primary !rounded-lg px-4 py-2" onClick={() => setIsNewModalOpen(true)}>
-                          <span className="flex items-center gap-2">
-                            <Plus size={16} /> Adicione um lançamento para começar
-                          </span>
-                        </button>
+                        <div className="flex justify-center">
+                          <button className="btn-primary !rounded-lg px-4 py-2" onClick={() => setIsNewModalOpen(true)}>
+                            <span className="flex items-center gap-2">
+                              <Plus size={16} /> Adicione um lançamento para começar
+                            </span>
+                          </button>
+                        </div>
                       )}
                     </td>
                   </tr>
@@ -157,12 +159,25 @@ export default function TransactionList({
                     const isEntrada = t.tipo === 'ENTRADA'
                     const color = isEntrada ? 'var(--success)' : 'var(--danger)'
                     return (
-                      <tr key={t.id} className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
-                        <td className="text-white whitespace-nowrap">{new Date(t.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</td>
-                        <td className="font-semibold text-white">{t.descricao}</td>
-                        <td className="text-[var(--text-muted)]">{t.categoria?.nome || '-'}</td>
-                        <td className="text-[var(--text-muted)]">{t.culto?.nome || '-'}</td>
-                        <td style={{ textAlign: 'center' }}>
+                      <tr key={t.id} className="flex flex-col mb-4 border border-white/10 rounded-xl p-4 bg-white/[0.02] md:bg-transparent shadow-sm md:table-row md:mb-0 md:border-b md:border-white/5 md:p-0 md:shadow-none hover:bg-white/[0.04] md:hover:bg-white/5 transition-colors">
+                        <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 text-white whitespace-nowrap">
+                          <span className="md:hidden font-semibold text-white/70 text-xs">Data</span>
+                          <span>{new Date(t.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</span>
+                        </td>
+                        <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 font-semibold text-white text-right md:text-left">
+                          <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Descrição</span>
+                          <span>{t.descricao}</span>
+                        </td>
+                        <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 text-[var(--text-muted)] text-right md:text-left">
+                          <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Categoria</span>
+                          <span>{t.categoria?.nome || '-'}</span>
+                        </td>
+                        <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 text-[var(--text-muted)] text-right md:text-left">
+                          <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Culto</span>
+                          <span>{t.culto?.nome || '-'}</span>
+                        </td>
+                        <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 md:text-center">
+                          <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Tipo</span>
                           <span className="px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium border"
                             style={{ 
                               backgroundColor: isEntrada ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
@@ -173,15 +188,18 @@ export default function TransactionList({
                             {isEntrada ? 'Entrada' : 'Saída'}
                           </span>
                         </td>
-                        <td style={{ textAlign: 'right', fontWeight: 600, color, whiteSpace: 'nowrap' }}>
-                          {isEntrada ? '+' : '-'} R$ {t.valor.toFixed(2).replace('.', ',')}
+                        <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 md:text-right font-semibold whitespace-nowrap" style={{ color }}>
+                          <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Valor</span>
+                          <span>{isEntrada ? '+' : '-'} R$ {t.valor.toFixed(2).replace('.', ',')}</span>
                         </td>
-                        <td style={{ textAlign: 'right', fontWeight: 600, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>
-                          R$ {t.balance.toFixed(2).replace('.', ',')}
+                        <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 md:text-right font-semibold whitespace-nowrap" style={{ color: 'var(--text-primary)' }}>
+                          <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Saldo</span>
+                          <span>R$ {t.balance.toFixed(2).replace('.', ',')}</span>
                         </td>
                         {canAct && (
-                          <td style={{ textAlign: 'center' }}>
-                            <div className="flex items-center gap-2 justify-center">
+                          <td className="flex justify-between items-center py-4 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 md:text-center">
+                            <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Ações</span>
+                            <div className="flex items-center gap-2 justify-end md:justify-center">
                               {canEdit && (
                                 <button className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors hover:bg-white/10" style={{ color: 'var(--primary-color)' }} onClick={() => setEditingTx(t)}>
                                   Editar
