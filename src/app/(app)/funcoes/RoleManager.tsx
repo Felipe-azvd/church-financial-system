@@ -38,7 +38,12 @@ export default function RoleManager({
     const nome = formData.get('nome') as string
     try {
       if (editingRole) {
-        await updateRole(editingRole.id, nome, selectedPermissions)
+        const result = await updateRole(editingRole.id, nome, selectedPermissions)
+        if (result && !result.success) {
+          alert(result.message || 'Erro ao atualizar função.')
+          setLoading(false)
+          return
+        }
         setEditingRole(null)
       } else {
         await createRole(nome, selectedPermissions)
