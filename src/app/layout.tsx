@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
-import { Inter, Sulphur_Point } from 'next/font/google';
+import { Manrope, Sulphur_Point } from 'next/font/google';
 import './globals.css';
 import ThemeProvider from '@/components/ThemeProvider'; 
 
-const inter = Inter({ subsets: ['latin'] });
+const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope' });
 const sulphurPoint = Sulphur_Point({
   weight: ['400', '700'],
   subsets: ['latin'],
@@ -26,8 +26,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning className={sulphurPoint.variable}>
-      <body className={inter.className}>
+    <html lang="pt-BR" suppressHydrationWarning className={`${sulphurPoint.variable} ${manrope.variable} dark`}>
+      <body className="font-sans bg-neutral-dark text-accent">
         <ThemeProvider>
           {/* Fundo dinâmico da página inteira (Pega no Login e no App) */}
           <div className="min-h-screen bg-[var(--bg-page)] text-[var(--text-color)] transition-colors duration-500 relative">

@@ -13,8 +13,16 @@
 }
 
 @theme {
-  --color-primary: var(--primary-color);
-  --shadow-glow: 0 0 15px rgba(59, 130, 246, 0.4);
+  --color-primary: #00E5FF;
+  --color-neutral: #101418;
+  --color-neutral-dark: #080A0C;
+  --color-neutral-glass: rgba(28, 36, 44, 0.6);
+  --color-accent: #A7B1B6;
+
+  --shadow-glow: 0 0 15px rgba(0, 229, 255, 0.4);
+  --drop-shadow-glow: 0 0 15px rgba(0, 229, 255, 0.4);
+
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-logo: var(--font-sulphur-point), sans-serif;
 }
 
@@ -24,7 +32,6 @@
     background-attachment: fixed !important;
     color: var(--text-color) !important;
     min-height: 100vh;
-    font-family: 'Inter', sans-serif;
   }
 
   /* OBRIGANDO AS TABELAS DO SISTEMA A TEREM RESPIRO */
