@@ -205,7 +205,7 @@ export default function Sidebar({
                     
                     {/* DROPDOWN GLASSMORPHISM */}
                     {isNetworkOpen && (
-                      <div className="absolute bottom-full left-0 mb-2 w-56 rounded-xl border border-white/10 bg-neutral-dark/95 backdrop-blur-xl shadow-2xl z-[100] animate-[fadeIn_0.2s_ease-out] p-2">
+                      <div className="absolute bottom-full left-0 mb-2 w-56 rounded-xl border border-[var(--border-tint)] bg-[var(--surface-tint)] backdrop-blur-md shadow-2xl z-[100] animate-[fadeIn_0.2s_ease-out] p-2">
                         <div className="text-[10px] uppercase font-bold tracking-widest text-accent mb-2 px-2 pt-1 border-b border-white/5 pb-2">
                           Selecione o Tenant
                         </div>
@@ -220,11 +220,11 @@ export default function Sidebar({
                               }}
                               className={`flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg text-left transition-all ${
                                 net.nome === churchName 
-                                ? 'bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.05)]' 
-                                : 'text-white/80 hover:bg-white/10 hover:text-white'
+                                ? 'bg-[var(--primary-soft)] text-[var(--primary-color)]' 
+                                : 'text-gray-300 hover:bg-white/5 hover:text-white transition-colors'
                               }`}
                             >
-                              {net.isMatriz ? <Star className="w-3.5 h-3.5 text-amber-500 flex-shrink-0" /> : <Building2 className="w-3.5 h-3.5 flex-shrink-0 opacity-70" />}
+                              {net.isMatriz ? <Star className="w-3.5 h-3.5 text-[var(--primary-color)] flex-shrink-0" /> : <Building2 className="w-3.5 h-3.5 flex-shrink-0 opacity-70" />}
                               <span className="truncate">{net.nome}</span>
                             </button>
                           ))}
