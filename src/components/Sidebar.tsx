@@ -81,7 +81,7 @@ export default function Sidebar({
         <nav className="flex flex-col gap-2 flex-1 overflow-x-hidden overflow-y-auto no-scrollbar">
           {activeNavItems.map((item) => {
             if (userPermissions[0] !== '*' && !isMasterArea) {
-              const permKey = `${item.label.toLowerCase()}.visualizar`
+              const permKey = `${item.href.replace('/', '')}.visualizar`
               if (item.label !== 'Dashboard' && item.label !== 'Configurações' && !userPermissions.includes(permKey)) return null
             }
 
