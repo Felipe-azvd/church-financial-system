@@ -66,14 +66,13 @@ export default function Sidebar({
       )}
 
       {/* SIDEBAR */}
-      <aside className={`sidebar-glass flex flex-col flex-shrink-0 h-full overflow-hidden transition-all duration-300 z-50 fixed md:relative top-0 left-0 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} ${isCollapsed ? 'md:w-20 md:px-3' : 'w-64 px-5'}`} style={{ paddingBottom: '2rem', paddingTop: '2rem' }}>
+      <aside className={`sidebar-glass flex flex-col flex-shrink-0 h-full overflow-hidden transition-all duration-300 z-50 fixed md:relative top-0 left-0 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} ${isCollapsed ? 'w-64 md:w-20 px-5 md:px-3' : 'w-64 px-5'}`} style={{ paddingBottom: '2rem', paddingTop: '2rem' }}>
         
         {/* LOGO */}
         {/* Trocamos o h-8 por min-h-[48px] para dar espaço vertical para a logo crescer */}
         <div className={`mb-10 flex items-center min-h-[48px] transition-all duration-300 ${isCollapsed ? 'md:justify-center' : 'justify-between'}`}>
           {/* Aumentamos de w-[160px] para w-[220px] */}
           <Image src="/logo-c.png" alt="ChurchFep Logo" width={220} height={60} className={`h-auto object-contain transition-all duration-300 ${isCollapsed ? 'md:w-0 md:opacity-0' : 'w-[220px] opacity-100'}`} priority />
-          <button className="md:hidden p-1 text-[var(--text-muted)] hover:text-white" onClick={() => setIsMobileOpen(false)}><X className="w-6 h-6" /></button>
         </div>
 
         {/* MENU */}
