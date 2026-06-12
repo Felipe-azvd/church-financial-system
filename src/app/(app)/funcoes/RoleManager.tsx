@@ -216,22 +216,26 @@ export default function RoleManager({
 
         {/* Tabela Responsiva com Cores do Tema */}
         {!isAdding && !editingRole && (
-          <div className="w-full overflow-x-auto rounded-2xl border border-[var(--border-tint)] bg-[var(--surface-tint)] shadow-sm">
-            <table className="table table-hover data-table w-full min-w-[700px]">
-              <thead>
+          <div className="w-full overflow-x-auto md:overflow-visible rounded-2xl border border-[var(--border-tint)] bg-[var(--surface-tint)] shadow-sm">
+            <table className="table table-hover data-table w-full block md:table md:min-w-[700px]">
+              <thead className="hidden md:table-header-group">
                 <tr>
                   <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]">Função</th>
-                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]" style={{ textAlign: 'center' }}>Permissões</th>
-                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]" style={{ textAlign: 'right' }}>Ações</th>
+                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)] text-center">Permissões</th>
+                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)] text-right">Ações</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="block md:table-row-group">
                 {initialRoles.map((r) => {
                   const isDefault = ['ADMINISTRADOR', 'TESOUREIRO', 'VISUALIZADOR'].includes(r.nome)
                   return (
-                    <tr key={r.id} className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
-                      <td className="font-semibold text-white">{r.nome}</td>
-                      <td style={{ textAlign: 'center' }}>
+                    <tr key={r.id} className="flex flex-col mb-4 border border-white/10 rounded-xl p-4 bg-white/[0.02] md:bg-transparent shadow-sm md:table-row md:mb-0 md:border-b md:border-white/5 md:p-0 md:shadow-none hover:bg-white/[0.04] md:hover:bg-white/5 transition-colors">
+                      <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 font-semibold text-white">
+                        <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Função</span>
+                        <span>{r.nome}</span>
+                      </td>
+                      <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 md:text-center">
+                        <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Permissões</span>
                         {isDefault ? (
                           <span className="px-3 py-1 rounded-full bg-white/10 text-gray-300 text-xs font-medium border border-white/10">Acesso Padrão</span>
                         ) : (
@@ -241,7 +245,8 @@ export default function RoleManager({
                           </span>
                         )}
                       </td>
-                      <td style={{ textAlign: 'right' }}>
+                      <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 md:text-right">
+                        <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Ações</span>
                         <div className="flex items-center gap-2 justify-end">
                           <button className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors" style={{ color: 'var(--primary-color)' }} onClick={() => handleEdit(r)}>
                             Editar

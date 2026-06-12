@@ -77,9 +77,9 @@ export default async function FinancialSubscriptionsPage() {
           <h2 className="text-lg font-semibold text-white">Controle de Mensalidades</h2>
         </div>
 
-        <div className="overflow-x-auto relative z-10 w-full">
-          <table className="w-full text-left border-collapse min-w-[700px]">
-            <thead>
+        <div className="overflow-x-auto md:overflow-visible relative z-10 w-full">
+          <table className="w-full text-left border-collapse block md:table md:min-w-[700px]">
+            <thead className="hidden md:table-header-group">
               <tr className="border-b border-white/10 text-sm font-medium text-[var(--text-muted)] bg-white/[0.01]">
                 <th className="py-4 pl-6 font-semibold">Igreja</th>
                 <th className="py-4 font-semibold">Plano</th>
@@ -88,7 +88,7 @@ export default async function FinancialSubscriptionsPage() {
                 <th className="py-4 text-right pr-6 font-semibold">Ações</th>
               </tr>
             </thead>
-            <tbody className="text-sm">
+            <tbody className="block md:table-row-group text-sm">
               {igrejas.map((igreja) => {
                 
                 // Formatação das Cores/Bordas para Status
@@ -108,9 +108,13 @@ export default async function FinancialSubscriptionsPage() {
                 }
 
                 return (
-                  <tr key={igreja.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group">
-                    <td className="py-4 pl-6 font-semibold text-white">{igreja.nome}</td>
-                    <td className="py-4">
+                  <tr key={igreja.id} className="flex flex-col mb-4 border border-white/10 rounded-xl p-4 bg-white/[0.02] md:bg-transparent shadow-sm md:table-row md:mb-0 md:border-b md:border-white/5 md:p-0 md:shadow-none hover:bg-white/[0.04] md:hover:bg-white/[0.02] transition-colors group">
+                    <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 md:pl-6 font-semibold text-white">
+                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Igreja</span>
+                      <span>{igreja.nome}</span>
+                    </td>
+                    <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4">
+                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Plano</span>
                       {igreja.plano ? (
                         <span className="px-2.5 py-1 rounded-md text-xs font-semibold bg-white/5 border border-white/10 text-[var(--text-muted)] uppercase tracking-wider">
                           {igreja.plano}
@@ -119,16 +123,19 @@ export default async function FinancialSubscriptionsPage() {
                         <span className="text-xs italic text-white/30">Sem plano</span>
                       )}
                     </td>
-                    <td className="py-4 font-medium text-[var(--text-muted)]">
-                      {igreja.dia_vencimento ? `Dia ${igreja.dia_vencimento}` : '--'}
+                    <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 font-medium text-[var(--text-muted)]">
+                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Vencimento</span>
+                      <span>{igreja.dia_vencimento ? `Dia ${igreja.dia_vencimento}` : '--'}</span>
                     </td>
-                    <td className="py-4">
+                    <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4">
+                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Status</span>
                       <span className={`px-3 py-1.5 rounded-full text-xs font-semibold ${statusBadgeClasses}`}>
                         {statusText}
                       </span>
                     </td>
-                    <td className="py-4 text-right pr-6">
-                      <div className="flex items-center justify-end gap-3 opacity-90 group-hover:opacity-100 transition-opacity">
+                    <td className="flex justify-between items-center py-4 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 md:text-right md:pr-6">
+                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Ações</span>
+                      <div className="flex items-center justify-end gap-3 opacity-100 md:opacity-90 md:group-hover:opacity-100 transition-opacity">
                         <EditPlanModal 
                           igrejaId={igreja.id} 
                           currentPlan={igreja.plano} 

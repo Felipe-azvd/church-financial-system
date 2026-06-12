@@ -185,20 +185,20 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
 
       {/* CORREÇÃO AQUI: Tabela responsiva com rolagem horizontal */}
       {(!isAdding && !editingUser) && (
-        <div className="w-full overflow-x-auto rounded-2xl border border-[var(--border-tint)] bg-[var(--surface-tint)] shadow-sm max-h-[500px] overflow-y-auto">
-          <table className="table table-hover data-table w-full min-w-[700px]">
-            <thead>
+        <div className="w-full overflow-x-auto md:overflow-visible rounded-2xl border border-[var(--border-tint)] bg-[var(--surface-tint)] shadow-sm max-h-[500px] overflow-y-auto">
+          <table className="table table-hover data-table w-full block md:table md:min-w-[700px]">
+            <thead className="hidden md:table-header-group">
               <tr>
                 <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]">Nome</th>
                 <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]">Email</th>
                 <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]">Perfil</th>
-                <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]" style={{ textAlign: 'right' }}>Ações</th>
+                <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)] text-right">Ações</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="block md:table-row-group">
               {initialUsers.length === 0 ? (
-                <tr>
-                  <td colSpan={4} style={{ textAlign: 'center', padding: 'var(--spacing-2xl) 0' }}>
+                <tr className="block md:table-row">
+                  <td colSpan={4} style={{ padding: 'var(--spacing-2xl) 0' }} className="block md:table-cell text-center">
                     <p style={{ color: 'var(--text-muted)', fontWeight: 500, marginBottom: 'var(--spacing-xl)', paddingBottom:"1.1%" }}>Nenhum usuário encontrado no sistema.</p>
                     <button className="btn btn-secondary !rounded-lg px-4 py-2 text-sm" onClick={() => setIsAdding(true)}>
                       Adicione um usuário para começar
@@ -207,16 +207,24 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
                 </tr>
               ) : (
                 initialUsers.map((u) => (
-                  <tr key={u.id} className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
-                    <td className="font-semibold text-white">{u.nome}</td>
-                    <td style={{ color: 'var(--text-secondary)' }}>{u.email}</td>
-                    <td>
+                  <tr key={u.id} className="flex flex-col mb-4 border border-white/10 rounded-xl p-4 bg-white/[0.02] md:bg-transparent shadow-sm md:table-row md:mb-0 md:border-b md:border-white/5 md:p-0 md:shadow-none hover:bg-white/[0.04] md:hover:bg-white/5 transition-colors">
+                    <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 font-semibold text-white">
+                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Nome</span>
+                      <span>{u.nome}</span>
+                    </td>
+                    <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4" style={{ color: 'var(--text-secondary)' }}>
+                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Email</span>
+                      <span>{u.email}</span>
+                    </td>
+                    <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4">
+                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Perfil</span>
                       <span className="px-3 py-1 rounded-full text-xs font-medium border"
                             style={{ backgroundColor: 'var(--primary-soft)', color: 'var(--primary-color)', borderColor: 'var(--border-tint)' }}>
                         {u.role_nome.toUpperCase()}
                       </span>
                     </td>
-                    <td style={{ textAlign: 'right' }}>
+                    <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 md:text-right">
+                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Ações</span>
                       <div className="flex items-center gap-2 justify-end">
                         <button onClick={() => setEditingUser(u)} className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors" style={{ color: 'var(--primary-color)' }}>Editar</button>
                         <button onClick={() => handleDelete(u.id)} className="px-3 py-1.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors">Excluir</button>
