@@ -97,9 +97,10 @@ export default function Sidebar({
                     </div>
                     {!isCollapsed && <ChevronRight className={`w-4 h-4 transition-transform ${isConfigOpen ? 'rotate-90' : ''}`} />}
                   </button>
-                  <div className={`overflow-hidden transition-all duration-300 flex flex-col gap-1 ${isConfigOpen && !isCollapsed ? 'max-h-40 mt-1 opacity-100' : 'max-h-0 opacity-0'}`}>
+                  <div className={`overflow-hidden transition-all duration-300 flex flex-col gap-1 ${isConfigOpen && !isCollapsed ? 'max-h-64 mt-1 opacity-100' : 'max-h-0 opacity-0'}`}>
                     <Link href="/configuracoes/cultos" onClick={handleLinkClick} className={`pl-12 py-2 text-sm rounded-lg ${pathname.includes('/cultos') ? 'text-white bg-white/10' : 'text-[var(--text-muted)] hover:text-white'}`}>Cultos</Link>
                     <Link href="/configuracoes/personalizacao" onClick={handleLinkClick} className={`pl-12 py-2 text-sm rounded-lg ${pathname.includes('/personalizacao') ? 'text-white bg-white/10' : 'text-[var(--text-muted)] hover:text-white'}`}>Personalização</Link>
+                    <Link href="/configuracoes/changelog" onClick={handleLinkClick} className={`pl-12 py-2 text-sm rounded-lg ${pathname.includes('/changelog') ? 'text-white bg-white/10' : 'text-[var(--text-muted)] hover:text-white'}`}>Atualizações</Link>
                   </div>
                 </div>
               )
