@@ -37,7 +37,7 @@ export async function updateRole(id: string, nome: string, permission_ids: strin
   try {
     const parsed = updateRoleSchema.safeParse({ id, nome, permission_ids })
     if (!parsed.success) {
-      return { success: false, message: "Dados inválidos: " + parsed.error.errors.map(e => e.message).join(', ') }
+      return { success: false, message: "Dados inválidos: " + parsed.error.issues.map(e => e.message).join(', ') }
     }
 
     const { db, tenantId, user } = await getTenantPrisma()
