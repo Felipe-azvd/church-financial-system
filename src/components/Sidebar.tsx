@@ -203,9 +203,9 @@ export default function Sidebar({
                       <ChevronsUpDown className="w-3 h-3 text-accent flex-shrink-0 group-hover:text-white transition-colors" />
                     </button>
                     
-                    {/* DROPDOWN GLASSMORPHISM */}
+                    {/* DROPDOWN SOLID BACKGROUND */}
                     {isNetworkOpen && (
-                      <div className="absolute bottom-full left-0 mb-2 w-56 rounded-xl border border-[var(--border-tint)] bg-[var(--surface-tint)] backdrop-blur-md shadow-2xl z-[100] animate-[fadeIn_0.2s_ease-out] p-2">
+                      <div className="absolute bottom-full left-0 mb-2 w-56 rounded-xl border border-[var(--border-tint)] bg-[var(--bg-page)] shadow-2xl z-[100] animate-[fadeIn_0.2s_ease-out] p-2">
                         <div className="text-[10px] uppercase font-bold tracking-widest text-accent mb-2 px-2 pt-1 border-b border-white/5 pb-2">
                           Selecione o Tenant
                         </div>
