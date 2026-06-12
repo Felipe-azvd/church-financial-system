@@ -54,10 +54,10 @@ export default function Sidebar({
   return (
     <>
       {/* MOBILE */}
-      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-[#080A0C] border-b border-white/5 z-40 flex items-center justify-between px-5">
+      <div className="md:hidden fixed top-0 left-0 right-0 h-16 sidebar-glass z-40 flex items-center justify-between px-5 backdrop-blur-md">
         <div className="flex items-center gap-3">
-          <Logo className="w-8 h-8 text-primary" />
-          <span className="font-sans font-bold text-xl text-white tracking-tight">Church<span className="text-primary">Fep</span></span>
+          <Logo className="w-8 h-8 text-[var(--primary-color)]" />
+          <span className="font-sans font-bold text-xl text-white tracking-tight">Church<span className="text-[var(--primary-color)]">Fep</span></span>
         </div>
         <button onClick={() => setIsMobileOpen(true)} className="p-2 text-gray-400 hover:text-white">
           <Menu className="w-6 h-6" />
@@ -69,13 +69,13 @@ export default function Sidebar({
       )}
 
       {/* SIDEBAR */}
-      <aside className={`bg-[#080A0C] border-r border-white/5 flex flex-col flex-shrink-0 h-full overflow-hidden transition-all duration-300 z-50 fixed md:relative top-0 left-0 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} ${isCollapsed ? 'w-64 md:w-24 px-4' : 'w-64 px-6'}`} style={{ paddingBottom: '2rem', paddingTop: '2rem' }}>
+      <aside className={`sidebar-glass backdrop-blur-md flex flex-col flex-shrink-0 h-full overflow-hidden transition-all duration-300 z-50 fixed md:relative top-0 left-0 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} ${isCollapsed ? 'w-64 md:w-24 px-4' : 'w-64 px-6'}`} style={{ paddingBottom: '2rem', paddingTop: '2rem' }}>
         
         {/* LOGO */}
         <div className={`mb-10 flex items-center min-h-[48px] transition-all duration-300 ${isCollapsed ? 'md:justify-center' : 'justify-start gap-3'}`}>
-          <Logo className="w-10 h-10 flex-shrink-0 text-primary" />
+          <Logo className="w-10 h-10 flex-shrink-0 text-[var(--primary-color)]" />
           <span className={`font-sans font-bold text-xl text-white tracking-tight transition-all duration-300 ${isCollapsed ? 'md:w-0 md:opacity-0 overflow-hidden' : 'opacity-100'}`}>
-            Church<span className="text-primary">Fep</span>
+            Church<span className="text-[var(--primary-color)]">Fep</span>
           </span>
         </div>
 
@@ -94,7 +94,7 @@ export default function Sidebar({
             if (item.label === 'Configurações') {
               return (
                 <div key={item.href} className="flex flex-col">
-                  <button onClick={() => { if (isCollapsed) setIsCollapsed(false); setIsConfigOpen(!isConfigOpen); }} className={`flex items-center justify-between rounded-lg transition-all duration-200 ${pathname.startsWith('/configuracoes') && !isConfigOpen ? 'bg-primary/10 text-primary border-l-2 border-primary' : 'text-gray-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent'} ${isCollapsed ? 'md:justify-center p-3' : 'px-4 py-3'}`}>
+                  <button onClick={() => { if (isCollapsed) setIsCollapsed(false); setIsConfigOpen(!isConfigOpen); }} className={`flex items-center justify-between rounded-lg transition-all duration-200 ${pathname.startsWith('/configuracoes') && !isConfigOpen ? 'bg-[var(--primary-soft)] text-[var(--primary-color)] border-l-2 border-[var(--primary-color)] [box-shadow:0_0_15px_var(--primary-glow)]' : 'text-gray-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent'} ${isCollapsed ? 'md:justify-center p-3' : 'px-4 py-3'}`}>
                     <div className="flex items-center gap-3">
                       <Icon className="w-5 h-5 flex-shrink-0" />
                       {!isCollapsed && <span className="transition-all duration-300">{item.label}</span>}
@@ -102,9 +102,9 @@ export default function Sidebar({
                     {!isCollapsed && <ChevronRight className={`w-4 h-4 transition-transform ${isConfigOpen ? 'rotate-90' : ''}`} />}
                   </button>
                   <div className={`overflow-hidden transition-all duration-300 flex flex-col gap-1 ${isConfigOpen && !isCollapsed ? 'max-h-64 mt-1 opacity-100' : 'max-h-0 opacity-0'}`}>
-                    <Link href="/configuracoes/cultos" onClick={handleLinkClick} className={`pl-12 py-2 text-sm rounded-lg ${pathname.includes('/cultos') ? 'text-primary font-medium' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>Cultos</Link>
-                    <Link href="/configuracoes/personalizacao" onClick={handleLinkClick} className={`pl-12 py-2 text-sm rounded-lg ${pathname.includes('/personalizacao') ? 'text-primary font-medium' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>Personalização</Link>
-                    <Link href="/configuracoes/changelog" onClick={handleLinkClick} className={`pl-12 py-2 text-sm rounded-lg ${pathname.includes('/changelog') ? 'text-primary font-medium' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>Atualizações</Link>
+                    <Link href="/configuracoes/cultos" onClick={handleLinkClick} className={`pl-12 py-2 text-sm rounded-lg ${pathname.includes('/cultos') ? 'text-[var(--primary-color)] font-medium' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>Cultos</Link>
+                    <Link href="/configuracoes/personalizacao" onClick={handleLinkClick} className={`pl-12 py-2 text-sm rounded-lg ${pathname.includes('/personalizacao') ? 'text-[var(--primary-color)] font-medium' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>Personalização</Link>
+                    <Link href="/configuracoes/changelog" onClick={handleLinkClick} className={`pl-12 py-2 text-sm rounded-lg ${pathname.includes('/changelog') ? 'text-[var(--primary-color)] font-medium' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>Atualizações</Link>
                   </div>
                 </div>
               )
@@ -131,8 +131,8 @@ export default function Sidebar({
 
             // PADRÃO PARA OS DEMAIS ITENS
             return (
-              <Link key={item.href} href={item.href} onClick={handleLinkClick} className={`flex items-center gap-3 rounded-lg transition-all duration-200 ${isActive ? (isMasterArea ? 'bg-amber-500/10 text-amber-500 border-l-2 border-amber-500' : 'bg-primary/10 text-primary border-l-2 border-primary') : 'text-gray-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent'} ${isCollapsed ? 'md:justify-center p-3' : 'px-4 py-3'}`}>
-                <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? (isMasterArea ? 'text-amber-500' : 'text-primary') : ''}`} />
+              <Link key={item.href} href={item.href} onClick={handleLinkClick} className={`flex items-center gap-3 rounded-lg transition-all duration-200 ${isActive ? (isMasterArea ? 'bg-amber-500/10 text-amber-500 border-l-2 border-amber-500' : 'bg-[var(--primary-soft)] text-[var(--primary-color)] border-l-2 border-[var(--primary-color)] [box-shadow:0_0_15px_var(--primary-glow)]') : 'text-gray-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent'} ${isCollapsed ? 'md:justify-center p-3' : 'px-4 py-3'}`}>
+                <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? (isMasterArea ? 'text-amber-500' : 'text-[var(--primary-color)]') : ''}`} />
                 {!isCollapsed && <span className="truncate transition-all duration-300">{item.label}</span>}
               </Link>
             )
