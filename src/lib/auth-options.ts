@@ -72,22 +72,22 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.igreja_id = (user as any).igreja_id;
-        token.is_master = (user as any).is_master;
-        token.is_superadmin = (user as any).is_superadmin; // 🔥 Repassa pro Token
-        token.role = (user as any).role;
-        token.permissions = (user as any).permissions;
+        token.igreja_id = user.igreja_id;
+        token.is_master = user.is_master;
+        token.is_superadmin = user.is_superadmin; // 🔥 Repassa pro Token
+        token.role = user.role;
+        token.permissions = user.permissions;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
-        (session.user as any).id = token.id || token.sub;
-        (session.user as any).igreja_id = token.igreja_id;
-        (session.user as any).is_master = token.is_master;
-        (session.user as any).is_superadmin = token.is_superadmin; // 🔥 Repassa pra Sessão
-        (session.user as any).role = token.role;
-        (session.user as any).permissions = token.permissions;
+        session.user.id = token.id || token.sub as string;
+        session.user.igreja_id = token.igreja_id;
+        session.user.is_master = token.is_master;
+        session.user.is_superadmin = token.is_superadmin; // 🔥 Repassa pra Sessão
+        session.user.role = token.role;
+        session.user.permissions = token.permissions;
       }
       return session;
     }

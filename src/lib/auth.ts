@@ -61,7 +61,7 @@ export async function getTenantPrisma() {
   let tenantId = user.igreja_id;
 
   // 🔥 AJUSTE AQUI: Se for Super Admin, ele pode olhar pelo "buraco da fechadura" usando o cookie
-  if ((user as any).is_superadmin) {
+  if (user.is_superadmin) {
     const cookieStore = await cookies();
     const masterTenantId = cookieStore.get('master_tenant_id')?.value;
     if (masterTenantId) {

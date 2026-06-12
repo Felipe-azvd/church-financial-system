@@ -7,6 +7,8 @@ declare module "next-auth" {
       role: string
       igreja_id: string
       permissions: string[]
+      is_master: boolean
+      is_superadmin: boolean
     } & DefaultSession["user"]
   }
 
@@ -15,6 +17,8 @@ declare module "next-auth" {
     role: string
     igreja_id: string
     permissions: string[]
+    is_master: boolean
+    is_superadmin: boolean
   }
 }
 
@@ -24,5 +28,7 @@ declare module "next-auth/jwt" {
     role: string
     igreja_id: string
     permissions: string[]
+    is_master: boolean
+    is_superadmin: boolean
   }
 }
