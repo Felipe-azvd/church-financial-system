@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import Image from 'next/image'
 import { 
   LayoutDashboard, ReceiptText, PieChart, Settings, Users, 
   LogOut, Key, Menu, ChevronRight, X, Crown,
@@ -54,9 +55,7 @@ export default function Sidebar({
     <>
       {/* MOBILE */}
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-[var(--bg-page)] border-b border-[var(--border-tint)] z-40 flex items-center justify-between px-5 backdrop-blur-md">
-        <span className={`text-xl font-bold ${isMasterArea ? 'text-amber-500' : 'text-[var(--primary-color)]'}`}>
-          ChurchFep
-        </span>
+        <Image src="/logo-c.png" alt="ChurchFep Logo" width={180} height={50} className="w-auto h-8 object-contain" priority />
         <button onClick={() => setIsMobileOpen(true)} className="p-2 text-[var(--text-muted)] hover:text-white">
           <Menu className="w-6 h-6" />
         </button>
@@ -73,7 +72,7 @@ export default function Sidebar({
         {/* Trocamos o h-8 por min-h-[48px] para dar espaço vertical para a logo crescer */}
         <div className={`mb-10 flex items-center min-h-[48px] transition-all duration-300 ${isCollapsed ? 'md:justify-center' : 'justify-between'}`}>
           {/* Aumentamos de w-[160px] para w-[220px] */}
-          <img src="/logo-c.png" alt="Logo" className={`h-auto object-contain transition-all duration-300 ${isCollapsed ? 'md:w-0 md:opacity-0' : 'w-[220px] opacity-100'}`} />
+          <Image src="/logo-c.png" alt="ChurchFep Logo" width={220} height={60} className={`h-auto object-contain transition-all duration-300 ${isCollapsed ? 'md:w-0 md:opacity-0' : 'w-[220px] opacity-100'}`} priority />
           <button className="md:hidden p-1 text-[var(--text-muted)] hover:text-white" onClick={() => setIsMobileOpen(false)}><X className="w-6 h-6" /></button>
         </div>
 

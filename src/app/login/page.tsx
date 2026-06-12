@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Mail, Lock, ArrowRight, Info } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function LoginForm() {
   const router = useRouter()
@@ -46,7 +47,7 @@ export default function LoginForm() {
         {/* Cabeçalho com Logo PNG */}
         <div className="text-center mb-10 flex flex-col items-center">
           {/* Aumentamos de w-[280px] para w-[360px] (quase a largura total do form) */}
-          <img src="/logo-c.png" alt="ChurchFep Logo" className="w-[360px] h-auto object-contain drop-shadow-[0_0_15px_var(--primary-glow)] transition-all duration-500 mb-3" />
+          <Image src="/logo-c.png" alt="ChurchFep Logo" width={360} height={100} className="w-[360px] h-auto object-contain drop-shadow-[0_0_15px_var(--primary-glow)] transition-all duration-500 mb-3" priority />
           <p className="text-[var(--text-muted)] mt-2">Inovação com propósito.</p>
         </div>
 
