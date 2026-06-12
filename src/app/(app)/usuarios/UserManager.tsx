@@ -207,7 +207,7 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
                 </tr>
               ) : (
                 initialUsers.map((u) => (
-                  <tr key={u.id} className="flex flex-col mb-4 border border-white/10 rounded-xl p-4 bg-white/[0.02] md:bg-transparent shadow-sm md:table-row md:mb-0 md:border-b md:border-white/5 md:p-0 md:shadow-none hover:bg-white/[0.04] md:hover:bg-white/5 transition-colors">
+                  <tr key={u.id} className="flex flex-col mb-4 bg-white/5 rounded-xl p-5 md:bg-transparent shadow-sm md:table-row md:mb-0 md:border-b md:border-white/5 md:p-0 md:shadow-none md:rounded-none hover:bg-white/10 md:hover:bg-white/5 transition-colors">
                     <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 font-semibold text-white">
                       <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Nome</span>
                       <span>{u.nome}</span>
