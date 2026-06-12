@@ -9,7 +9,7 @@ export default function Home() {
       
       <div className="z-10 text-center max-w-lg w-full flex flex-col items-center">
         <div className="mb-10">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 logo-glow">ChurchFin</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 logo-glow">ChurchFep</h1>
           <p className="text-lg text-[var(--text-muted)]">
             Bem-vindo ao sistema de gestão financeira da sua igreja.
           </p>

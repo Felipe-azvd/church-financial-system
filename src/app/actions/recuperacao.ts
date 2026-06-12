@@ -39,14 +39,14 @@ export async function enviarEmailRecuperacao(email: string) {
 
     // 4. Dispara o e-mail
     await transporter.sendMail({
-      from: `"ChurchFin Suporte" <${process.env.EMAIL_USER}>`,
+      from: `"ChurchFep Suporte" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: "Recuperação de Senha - ChurchFin",
+      subject: "Recuperação de Senha - ChurchFep",
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; background-color: #0B1121; padding: 40px; border-radius: 10px; color: #fff;">
           <h2 style="color: #10B981; text-align: center;">Recuperação de Senha</h2>
           <p>Olá, ${user.nome}.</p>
-          <p>Você solicitou a redefinição da sua senha no ChurchFin. Clique no botão abaixo para criar uma nova senha. Este link é válido por 1 hora.</p>
+          <p>Você solicitou a redefinição da sua senha no ChurchFep. Clique no botão abaixo para criar uma nova senha. Este link é válido por 1 hora.</p>
           <div style="text-align: center; margin: 30px 0;">
             <a href="${resetLink}" style="background-color: #10B981; color: #000; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Redefinir Minha Senha</a>
           </div>

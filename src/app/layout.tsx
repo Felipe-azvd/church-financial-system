@@ -13,7 +13,7 @@ const sulphurPoint = Sulphur_Point({
 
 // AQUI: Injetamos o Favicon e o Slogan Oficial!
 export const metadata: Metadata = {
-  title: 'ChurchFin | Inovação com propósito',
+  title: 'ChurchFep | Inovação com propósito',
   description: 'Gestão inteligente para igrejas modernas',
   icons: {
     icon: '/favicon.ico',

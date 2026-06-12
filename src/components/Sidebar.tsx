@@ -55,7 +55,7 @@ export default function Sidebar({
       {/* MOBILE */}
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-[var(--bg-page)] border-b border-[var(--border-tint)] z-40 flex items-center justify-between px-5 backdrop-blur-md">
         <span className={`text-xl font-bold ${isMasterArea ? 'text-amber-500' : 'text-[var(--primary-color)]'}`}>
-          ChurchFin
+          ChurchFep
         </span>
         <button onClick={() => setIsMobileOpen(true)} className="p-2 text-[var(--text-muted)] hover:text-white">
           <Menu className="w-6 h-6" />

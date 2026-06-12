@@ -28,7 +28,7 @@ export default function EsqueciSenhaPage() {
       <div className="w-full max-w-md relative z-10">
         {/* Cabeçalho com Logo PNG (Copiado do LoginForm) */}
         <div className="text-center mb-10 flex flex-col items-center">
-          <img src="/logo-c.png" alt="ChurchFin Logo" className="w-[280px] h-auto object-contain drop-shadow-[0_0_15px_var(--primary-glow)] transition-all duration-500 mb-3" />
+          <img src="/logo-c.png" alt="ChurchFep Logo" className="w-[280px] h-auto object-contain drop-shadow-[0_0_15px_var(--primary-glow)] transition-all duration-500 mb-3" />
           <p className="text-[var(--text-muted)] mt-2">Recuperação de Acesso</p>
         </div>
 

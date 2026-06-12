@@ -59,7 +59,7 @@ export default function PersonalizacaoPage() {
         </div>
         <div>
           <h1 className="text-2xl font-semibold text-white">Personalização</h1>
-          <p className="text-sm text-[var(--text-muted)] mt-1">Configure a identidade visual e os dados do seu ChurchFin</p>
+          <p className="text-sm text-[var(--text-muted)] mt-1">Configure a identidade visual e os dados do seu ChurchFep</p>
         </div>
       </div>
 

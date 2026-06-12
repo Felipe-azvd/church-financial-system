@@ -46,7 +46,7 @@ export default function LoginForm() {
         {/* Cabeçalho com Logo PNG */}
         <div className="text-center mb-10 flex flex-col items-center">
           {/* Aumentamos de w-[280px] para w-[360px] (quase a largura total do form) */}
-          <img src="/logo-c.png" alt="ChurchFin Logo" className="w-[360px] h-auto object-contain drop-shadow-[0_0_15px_var(--primary-glow)] transition-all duration-500 mb-3" />
+          <img src="/logo-c.png" alt="ChurchFep Logo" className="w-[360px] h-auto object-contain drop-shadow-[0_0_15px_var(--primary-glow)] transition-all duration-500 mb-3" />
           <p className="text-[var(--text-muted)] mt-2">Inovação com propósito.</p>
         </div>
 
