@@ -110,7 +110,7 @@ export default function ConfigItemManager({
 
       {/* Tabela de Listagem */}
       {(!isAdding && !editingItem) && (
-        <div className="md:overflow-x-auto md:overflow-visible rounded-xl border border-white/5">
+        <div className="md:overflow-x-auto md:overflow-visible md:rounded-xl md:border md:border-white/5">
           <table className="table table-hover data-table w-full block md:table">
             <thead className="hidden md:table-header-group">
               <tr>
@@ -129,7 +129,7 @@ export default function ConfigItemManager({
               ) : (
                 items.map(item => {
                   return (
-                    <tr key={item.id} className="flex flex-col mb-4 bg-white/5 rounded-xl p-5 md:bg-transparent shadow-sm md:table-row md:mb-0 md:border-b md:border-white/5 md:p-0 md:shadow-none md:rounded-none hover:bg-white/10 md:hover:bg-white/5 transition-colors">
+                    <tr key={item.id} className="flex flex-col bg-transparent py-4 border-b border-white/5 last:border-b-0 md:table-row md:py-0 md:border-white/5 md:hover:bg-white/5 transition-colors">
                       <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 font-medium text-white whitespace-normal break-words">
                         <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">{type === 'categoria' ? 'Categoria' : 'Nome'}</span>
                         <span className="text-right md:text-left">{item.nome}</span>

@@ -29,7 +29,7 @@ export default function IncomeByCulto({
             </tr>
           ) : (
             data.map((item) => (
-              <tr key={item.culto} className="flex flex-col mb-4 bg-white/5 rounded-xl p-5 md:bg-transparent shadow-sm md:table-row md:mb-0 md:border-b md:border-white/5 md:p-0 md:shadow-none md:rounded-none hover:bg-white/10 md:hover:bg-white/5 transition-colors">
+              <tr key={item.culto} className="flex flex-col bg-transparent py-4 border-b border-white/5 last:border-b-0 md:table-row md:py-0 md:border-white/5 md:hover:bg-white/5 transition-colors">
                 <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 font-semibold text-white whitespace-normal break-words">
                   <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Culto</span>
                   <span className="text-right md:text-left">{item.culto}</span>

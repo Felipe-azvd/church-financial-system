@@ -35,7 +35,7 @@ export default async function ManageChurchesPage() {
       </div>
 
       {/* BLOCO DA TABELA */}
-      <div className="rounded-2xl border border-white/10 bg-[#0B1121]/50 backdrop-blur-md shadow-2xl relative overflow-hidden flex flex-col">
+      <div className="md:rounded-2xl md:border md:border-white/10 md:bg-[#0B1121]/50 md:backdrop-blur-md md:shadow-2xl relative overflow-hidden flex flex-col">
         {/* BARRA SUPERIOR E BUSCA */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 border-b border-white/10 relative z-10">
           <div className="relative max-w-md w-full">
@@ -74,7 +74,7 @@ export default async function ManageChurchesPage() {
                 }
 
                 return (
-                  <tr key={igreja.id} className="flex flex-col mb-4 bg-white/5 rounded-xl p-5 md:bg-transparent shadow-sm md:table-row md:mb-0 md:border-b md:border-white/5 md:p-0 md:shadow-none md:rounded-none hover:bg-white/10 md:hover:bg-white/[0.02] transition-colors group">
+                  <tr key={igreja.id} className="flex flex-col bg-transparent py-4 border-b border-white/5 last:border-b-0 md:table-row md:py-0 md:border-white/5 md:hover:bg-white/[0.02] transition-colors group">
                     <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 md:pl-6 font-mono text-xs text-[var(--text-muted)] tracking-wider">
                       <span className="md:hidden font-semibold text-white/70">ID</span>
                       <span>{igreja.id.length < 5 ? `#${igreja.id.padStart(4, '0')}` : `#${igreja.id.slice(1, 9).toUpperCase()}`}</span>

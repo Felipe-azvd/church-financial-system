@@ -123,7 +123,7 @@ export default function TransactionList({
           Extrato Financeiro
         </h2>
         {/* CORREÇÃO 1: Fundo responsivo e rolagem para a tabela não estourar a tela */}
-        <div className="w-full overflow-hidden max-h-[500px] overflow-y-auto rounded-2xl border border-[var(--border-tint)] bg-[var(--surface-tint)] shadow-sm">
+        <div className="w-full overflow-hidden max-h-[500px] overflow-y-auto md:rounded-2xl md:border md:border-[var(--border-tint)] md:bg-[var(--surface-tint)] md:shadow-sm">
           <div className="w-full overflow-x-auto md:overflow-visible">
             <table className="table table-hover data-table w-full block md:table md:min-w-[800px]">
               <thead className="hidden md:table-header-group">
@@ -159,7 +159,7 @@ export default function TransactionList({
                     const isEntrada = t.tipo === 'ENTRADA'
                     const color = isEntrada ? 'var(--success)' : 'var(--danger)'
                     return (
-                      <tr key={t.id} className="flex flex-col mb-4 bg-white/5 rounded-xl p-5 md:bg-transparent shadow-sm md:table-row md:mb-0 md:border-b md:border-white/5 md:p-0 md:shadow-none md:rounded-none hover:bg-white/10 md:hover:bg-white/5 transition-colors">
+                      <tr key={t.id} className="flex flex-col bg-transparent py-4 border-b border-white/5 last:border-b-0 md:table-row md:py-0 md:border-white/5 md:hover:bg-white/5 transition-colors">
                         <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 text-white whitespace-nowrap">
                           <span className="md:hidden font-semibold text-white/70 text-xs">Data</span>
                           <span>{new Date(t.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</span>

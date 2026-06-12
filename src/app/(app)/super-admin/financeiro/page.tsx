@@ -72,7 +72,7 @@ export default async function FinancialSubscriptionsPage() {
       </div>
 
       {/* BLOCO DA TABELA DE CONTROLE DE MENSALIDADES */}
-      <div className="rounded-2xl border border-white/10 bg-[#0B1121]/50 backdrop-blur-md shadow-2xl relative overflow-hidden flex flex-col">
+      <div className="md:rounded-2xl md:border md:border-white/10 md:bg-[#0B1121]/50 md:backdrop-blur-md md:shadow-2xl relative overflow-hidden flex flex-col">
         <div className="p-6 border-b border-white/10 relative z-10">
           <h2 className="text-lg font-semibold text-white">Controle de Mensalidades</h2>
         </div>
@@ -108,7 +108,7 @@ export default async function FinancialSubscriptionsPage() {
                 }
 
                 return (
-                  <tr key={igreja.id} className="flex flex-col mb-4 bg-white/5 rounded-xl p-5 md:bg-transparent shadow-sm md:table-row md:mb-0 md:border-b md:border-white/5 md:p-0 md:shadow-none md:rounded-none hover:bg-white/10 md:hover:bg-white/[0.02] transition-colors group">
+                  <tr key={igreja.id} className="flex flex-col bg-transparent py-4 border-b border-white/5 last:border-b-0 md:table-row md:py-0 md:border-white/5 md:hover:bg-white/[0.02] transition-colors group">
                     <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 md:pl-6 font-semibold text-white">
                       <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Igreja</span>
                       <span>{igreja.nome}</span>

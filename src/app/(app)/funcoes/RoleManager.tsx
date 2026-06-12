@@ -216,7 +216,7 @@ export default function RoleManager({
 
         {/* Tabela Responsiva com Cores do Tema */}
         {!isAdding && !editingRole && (
-          <div className="w-full overflow-x-auto md:overflow-visible rounded-2xl border border-[var(--border-tint)] bg-[var(--surface-tint)] shadow-sm">
+          <div className="w-full overflow-x-auto md:overflow-visible md:rounded-2xl md:border md:border-[var(--border-tint)] md:bg-[var(--surface-tint)] md:shadow-sm">
             <table className="table table-hover data-table w-full block md:table md:min-w-[700px]">
               <thead className="hidden md:table-header-group">
                 <tr>
@@ -229,7 +229,7 @@ export default function RoleManager({
                 {initialRoles.map((r) => {
                   const isDefault = ['ADMINISTRADOR', 'TESOUREIRO', 'VISUALIZADOR'].includes(r.nome)
                   return (
-                    <tr key={r.id} className="flex flex-col mb-4 bg-white/5 rounded-xl p-5 md:bg-transparent shadow-sm md:table-row md:mb-0 md:border-b md:border-white/5 md:p-0 md:shadow-none md:rounded-none hover:bg-white/10 md:hover:bg-white/5 transition-colors">
+                    <tr key={r.id} className="flex flex-col bg-transparent py-4 border-b border-white/5 last:border-b-0 md:table-row md:py-0 md:border-white/5 md:hover:bg-white/5 transition-colors">
                       <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 font-semibold text-white">
                         <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Função</span>
                         <span>{r.nome}</span>

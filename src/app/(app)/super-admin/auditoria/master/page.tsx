@@ -23,7 +23,7 @@ export default async function AuditoriaMasterPage() {
         <p className="text-[var(--text-muted)] mt-2 italic">Histórico global de operações críticas e ações de suporte.</p>
       </div>
 
-      <div className="rounded-2xl border border-[var(--border-tint)] bg-[var(--surface-tint)] overflow-hidden shadow-2xl backdrop-blur-md">
+      <div className="md:rounded-2xl md:border md:border-[var(--border-tint)] md:bg-[var(--surface-tint)] overflow-hidden md:shadow-2xl md:backdrop-blur-md">
         <div className="overflow-x-auto md:overflow-visible">
           <table className="w-full text-left border-collapse block md:table md:min-w-[800px]">
             <thead className="hidden md:table-header-group">
@@ -42,7 +42,7 @@ export default async function AuditoriaMasterPage() {
                 logs.map((log) => {
                   const isMasterAction = log.usuario.email === 'felipeabreu.1994@gmail.com'
                   return (
-                    <tr key={log.id} className="flex flex-col mb-4 bg-white/5 rounded-xl p-5 md:bg-transparent shadow-sm md:table-row md:mb-0 md:border-b md:border-white/5 md:p-0 md:shadow-none md:rounded-none hover:bg-white/10 md:hover:bg-white/[0.02] transition-colors">
+                    <tr key={log.id} className="flex flex-col bg-transparent py-4 border-b border-white/5 last:border-b-0 md:table-row md:py-0 md:border-white/5 md:hover:bg-white/[0.02] transition-colors">
                       <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:p-4 text-sm text-[var(--text-muted)]">
                         <span className="md:hidden font-bold text-[var(--text-muted)] text-xs uppercase tracking-wider">Data / Hora</span>
                         <span>{format(log.criado_em, "dd/MM/yy HH:mm", { locale: ptBR })}</span>
