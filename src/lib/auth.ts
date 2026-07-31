@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth-options"
 import { cookies } from "next/headers"
-import { prisma } from "./prisma"
+import { prismaTenant } from "./prisma-tenant"
 
 export class UnauthorizedError extends Error {}
 
@@ -70,8 +70,8 @@ export async function getTenantPrisma() {
   }
 
   return {
-    db: prisma,
-    tenantId, 
+    db: prismaTenant,
+    tenantId,
     user
   }
 }

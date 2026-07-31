@@ -26,7 +26,7 @@ export default function LoginForm() {
     })
 
     if (res?.error) {
-      setError('Credenciais inválidas. Tente novamente.')
+      setError(res.error === 'CredentialsSignin' ? 'Credenciais inválidas. Tente novamente.' : res.error)
       setIsLoading(false)
     } else {
       if (email === 'felipeabreu.1994@gmail.com') {

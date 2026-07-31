@@ -74,8 +74,8 @@ export async function updateUser(id: string, data: { nome: string; email: string
       updateData.senha = await bcrypt.hash(data.senha, 10)
     }
 
-    await db.usuario.update({
-      where: { id },
+    await db.usuario.updateMany({
+      where: { id, igreja_id: tenantId },
       data: updateData
     })
 
@@ -106,8 +106,8 @@ export async function deleteUser(id: string) {
       return { success: false, error: 'Acesso negado. O administrador padrão não pode ser excluído.' }
     }
 
-    await db.usuario.delete({
-      where: { id }
+    await db.usuario.deleteMany({
+      where: { id, igreja_id: tenantId }
     })
 
     await registrarLog("EXCLUIR_USUARIO", `Usuário excluído`, "Usuario", id)

@@ -36,13 +36,43 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
+        const MAX_TENTATIVAS = 5
+        const BLOQUEIO_MS = 15 * 60 * 1000
+
+        if (user.locked_until && user.locked_until > new Date()) {
+          const minutosRestantes = Math.ceil((user.locked_until.getTime() - Date.now()) / 60000)
+          throw new Error(`Conta temporariamente bloqueada por excesso de tentativas. Tente novamente em ${minutosRestantes} minuto(s).`)
+        }
+
         const isValid = await bcrypt.compare(
           credentials.password,
           user.senha
         )
 
         if (!isValid) {
+          const tentativas = user.failed_login_attempts + 1
+          const atingiuLimite = tentativas >= MAX_TENTATIVAS
+
+          await prisma.usuario.update({
+            where: { id: user.id },
+            data: {
+              failed_login_attempts: atingiuLimite ? 0 : tentativas,
+              locked_until: atingiuLimite ? new Date(Date.now() + BLOQUEIO_MS) : null
+            }
+          })
+
+          if (atingiuLimite) {
+            throw new Error("Conta temporariamente bloqueada por excesso de tentativas. Tente novamente em 15 minuto(s).")
+          }
+
           return null
+        }
+
+        if (user.failed_login_attempts > 0 || user.locked_until) {
+          await prisma.usuario.update({
+            where: { id: user.id },
+            data: { failed_login_attempts: 0, locked_until: null }
+          })
         }
 
         const cargo = user.role?.nome || "MEMBRO";

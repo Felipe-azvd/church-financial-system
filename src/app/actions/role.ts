@@ -59,14 +59,12 @@ export async function updateRole(id: string, nome: string, permission_ids: strin
       db.rolePermission.deleteMany({
         where: { role_id: parsed.data.id }
       }),
-      db.role.update({
+      db.role.updateMany({
         where: { id: parsed.data.id, igreja_id: tenantId },
-        data: { 
-          nome: parsed.data.nome, 
-          role_permissions: {
-            create: parsed.data.permission_ids.map(pid => ({ permission_id: pid }))
-          }
-        }
+        data: { nome: parsed.data.nome }
+      }),
+      db.rolePermission.createMany({
+        data: parsed.data.permission_ids.map(pid => ({ role_id: parsed.data.id, permission_id: pid }))
       })
     ])
 

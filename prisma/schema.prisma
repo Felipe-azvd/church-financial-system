@@ -44,6 +44,11 @@ model Usuario {
   // Campos de recuperação de senha (agora dentro do model)
   resetToken       String?
   resetTokenExpiry DateTime?
+  reset_requested_at DateTime?
+
+  // Campos de proteção contra força bruta no login
+  failed_login_attempts Int       @default(0)
+  locked_until           DateTime?
 
   igreja     Igreja      @relation(fields: [igreja_id], references: [id], onDelete: Cascade)
   role       Role        @relation(fields: [role_id], references: [id], onDelete: Restrict)

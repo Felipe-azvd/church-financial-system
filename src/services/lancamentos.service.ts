@@ -1,4 +1,5 @@
 import { getTenantPrisma, checkPermission } from "@/lib/auth"
+import { prismaTenant } from "@/lib/prisma-tenant"
 
 export type CreateLancamentoDTO = {
   descricao: string
@@ -11,9 +12,26 @@ export type CreateLancamentoDTO = {
 
 export type UpdateLancamentoDTO = Partial<CreateLancamentoDTO>
 
+async function validarPertencimentoAoTenant(
+  db: typeof prismaTenant,
+  tenantId: string,
+  categoria_id?: string | null,
+  culto_id?: string | null
+) {
+  if (categoria_id) {
+    const categoria = await db.categoria.findFirst({ where: { id: categoria_id, igreja_id: tenantId } })
+    if (!categoria) throw new Error("Categoria inválida para esta igreja.")
+  }
+  if (culto_id) {
+    const culto = await db.culto.findFirst({ where: { id: culto_id, igreja_id: tenantId } })
+    if (!culto) throw new Error("Culto inválido para esta igreja.")
+  }
+}
+
 export async function criarLancamento(data: CreateLancamentoDTO) {
   await checkPermission('lancamentos.criar')
   const { db, tenantId, user } = await getTenantPrisma()
+  await validarPertencimentoAoTenant(db, tenantId, data.categoria_id, data.culto_id)
   return await db.transacao.create({
     data: {
       igreja_id: tenantId, // Overridden by Prisma Tenant extension automatically, but explicitly set for isolation
@@ -49,6 +67,7 @@ export async function listarLancamentos(startDate: Date, endDate: Date) {
 export async function atualizarLancamento(id: string, data: UpdateLancamentoDTO) {
   await checkPermission('lancamentos.editar')
   const { db, tenantId } = await getTenantPrisma()
+  await validarPertencimentoAoTenant(db, tenantId, data.categoria_id, data.culto_id)
   const result = await db.transacao.updateMany({
     where: { 
       id,

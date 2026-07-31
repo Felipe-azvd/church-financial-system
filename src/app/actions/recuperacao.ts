@@ -23,14 +23,21 @@ export async function enviarEmailRecuperacao(email: string) {
       return { success: true }
     }
 
+    // Throttle: evita reenviar e-mail se já foi solicitado há menos de 60 segundos
+    const THROTTLE_MS = 60 * 1000
+    if (user.reset_requested_at && Date.now() - user.reset_requested_at.getTime() < THROTTLE_MS) {
+      return { success: true }
+    }
+
     // 1. Gera o Token de 64 caracteres e define validade de 1 hora
     const resetToken = crypto.randomBytes(32).toString("hex")
+    const resetTokenHash = crypto.createHash("sha256").update(resetToken).digest("hex")
     const resetTokenExpiry = new Date(Date.now() + 1000 * 60 * 60)
 
-    // 2. Salva no banco
+    // 2. Salva o HASH do token no banco (o token em texto puro só existe no e-mail)
     await prisma.usuario.update({
       where: { email },
-      data: { resetToken, resetTokenExpiry },
+      data: { resetToken: resetTokenHash, resetTokenExpiry, reset_requested_at: new Date() },
     })
 
     // 3. Monta o link mágico
@@ -65,10 +72,15 @@ export async function enviarEmailRecuperacao(email: string) {
 
 export async function salvarNovaSenha(token: string, novaSenha: string) {
   try {
-    // Procura um usuário com esse token que ainda não expirou
+    if (!novaSenha || novaSenha.length < 6) {
+      return { success: false, error: "A senha deve ter pelo menos 6 caracteres." }
+    }
+
+    // Procura um usuário cujo hash do token bate e que ainda não expirou
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex")
     const user = await prisma.usuario.findFirst({
       where: {
-        resetToken: token,
+        resetToken: tokenHash,
         resetTokenExpiry: { gt: new Date() },
       },
     })

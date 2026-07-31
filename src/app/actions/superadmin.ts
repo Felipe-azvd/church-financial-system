@@ -163,6 +163,12 @@ export async function sairModoSuporte() {
 }
 
 export async function alterarPlanoIgreja(igrejaId: string, novoPlano: string, novoVencimento?: number) {
+  const user = await getCurrentUser()
+
+  if (!user || !user.permissions.includes('*')) {
+    return { success: false, error: 'Acesso negado.' }
+  }
+
   try {
     const igrejaAnterior = await prisma.igreja.findUnique({
       where: { id: igrejaId },
