@@ -38,7 +38,7 @@ export default async function LancamentosPage({
         lookups={lookups}
         userPermissions={user.permissions} 
         isMaster={(user as any).is_master}
-        headerSlot={<MonthSelector />}
+        headerSlot={<MonthSelector key="month-selector" />}
       />
     </div>
   )

@@ -2,7 +2,9 @@
 
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { createTransaction, updateTransaction } from '@/app/actions/finance'
-import { UploadCloud, ChevronDown } from 'lucide-react'
+import { UploadCloud } from 'lucide-react'
+import { Modal } from '@/components/ui/Modal'
+import { Select } from '@/components/ui/Select'
 
 type Lookup = { id: string; nome: string; tipo?: string }
 
@@ -14,51 +16,6 @@ export type TransactionEditData = {
   tipo: string
   categoria_id?: string | null
   culto_id?: string | null
-}
-
-// 🔥 COMPONENTE CUSTOMIZADO (Sem dependências externas)
-function CustomSelect({ value, onChange, options, placeholder = "Selecione" }: any) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (ref.current && !ref.current.contains(event.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const selectedLabel = options.find((o: any) => o.value === value)?.label;
-
-  return (
-    <div className="relative" ref={ref}>
-      <button
-        type="button"
-        onClick={() => setOpen(!open)}
-        className="input-field w-full h-[42px] px-3 bg-black/20 text-white focus:border-[var(--primary-color)] transition-all flex items-center justify-between text-left border border-white/5"
-      >
-        <span className={selectedLabel ? "text-white" : "text-[var(--text-muted)]"}>
-          {selectedLabel || placeholder}
-        </span>
-        <ChevronDown className={`w-4 h-4 text-[var(--text-muted)] transition-transform ${open ? 'rotate-180' : ''}`} />
-      </button>
-
-      {open && (
-        <div className="absolute z-[9999] w-full mt-1 bg-[var(--bg-page)] border border-white/10 rounded-lg shadow-2xl max-h-56 overflow-y-auto">
-          {options.map((opt: any) => (
-            <div
-              key={opt.value}
-              onClick={() => { onChange(opt.value); setOpen(false); }}
-              className={`px-4 py-2.5 cursor-pointer text-sm transition-colors ${value === opt.value ? 'bg-white/10 text-white font-medium' : 'text-[var(--text-muted)] hover:bg-white/5 hover:text-white'}`}
-            >
-              {opt.label}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
 }
 
 export default function NewTransactionModal({
@@ -84,9 +41,9 @@ export default function NewTransactionModal({
   const [successMsg, setSuccessMsg] = useState('')
   const [quickEntry, setQuickEntry] = useState('')
   const [descricao, setDescricao] = useState('')
-  const [categoriaId, setCategoriaId] = useState('none') 
-  const [cultoId, setCultoId] = useState('none') 
-  const [paymentMethod, setPaymentMethod] = useState('DINHEIRO') // Novo State
+  const [categoriaId, setCategoriaId] = useState('none')
+  const [cultoId, setCultoId] = useState('none')
+  const [paymentMethod, setPaymentMethod] = useState('DINHEIRO')
   const [dataString, setDataString] = useState(new Date().toISOString().split('T')[0])
   const [valorRaw, setValorRaw] = useState<number>(0)
   const [valorDisplay, setValorDisplay] = useState<string>('')
@@ -119,15 +76,15 @@ export default function NewTransactionModal({
   }, [isOpen, transaction])
 
   const normalize = (text: string) => {
-    return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    return text.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '')
   }
 
   const normalizedCategorias = useMemo(() => {
-    return lookups.categorias.map((c: any) => ({ ...c, normalized: normalize(c.nome) }))
+    return lookups.categorias.map((c) => ({ ...c, normalized: normalize(c.nome) }))
   }, [lookups.categorias])
 
   const normalizedCultos = useMemo(() => {
-    return lookups.cultos.map((c: any) => ({ ...c, normalized: normalize(c.nome) }))
+    return lookups.cultos.map((c) => ({ ...c, normalized: normalize(c.nome) }))
   }, [lookups.cultos])
 
   const parseQuickEntry = useCallback((text: string) => {
@@ -136,7 +93,7 @@ export default function NewTransactionModal({
     if (tokens.length === 0) return
 
     const numericTokenIndex = tokens.findIndex((t: string) => /^\d+(?:[.,]\d+)?$/.test(t))
-    
+
     if (numericTokenIndex !== -1) {
       const rawVal = tokens[numericTokenIndex].replace(',', '.')
       const numericValue = parseFloat(rawVal)
@@ -145,18 +102,18 @@ export default function NewTransactionModal({
         setValorDisplay(formatCurrency(numericValue))
       }
 
-      const remainingTokens = tokens.filter((_: any, idx: number) => idx !== numericTokenIndex)
-      
+      const remainingTokens = tokens.filter((_, idx) => idx !== numericTokenIndex)
+
       if (remainingTokens.length > 0) {
         let matchedCatId = 'none'
         let catTokenMatched = ''
-        
+
         const catToken = remainingTokens[0]
         if (catToken) {
           const normalizedToken = normalize(catToken)
-          const validCats = normalizedCategorias.filter((c: any) => c.tipo === tipo || c.tipo === 'AMBOS')
-          let partialCat = validCats.find((c: any) => c.normalized.startsWith(normalizedToken))
-          if (!partialCat) partialCat = validCats.find((c: any) => c.normalized.includes(normalizedToken))
+          const validCats = normalizedCategorias.filter((c) => c.tipo === tipo || c.tipo === 'AMBOS')
+          let partialCat = validCats.find((c) => c.normalized.startsWith(normalizedToken))
+          if (!partialCat) partialCat = validCats.find((c) => c.normalized.includes(normalizedToken))
 
           if (partialCat) {
             matchedCatId = partialCat.id
@@ -171,9 +128,9 @@ export default function NewTransactionModal({
         const potentialCultoTokens = remainingTokens.slice(1)
         for (const token of potentialCultoTokens) {
           const normalizedCultoToken = normalize(token)
-          let partialCulto = normalizedCultos.find((c: any) => c.normalized.startsWith(normalizedCultoToken))
-          if (!partialCulto) partialCulto = normalizedCultos.find((c: any) => c.normalized.includes(normalizedCultoToken))
-          
+          let partialCulto = normalizedCultos.find((c) => c.normalized.startsWith(normalizedCultoToken))
+          if (!partialCulto) partialCulto = normalizedCultos.find((c) => c.normalized.includes(normalizedCultoToken))
+
           if (partialCulto) {
             matchedCultoId = partialCulto.id
             cultoTokenMatched = token
@@ -183,8 +140,8 @@ export default function NewTransactionModal({
         setCultoId(matchedCultoId)
 
         let descTokens = [...remainingTokens]
-        if (catTokenMatched) descTokens = descTokens.filter((t: string) => t !== catTokenMatched)
-        if (cultoTokenMatched) descTokens = descTokens.filter((t: string) => t !== cultoTokenMatched)
+        if (catTokenMatched) descTokens = descTokens.filter((t) => t !== catTokenMatched)
+        if (cultoTokenMatched) descTokens = descTokens.filter((t) => t !== cultoTokenMatched)
         setDescricao(descTokens.join(' '))
       }
     }
@@ -196,7 +153,7 @@ export default function NewTransactionModal({
     if (form) form.requestSubmit()
   }
 
-  const formatCurrency = (value: number) => {
+  function formatCurrency(value: number) {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value)
   }
 
@@ -213,20 +170,10 @@ export default function NewTransactionModal({
   }
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) onClose()
-    }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, onClose])
-
-  useEffect(() => {
     if (isOpen && valorInputRef.current) {
       setTimeout(() => valorInputRef.current?.focus(), 50)
     }
   }, [isOpen, tipo])
-
-  if (!isOpen) return null
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -235,13 +182,12 @@ export default function NewTransactionModal({
     setError('')
 
     const formData = new FormData(e.currentTarget)
-    
-    // Captura os valores dos inputs ocultos vinculados ao CustomSelect
+
     const rawCat = formData.get('categoria_id') as string
     const rawCulto = formData.get('culto_id') as string
-    
-    const finalCategoriaId = (!rawCat || rawCat === 'none') ? null : rawCat;
-    const finalCultoId = (!rawCulto || rawCulto === 'none') ? null : rawCulto;
+
+    const finalCategoriaId = (!rawCat || rawCat === 'none') ? null : rawCat
+    const finalCultoId = (!rawCulto || rawCulto === 'none') ? null : rawCulto
 
     try {
       const payload = {
@@ -252,15 +198,15 @@ export default function NewTransactionModal({
         categoria_id: finalCategoriaId,
         culto_id: (tipo === 'ENTRADA') ? finalCultoId : null,
       }
-      
+
       if (onSaveOptimistic) onSaveOptimistic({ ...payload, id: transaction?.id })
 
-      let res;
+      let res
       if (transaction) res = await updateTransaction(transaction.id, payload)
       else res = await createTransaction(payload)
 
       if (!res.success) throw new Error(res.error || 'Erro ao registrar lançamento')
-      setSuccessMsg(transaction ? '✓ Lançamento atualizado com sucesso' : '✓ Lançamento salvo com sucesso')
+      setSuccessMsg(transaction ? 'Lançamento atualizado com sucesso' : 'Lançamento salvo com sucesso')
 
       setTimeout(() => {
         onSuccess()
@@ -274,202 +220,174 @@ export default function NewTransactionModal({
     }
   }
 
-  const modalOverlayStyle: React.CSSProperties = {
-    position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-    backgroundColor: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(4px)',
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    zIndex: 9999, animation: 'fadeIn 0.2s ease-out'
-  }
+  const toneClass = tipo === 'ENTRADA'
+    ? { text: 'text-[var(--color-success)]', border: 'border-[var(--color-success)]', bg: 'bg-[var(--color-success)]/10' }
+    : { text: 'text-[var(--color-error)]', border: 'border-[var(--color-error)]', bg: 'bg-[var(--color-error)]/10' }
 
   return (
-    <div style={modalOverlayStyle} onClick={(e) => { if (e.target === e.currentTarget) onClose() }}>
-      
-        <div className="bg-[var(--bg-page)] border border-[var(--border-tint)] w-[95%] sm:w-[90%] max-w-[500px] p-5 sm:p-8 relative rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.6)] transition-colors duration-500 max-h-[95vh] overflow-y-auto">        
-        <h2 className="text-xl font-semibold mb-6 text-white">
-          {transaction ? 'Editar lançamento' : 'Novo lançamento'}
-        </h2>
-        
-        {error && <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-medium">{error}</div>}
-        {successMsg && <div className="mb-4 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-semibold">{successMsg}</div>}
+    <Modal isOpen={isOpen} onClose={onClose} title={transaction ? 'Editar lançamento' : 'Novo lançamento'} size="md">
+      {error && <div className="mb-4 p-3 rounded-[var(--radius-field)] bg-[var(--color-error)]/10 border border-[var(--color-error)]/20 text-[var(--color-error)] text-sm font-medium">{error}</div>}
+      {successMsg && <div className="mb-4 p-3 rounded-[var(--radius-field)] bg-[var(--color-success)]/10 border border-[var(--color-success)]/20 text-[var(--color-success)] text-sm font-semibold">{successMsg}</div>}
 
-        <div className="flex flex-col gap-2 mb-6">
-          <label className="text-sm font-medium text-[var(--text-color)]">Entrada rápida</label>
-          <input 
-            type="text" 
-            className="input-field bg-black/20 focus:border-[var(--primary-color)] transition-all text-white" 
-            placeholder="Ex: 50 oferta" 
-            value={quickEntry}
-            onChange={(e) => setQuickEntry(e.target.value)}
-            onBlur={() => parseQuickEntry(quickEntry)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault()
-                parseQuickEntry(quickEntry)
-                setTimeout(() => handleQuickEntrySubmit(), 100)
-              }
-            }}
-          />
-        </div>
+      <div className="flex flex-col gap-2 mb-6">
+        <label className="text-sm font-medium">Entrada rápida</label>
+        <input
+          type="text"
+          className="input-field"
+          placeholder="Ex: 50 oferta"
+          value={quickEntry}
+          onChange={(e) => setQuickEntry(e.target.value)}
+          onBlur={() => parseQuickEntry(quickEntry)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              parseQuickEntry(quickEntry)
+              setTimeout(() => handleQuickEntrySubmit(), 100)
+            }
+          }}
+        />
+      </div>
 
-        <div className="flex gap-4 mb-6">
-          <button 
-            type="button"
-            className={`flex-1 py-2 rounded-lg font-semibold transition-all duration-200 border ${tipo === 'ENTRADA' ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400' : 'border-white/10 bg-transparent text-[var(--text-muted)] hover:bg-white/5'}`}
-            onClick={() => setTipo('ENTRADA')}
-          >
-            Entrada
-          </button>
-          <button 
-            type="button"
-            className={`flex-1 py-2 rounded-lg font-semibold transition-all duration-200 border ${tipo === 'SAIDA' ? 'border-red-500 bg-red-500/10 text-red-400' : 'border-white/10 bg-transparent text-[var(--text-muted)] hover:bg-white/5'}`}
-            onClick={() => setTipo('SAIDA')}
-          >
-            Saída
-          </button>
-        </div>
+      <div className="flex gap-4 mb-6">
+        <button
+          type="button"
+          className={`flex-1 py-2 rounded-[var(--radius-field)] font-semibold transition-colors border ${tipo === 'ENTRADA' ? `${toneClass.border} ${toneClass.bg} ${toneClass.text}` : 'border-[var(--color-base-300)] bg-transparent text-[var(--text-muted)] hover:bg-[var(--color-base-200)]'}`}
+          onClick={() => setTipo('ENTRADA')}
+        >
+          Entrada
+        </button>
+        <button
+          type="button"
+          className={`flex-1 py-2 rounded-[var(--radius-field)] font-semibold transition-colors border ${tipo === 'SAIDA' ? 'border-[var(--color-error)] bg-[var(--color-error)]/10 text-[var(--color-error)]' : 'border-[var(--color-base-300)] bg-transparent text-[var(--text-muted)] hover:bg-[var(--color-base-200)]'}`}
+          onClick={() => setTipo('SAIDA')}
+        >
+          Saída
+        </button>
+      </div>
 
-        <form id="transaction-form" onSubmit={handleSubmit} className="flex flex-col gap-5">
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-2 col-span-1">
-              <label className="text-sm font-medium text-[var(--text-color)]">Data</label>
-              {/* 🔥 CLASSE MAGICA INVERT ADICIONADA AQUI: */}
-              <input 
-                type="date" 
-                name="data" 
-                required 
-                className="input-field h-[42px] px-3 bg-black/20 text-white [&::-webkit-calendar-picker-indicator]:invert" 
-                value={dataString} 
-                onChange={e => setDataString(e.target.value)} 
-              />
-            </div>
-            
-            <div className="flex flex-col gap-2 col-span-1">
-              <label className="text-sm font-medium text-[var(--text-color)]">Valor (R$)</label>
-              <input 
-                ref={valorInputRef}
-                type="text" 
-                value={valorDisplay}
-                onChange={handleValorChange}
-                required 
-                className="input-field h-[42px] px-4 font-bold text-lg bg-black/20 focus:border-[#3b82f6] transition-all" 
-                placeholder="R$ 0,00" 
-                style={{
-                  color: tipo === 'ENTRADA' ? '#34d399' : '#f87171',
-                  borderColor: tipo === 'ENTRADA' ? 'rgba(52, 211, 153, 0.4)' : 'rgba(248, 113, 113, 0.4)'
-                }}
-              />
-            </div>
+      <form id="transaction-form" onSubmit={handleSubmit} className="flex flex-col gap-5">
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="flex flex-col gap-2 col-span-1">
+            <label className="text-sm font-medium">Data</label>
+            <input
+              type="date"
+              name="data"
+              required
+              className="input-field"
+              value={dataString}
+              onChange={e => setDataString(e.target.value)}
+            />
           </div>
 
+          <div className="flex flex-col gap-2 col-span-1">
+            <label className="text-sm font-medium">Valor (R$)</label>
+            <input
+              ref={valorInputRef}
+              type="text"
+              value={valorDisplay}
+              onChange={handleValorChange}
+              required
+              className={`input-field font-bold text-lg ${toneClass.text} ${toneClass.border}`}
+              placeholder="R$ 0,00"
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-medium">Descrição</label>
+          <input name="descricao" required className="input-field" placeholder="Ex: Oferta de Domingo, Conta de Luz..." value={descricao} onChange={e => setDescricao(e.target.value)} />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-[var(--text-color)]">Descrição</label>
-            <input name="descricao" required className="input-field h-[42px] bg-black/20 text-white focus:border-[var(--primary-color)] transition-all" placeholder="Ex: Oferta de Domingo, Conta de Luz..." value={descricao} onChange={e => setDescricao(e.target.value)} />
+            <label className="text-sm font-medium">Categoria</label>
+            <Select
+              value={categoriaId}
+              onChange={setCategoriaId}
+              name="categoria_id"
+              options={[
+                { value: 'none', label: 'Nenhuma' },
+                ...lookups.categorias
+                  .filter(c => c.tipo === tipo || c.tipo === 'AMBOS')
+                  .map(c => ({ value: c.id, label: c.nome }))
+              ]}
+            />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {tipo === 'ENTRADA' && (
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-[var(--text-color)]">Categoria</label>
-              <CustomSelect 
-                value={categoriaId} 
-                onChange={setCategoriaId} 
+              <label className="text-sm font-medium">Culto (Opcional)</label>
+              <Select
+                value={cultoId}
+                onChange={setCultoId}
+                name="culto_id"
                 options={[
-                  { value: 'none', label: 'Nenhuma' },
-                  ...lookups.categorias
-                    .filter(c => c.tipo === tipo || c.tipo === 'AMBOS')
-                    .map(c => ({ value: c.id, label: c.nome }))
+                  { value: 'none', label: 'Nenhum' },
+                  ...lookups.cultos.map(c => ({ value: c.id, label: c.nome }))
                 ]}
               />
-              {/* Oculto, apenas para passar o valor no formData nativo do React */}
-              <input type="hidden" name="categoria_id" value={categoriaId} />
             </div>
-
-            {tipo === 'ENTRADA' && (
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-[var(--text-color)]">Culto (Opcional)</label>
-                <CustomSelect 
-                  value={cultoId} 
-                  onChange={setCultoId} 
-                  options={[
-                    { value: 'none', label: 'Nenhum' },
-                    ...lookups.cultos.map(c => ({ value: c.id, label: c.nome }))
-                  ]}
-                />
-                <input type="hidden" name="culto_id" value={cultoId} />
-              </div>
-            )}
-
-            {tipo === 'ENTRADA' && (
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-[var(--text-color)]">Pagamento</label>
-                <CustomSelect 
-                  value={paymentMethod} 
-                  onChange={setPaymentMethod} 
-                  options={[
-                    { value: 'DINHEIRO', label: 'Dinheiro' },
-                    { value: 'PIX', label: 'PIX' },
-                    { value: 'CARTAO', label: 'Cartão' },
-                    { value: 'BOLETO', label: 'Boleto' },
-                    { value: 'TRANSFERENCIA', label: 'Transferência' }
-                  ]}
-                />
-                <input type="hidden" name="payment_method" value={paymentMethod} />
-              </div>
-            )}
-
-            {tipo === 'SAIDA' && (
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-[var(--text-color)]">Responsável</label>
-                <input type="text" name="responsavel" className="input-field h-[42px] bg-black/20 text-white focus:border-[var(--primary-color)] transition-all" placeholder="Nome" />
-              </div>
-            )}
-          </div>
-
-          {tipo === 'SAIDA' && (
-             <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-[var(--text-color)]">Comprovante</label>
-                <input type="file" name="comprovante" id="comprovante" className="sr-only" accept="image/*,.pdf" />
-                
-                <label htmlFor="comprovante" className="flex items-center justify-center h-[120px] rounded-lg border-2 border-dashed border-white/10 bg-black/20 cursor-pointer hover:border-[var(--primary-color)] hover:bg-black/30 transition-all gap-4 px-6 text-center">
-                    <UploadCloud className="h-10 w-10 text-[var(--text-muted)] flex-shrink-0" />
-                    <div>
-                        <p className="text-sm font-medium text-white">Clique ou arraste um arquivo para anexar...</p>
-                        <p className="text-xs text-[var(--text-muted)] mt-1">Formatos suportados: Imagens, PDF (Máx. 5MB)</p>
-                    </div>
-                </label>
-              </div>
           )}
 
-          <div className="flex justify-end gap-3 mt-4 pt-6 border-t border-white/10">
-            <button 
-              type="button" 
-              className="px-6 py-2 rounded-lg font-medium text-[var(--text-muted)] hover:text-white hover:bg-white/5 transition-all" 
-              onClick={onClose}
-            >
-              Cancelar
-            </button>
-            <button 
-              type="submit" 
-              className="!rounded-lg !px-10 !py-2 font-semibold text-white transition-all duration-300" 
-              disabled={loading} 
-              style={{ 
-                backgroundColor: tipo === 'ENTRADA' ? '#10b981' : '#ef4444', 
-                border: 'none',
-                boxShadow: tipo === 'ENTRADA' ? '0 0 15px rgba(16, 185, 129, 0.4)' : '0 0 15px rgba(239, 68, 68, 0.4)'
-              }}
-            >
-              {loading ? 'Salvando...' : (transaction ? 'Salvar alterações' : 'Salvar lançamento')}
-            </button>
+          {tipo === 'ENTRADA' && (
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium">Pagamento</label>
+              <Select
+                value={paymentMethod}
+                onChange={setPaymentMethod}
+                name="payment_method"
+                options={[
+                  { value: 'DINHEIRO', label: 'Dinheiro' },
+                  { value: 'PIX', label: 'PIX' },
+                  { value: 'CARTAO', label: 'Cartão' },
+                  { value: 'BOLETO', label: 'Boleto' },
+                  { value: 'TRANSFERENCIA', label: 'Transferência' }
+                ]}
+              />
+            </div>
+          )}
+
+          {tipo === 'SAIDA' && (
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium">Responsável</label>
+              <input type="text" name="responsavel" className="input-field" placeholder="Nome" />
+            </div>
+          )}
+        </div>
+
+        {tipo === 'SAIDA' && (
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium">Comprovante</label>
+            <input type="file" name="comprovante" id="comprovante" className="sr-only" accept="image/*,.pdf" />
+
+            <label htmlFor="comprovante" className="flex items-center justify-center h-[120px] rounded-[var(--radius-field)] border-2 border-dashed border-[var(--color-base-300)] cursor-pointer hover:border-[var(--color-primary)] hover:bg-[var(--color-base-200)] transition-colors gap-4 px-6 text-center">
+              <UploadCloud className="h-10 w-10 text-[var(--text-muted)] flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium">Clique ou arraste um arquivo para anexar...</p>
+                <p className="text-xs text-[var(--text-muted)] mt-1">Formatos suportados: Imagens, PDF (Máx. 5MB)</p>
+              </div>
+            </label>
           </div>
-        </form>
-      </div>
-      
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(-10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
-    </div>
+        )}
+
+        <div className="flex justify-end gap-3 mt-4 pt-6 border-t border-[var(--color-base-300)]">
+          <button
+            type="button"
+            className="px-6 py-2 rounded-[var(--radius-field)] font-medium text-[var(--text-muted)] hover:text-[var(--text-color)] hover:bg-[var(--color-base-200)] transition-colors"
+            onClick={onClose}
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            className={`px-10 py-2 rounded-[var(--radius-field)] font-semibold transition-opacity hover:opacity-90 disabled:opacity-50 ${tipo === 'ENTRADA' ? 'bg-[var(--color-success)] text-[var(--color-success-content)]' : 'bg-[var(--color-error)] text-[var(--color-error-content)]'}`}
+            disabled={loading}
+          >
+            {loading ? 'Salvando...' : (transaction ? 'Salvar alterações' : 'Salvar lançamento')}
+          </button>
+        </div>
+      </form>
+    </Modal>
   )
 }

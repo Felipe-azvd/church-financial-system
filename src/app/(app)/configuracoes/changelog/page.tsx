@@ -4,93 +4,110 @@ export const metadata = {
   title: 'Changelog | ChurchFep',
 }
 
+type ChangeItem = { tag: 'Alterado' | 'Corrigido'; text: React.ReactNode }
+type VersionEntry = { version: string; date: string; changes: ChangeItem[]; fixes: ChangeItem[] }
+
+const VERSIONS: VersionEntry[] = [
+  {
+    version: 'Versão 2.0.0',
+    date: '3 de Agosto de 2026',
+    changes: [
+      { tag: 'Alterado', text: <>Redesign visual completo do sistema — nova identidade <strong>Institutional Ledger</strong>, com tipografia editorial (Newsreader + Inter), paleta navy/âmbar e tema claro como padrão.</> },
+      { tag: 'Alterado', text: 'Novo modo escuro real, com contraste validado (WCAG AA/AAA) — não é mais um filtro cosmético.' },
+      { tag: 'Alterado', text: 'Relatórios ganharam gráficos reais (barras e evolução no tempo), substituindo as tabelas de texto puro.' },
+      { tag: 'Alterado', text: 'Janelas de cadastro (Lançamentos, Filiais, Assinaturas) padronizadas em um único componente de modal, com navegação por teclado.' },
+      { tag: 'Alterado', text: 'Confirmações de exclusão e avisos passaram a usar diálogos do próprio sistema, no lugar das janelas nativas do navegador.' },
+    ],
+    fixes: [
+      { tag: 'Corrigido', text: 'Diversos textos e cores que não apareciam corretamente por referenciar estilos inexistentes.' },
+      { tag: 'Corrigido', text: 'Piscar de tela (flash) ao carregar qualquer página, antes de aplicar o tema.' },
+      { tag: 'Corrigido', text: 'Contraste de botões e menus que ficavam difíceis de ler no tema claro.' },
+      { tag: 'Corrigido', text: 'Acesso indevido às telas de auditoria do Super Admin por usuários sem permissão.' },
+    ],
+  },
+  {
+    version: 'Versão 1.0.1',
+    date: '12 de Junho de 2026',
+    changes: [
+      { tag: 'Alterado', text: <>Rebranding global de texto e logos para <strong>ChurchFep</strong>.</> },
+    ],
+    fixes: [
+      { tag: 'Corrigido', text: 'Hidratação da sessão do NextAuth para controle de acesso baseado em funções (RBAC).' },
+      { tag: 'Corrigido', text: <>Grid de dados responsivo em tabelas (Fim da rolagem horizontal com o novo <em>Mobile Card View</em>).</> },
+      { tag: 'Corrigido', text: 'Comportamento e transição do menu lateral (Sidebar) no celular.' },
+    ],
+  },
+]
+
+const BADGE_CLASS = {
+  Alterado: 'border-[var(--color-primary)]/30 text-[var(--color-primary)] bg-[var(--color-primary)]/10',
+  Corrigido: 'border-[var(--color-success)]/30 text-[var(--color-success)] bg-[var(--color-success)]/10',
+} as const
+
+function Badge({ tag }: { tag: ChangeItem['tag'] }) {
+  return (
+    <span className={`mt-0.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase border flex-shrink-0 ${BADGE_CLASS[tag]}`}>
+      {tag}
+    </span>
+  )
+}
+
 export default function ChangelogPage() {
   return (
-    <div className="p-8 space-y-8 animate-[fadeIn_0.3s_ease-out] font-manrope">
-      {/* Header */}
+    <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-          <Info className="text-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.3)]" /> 
+        <h1 className="text-2xl font-serif font-semibold tracking-tight flex items-center gap-3">
+          <Info className="w-6 h-6 text-[var(--color-primary)]" />
           Atualizações e Novidades
         </h1>
-        <p className="text-[var(--text-muted)] mt-2 italic">Acompanhe as últimas melhorias e correções do ChurchFep.</p>
+        <p className="text-[var(--text-muted)] mt-2 text-sm">Acompanhe as últimas melhorias e correções do ChurchFep.</p>
       </div>
 
-      {/* Timeline Container */}
-      <div className="relative border-l border-white/10 ml-4 md:ml-6 space-y-12 pb-8">
-        
-        {/* Release 1.0.1 */}
-        <div className="relative pl-8 md:pl-12">
-          {/* Timeline Node */}
-          <div className="absolute -left-2.5 top-1.5 w-5 h-5 bg-blue-500 rounded-full border-4 border-[#0a1511] shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
-          
-          <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 mb-4">
-            <h2 className="text-2xl font-bold text-white tracking-tight">Versão 1.0.1</h2>
-            <span className="text-sm font-medium text-[var(--text-muted)]">12 de Junho de 2026</span>
-          </div>
+      <div className="relative border-l border-[var(--color-base-300)] ml-4 md:ml-6 space-y-12 pb-8">
+        {VERSIONS.map((entry) => (
+          <div key={entry.version} className="relative pl-8 md:pl-12">
+            <div className="absolute -left-2.5 top-1.5 w-5 h-5 bg-[var(--color-primary)] rounded-full border-4 border-[var(--color-base-100)]"></div>
 
-          <div className="rounded-2xl border border-[var(--border-tint)] bg-[var(--surface-tint)] p-6 md:p-8 shadow-2xl backdrop-blur-md relative overflow-hidden">
-            {/* Subtle glow effect in the card */}
-            <div className="absolute top-0 right-0 -mr-16 -mt-16 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 mb-4">
+              <h2 className="text-xl font-semibold tracking-tight">{entry.version}</h2>
+              <span className="text-sm font-medium text-[var(--text-muted)]">{entry.date}</span>
+            </div>
 
-            <div className="space-y-6 relative z-10">
-              
-              {/* Changed Section */}
-              <div>
-                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                  <RefreshCw className="w-5 h-5 text-blue-400" />
-                  Melhorias e Alterações
-                </h3>
-                <ul className="space-y-3">
-                  <li className="flex items-start gap-3">
-                    <span className="mt-0.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase border border-blue-500/30 text-blue-400 bg-blue-500/10 flex-shrink-0 shadow-[0_0_10px_rgba(59,130,246,0.1)]">
-                      Alterado
-                    </span>
-                    <span className="text-sm text-[var(--text-color)] leading-relaxed">
-                      Rebranding global de texto e logos para <strong className="text-white">ChurchFep</strong>.
-                    </span>
-                  </li>
-                </ul>
+            <div className="rounded-[var(--radius-box)] border border-[var(--color-base-300)] bg-[var(--color-base-100)] p-6 md:p-8 shadow-[var(--shadow-sm)]">
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <RefreshCw className="w-5 h-5 text-[var(--color-primary)]" />
+                    Melhorias e Alterações
+                  </h3>
+                  <ul className="space-y-3">
+                    {entry.changes.map((item, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <Badge tag={item.tag} />
+                        <span className="text-sm leading-relaxed">{item.text}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <CheckCircle2 className="w-5 h-5 text-[var(--color-success)]" />
+                    Correções de Bugs
+                  </h3>
+                  <ul className="space-y-3">
+                    {entry.fixes.map((item, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <Badge tag={item.tag} />
+                        <span className="text-sm leading-relaxed">{item.text}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-
-              {/* Fixed Section */}
-              <div>
-                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-amber-500" />
-                  Correções de Bugs
-                </h3>
-                <ul className="space-y-3">
-                  <li className="flex items-start gap-3">
-                    <span className="mt-0.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase border border-amber-500/30 text-amber-500 bg-amber-500/10 flex-shrink-0 shadow-[0_0_10px_rgba(245,158,11,0.1)]">
-                      Corrigido
-                    </span>
-                    <span className="text-sm text-[var(--text-color)] leading-relaxed">
-                      Hidratação da sessão do NextAuth para controle de acesso baseado em funções (RBAC).
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="mt-0.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase border border-amber-500/30 text-amber-500 bg-amber-500/10 flex-shrink-0 shadow-[0_0_10px_rgba(245,158,11,0.1)]">
-                      Corrigido
-                    </span>
-                    <span className="text-sm text-[var(--text-color)] leading-relaxed">
-                      Grid de dados responsivo em tabelas (Fim da rolagem horizontal com o novo <em className="text-white">Mobile Card View</em>).
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="mt-0.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase border border-amber-500/30 text-amber-500 bg-amber-500/10 flex-shrink-0 shadow-[0_0_10px_rgba(245,158,11,0.1)]">
-                      Corrigido
-                    </span>
-                    <span className="text-sm text-[var(--text-color)] leading-relaxed">
-                      Comportamento e transição do menu lateral (Sidebar) no celular.
-                    </span>
-                  </li>
-                </ul>
-              </div>
-
             </div>
           </div>
-        </div>
-
+        ))}
       </div>
     </div>
   )

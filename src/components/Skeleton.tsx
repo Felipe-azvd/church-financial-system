@@ -29,11 +29,11 @@ export function SkeletonStatCard() {
 export function SkeletonChartCard({ title }: { title: string }) {
   return (
     <div className="card">
-      <div className="card-body" style={{ borderBottom: '1px solid var(--border-color)' }}>
+      <div className="card-body border-b border-[var(--color-base-300)]">
         <SkeletonLine width="w-40" height="h-5" />
       </div>
       <div className="card-body">
-        <div className="animate-pulse" style={{ height: '320px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)' }} />
+        <div className="animate-pulse h-80 bg-base-200 rounded-[var(--radius-field)]" />
       </div>
     </div>
   )
@@ -42,18 +42,18 @@ export function SkeletonChartCard({ title }: { title: string }) {
 export function SkeletonTableCard({ rows = 4 }: { rows?: number }) {
   return (
     <div className="card">
-      <div className="card-body" style={{ borderBottom: '1px solid var(--border-color)' }}>
+      <div className="card-body border-b border-[var(--color-base-300)]">
         <SkeletonLine width="w-40" height="h-5" />
       </div>
       <div className="card-body">
         {/* Table header */}
-        <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
+        <div className="flex gap-3">
           <SkeletonLine width="w-1/2" height="h-3" />
           <SkeletonLine width="w-1/4" height="h-3" />
         </div>
         {/* Rows */}
         {Array.from({ length: rows }).map((_, i) => (
-          <div key={i} style={{ display: 'flex', gap: 'var(--space-3)' }}>
+          <div key={i} className="flex gap-3">
             <SkeletonLine width="w-1/2" height="h-4" />
             <SkeletonLine width="w-1/4" height="h-4" />
           </div>
@@ -66,14 +66,14 @@ export function SkeletonTableCard({ rows = 4 }: { rows?: number }) {
 export function SkeletonInsightCard() {
   return (
     <div className="card">
-      <div className="card-body" style={{ borderBottom: '1px solid var(--border-color)' }}>
+      <div className="card-body border-b border-[var(--color-base-300)]">
         <SkeletonLine width="w-40" height="h-5" />
       </div>
       <div className="card-body gap-2">
         {[1, 2, 3].map(i => (
           <div key={i} className="card">
             <div className="card-body flex-row items-center gap-3">
-              <div className="animate-pulse" style={{ width: 'var(--text-xl)', height: 'var(--text-xl)', borderRadius: '50%', backgroundColor: 'var(--bg-tertiary)', flexShrink: 0 }} />
+              <div className="animate-pulse w-8 h-8 rounded-full bg-base-300 flex-shrink-0" />
               <SkeletonLine width="w-3/4" height="h-4" />
             </div>
           </div>

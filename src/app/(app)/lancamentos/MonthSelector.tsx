@@ -34,14 +34,14 @@ export default function MonthSelector() {
   const monthName = currentDate.toLocaleString('pt-BR', { month: 'long', year: 'numeric' })
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-md)' }}>
-      <button onClick={handlePrev} className="icon-btn" style={{ padding: 'var(--space-2)', background: 'var(--bg-tertiary)', borderRadius: 'var(--radius-md)' }}>
+    <div className="flex items-center gap-3">
+      <button onClick={handlePrev} className="p-2 rounded-[var(--radius-field)] bg-[var(--color-base-200)] border border-[var(--color-base-300)] hover:bg-[var(--color-base-300)] transition-colors">
         <ChevronLeft size={20} />
       </button>
-      <h2 style={{ minWidth: '200px', textAlign: 'center', textTransform: 'capitalize', margin: 0 }}>
+      <h2 className="min-w-[200px] text-center capitalize m-0 font-medium">
         {monthName}
       </h2>
-      <button onClick={handleNext} className="icon-btn" style={{ padding: 'var(--space-2)', background: 'var(--bg-tertiary)', borderRadius: 'var(--radius-md)' }}>
+      <button onClick={handleNext} className="p-2 rounded-[var(--radius-field)] bg-[var(--color-base-200)] border border-[var(--color-base-300)] hover:bg-[var(--color-base-300)] transition-colors">
         <ChevronRight size={20} />
       </button>
     </div>

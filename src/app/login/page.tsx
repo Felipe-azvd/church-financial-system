@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Mail, Lock, ArrowRight, Info } from 'lucide-react'
 import Link from 'next/link'
-import Image from 'next/image'
+import { Logo } from '@/components/ui/Logo'
 
 export default function LoginForm() {
   const router = useRouter()
@@ -38,21 +38,19 @@ export default function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[var(--bg-page)] text-[var(--text-color)] transition-colors duration-500">
-      {/* Luzes de fundo sincronizadas com o tema */}
-      <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-[var(--primary-color)] opacity-[0.07] rounded-full blur-[100px] -translate-x-1/3 -translate-y-1/3 pointer-events-none transition-colors duration-500"></div>
-      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[var(--primary-color)] opacity-[0.05] rounded-full blur-[100px] translate-x-1/3 translate-y-1/3 pointer-events-none transition-colors duration-500"></div>
-
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[var(--bg-page)] text-[var(--text-color)]">
       <div className="w-full max-w-md relative z-10">
-        {/* Cabeçalho com Logo PNG */}
+        {/* Cabeçalho com marca */}
         <div className="text-center mb-10 flex flex-col items-center">
-          {/* Aumentamos de w-[280px] para w-[360px] (quase a largura total do form) */}
-          <Image src="/logo-c.png" alt="ChurchFep Logo" width={360} height={100} className="w-[360px] h-auto object-contain drop-shadow-[0_0_15px_var(--primary-glow)] transition-all duration-500 mb-3" priority />
+          <Logo className="w-14 h-14 text-[var(--primary-color)] mb-4" />
+          <span className="font-serif font-semibold text-3xl tracking-tight">
+            Church<span className="text-[var(--primary-color)]">Fep</span>
+          </span>
           <p className="text-[var(--text-muted)] mt-2">Inovação com propósito.</p>
         </div>
 
-        {/* Formulário Principal - Fundo Sincronizado */}
-        <div className="rounded-2xl border border-[var(--border-tint)] bg-[var(--surface-tint)] p-8 mb-6 shadow-2xl backdrop-blur-md transition-colors duration-500">
+        {/* Formulário Principal */}
+        <div className="rounded-lg border border-[var(--border-tint)] bg-[var(--surface-tint)] p-8 mb-6 shadow-md">
           {error && (
             <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm text-center">
               {error}
@@ -67,7 +65,7 @@ export default function LoginForm() {
                 <input
                   id="email"
                   type="email"
-                  className="input-field w-full pl-10 py-3 rounded-lg text-sm bg-black/20 focus:border-[var(--primary-color)] transition-all"
+                  className="input-field w-full pl-10 text-sm"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -83,7 +81,7 @@ export default function LoginForm() {
                 <input
                   id="password"
                   type="password"
-                  className="input-field w-full pl-10 py-3 rounded-lg text-sm bg-black/20 focus:border-[var(--primary-color)] transition-all"
+                  className="input-field w-full pl-10 text-sm"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -113,10 +111,10 @@ export default function LoginForm() {
         </div>
 
         {/* Bloco de Informação - Sincronizado */}
-        <div className="!p-4 bg-[var(--surface-tint)] flex gap-3 items-start border border-[var(--border-tint)] rounded-2xl backdrop-blur-md transition-colors duration-500">
-          <Info className="h-5 w-5 text-[var(--primary-color)] flex-shrink-0 mt-0.5 transition-colors duration-500" />
+        <div className="p-4 bg-[var(--surface-tint)] flex gap-3 items-start border border-[var(--border-tint)] rounded-lg">
+          <Info className="h-5 w-5 text-[var(--primary-color)] flex-shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm font-medium text-white">Precisa de uma conta?</p>
+            <p className="text-sm font-medium text-[var(--text-color)]">Precisa de uma conta?</p>
             <p className="text-xs text-[var(--text-muted)] mt-1 leading-relaxed">
               O cadastro é realizado apenas por convite. Entre em contato com a liderança da sua igreja para solicitar acesso.
             </p>

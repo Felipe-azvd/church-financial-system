@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { deleteTransaction } from '@/app/actions/finance'
 import NewTransactionModal from '@/components/NewTransactionModal'
 import { Plus } from 'lucide-react'
+import { useConfirm } from '@/components/ui/ConfirmDialog'
+import { useToast } from '@/components/ui/Toast'
 
 type Lookup = { id: string; nome: string; tipo?: string }
 
@@ -36,6 +38,8 @@ export default function TransactionList({
 }) {
   const [editingTx, setEditingTx] = useState<TransactionData | null>(null)
   const [isNewModalOpen, setIsNewModalOpen] = useState(false)
+  const { confirm, ConfirmDialogElement } = useConfirm()
+  const { toast } = useToast()
 
   const canEdit = isMaster || userPermissions.includes('lancamentos.editar')
   const canDelete = isMaster || userPermissions.includes('lancamentos.excluir')
@@ -55,16 +59,21 @@ export default function TransactionList({
   }, [entradas, saidas])
 
   const handleDelete = async (id: string) => {
-    if (confirm('Tem certeza que deseja excluir este lançamento?')) {
-      // Optimistic delete
-      setOptimisticTxs((prev) => prev.filter(t => t.id !== id))
-      try {
-        const res = await deleteTransaction(id)
-        if (!res.success) throw new Error(res.error || 'Não foi possível excluir este lançamento.')
-      } catch (err: any) {
-        alert(err.message || 'Operação cancelada: erro inesperado.')
-        setOptimisticTxs(allDbTransactions) // Revert on fail
-      }
+    const ok = await confirm({
+      title: 'Excluir lançamento',
+      description: 'Tem certeza que deseja excluir este lançamento?',
+      tone: 'danger',
+      confirmLabel: 'Excluir',
+    })
+    if (!ok) return
+
+    setOptimisticTxs((prev) => prev.filter(t => t.id !== id))
+    try {
+      const res = await deleteTransaction(id)
+      if (!res.success) throw new Error(res.error || 'Não foi possível excluir este lançamento.')
+    } catch (err: any) {
+      toast(err.message || 'Operação cancelada: erro inesperado.', 'error')
+      setOptimisticTxs(allDbTransactions) // Revert on fail
     }
   }
 
@@ -128,14 +137,14 @@ export default function TransactionList({
             <table className="table table-hover data-table w-full block md:table md:min-w-[800px]">
               <thead className="hidden md:table-header-group">
                 <tr>
-                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]">Data</th>
-                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]">Descrição</th>
-                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]">Categoria</th>
-                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]">Culto</th>
-                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)] text-center">Tipo</th>
-                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)] text-right">Valor</th>
-                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)] text-right">Saldo Corrente</th>
-                  {canAct && <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)] text-center">Ações</th>}
+                  <th className="text-[var(--primary-color)]">Data</th>
+                  <th className="text-[var(--primary-color)]">Descrição</th>
+                  <th className="text-[var(--primary-color)]">Categoria</th>
+                  <th className="text-[var(--primary-color)]">Culto</th>
+                  <th className="text-[var(--primary-color)] text-center">Tipo</th>
+                  <th className="text-[var(--primary-color)] text-right">Valor</th>
+                  <th className="text-[var(--primary-color)] text-right">Saldo Corrente</th>
+                  {canAct && <th className="text-[var(--primary-color)] text-center">Ações</th>}
                 </tr>
               </thead>
               <tbody className="block md:table-row-group">
@@ -157,56 +166,53 @@ export default function TransactionList({
                 ) : (
                   displayTransactions.map((t) => {
                     const isEntrada = t.tipo === 'ENTRADA'
-                    const color = isEntrada ? 'var(--success)' : 'var(--danger)'
+                    const colorVar = isEntrada ? 'var(--color-success)' : 'var(--color-error)'
                     return (
-                      <tr key={t.id} className="flex flex-col bg-transparent py-4 border-b border-white/5 last:border-b-0 md:table-row md:py-0 md:border-white/5 md:hover:bg-white/5 transition-colors">
-                        <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 text-white whitespace-nowrap">
-                          <span className="md:hidden font-semibold text-white/70 text-xs">Data</span>
+                      <tr key={t.id} className="flex flex-col bg-transparent py-4 border-b border-[var(--color-base-300)] last:border-b-0 md:table-row md:py-0 md:hover:bg-[var(--color-base-200)] transition-colors">
+                        <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 whitespace-nowrap">
+                          <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Data</span>
                           <span>{new Date(t.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</span>
                         </td>
-                        <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 font-semibold text-white text-right md:text-left">
+                        <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 font-semibold text-right md:text-left">
                           <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Descrição</span>
                           <span>{t.descricao}</span>
                         </td>
-                        <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 text-[var(--text-muted)] text-right md:text-left">
+                        <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 text-[var(--text-muted)] text-right md:text-left">
                           <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Categoria</span>
                           <span>{t.categoria?.nome || '-'}</span>
                         </td>
-                        <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 text-[var(--text-muted)] text-right md:text-left">
+                        <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 text-[var(--text-muted)] text-right md:text-left">
                           <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Culto</span>
                           <span>{t.culto?.nome || '-'}</span>
                         </td>
-                        <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 md:text-center">
+                        <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 md:text-center">
                           <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Tipo</span>
-                          <span className="px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium border"
-                            style={{ 
-                              backgroundColor: isEntrada ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                              color: isEntrada ? '#10b981' : '#ef4444',
-                              borderColor: isEntrada ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)'
-                            }}
+                          <span
+                            className="px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium border"
+                            style={{ backgroundColor: `color-mix(in oklab, ${colorVar} 10%, transparent)`, color: colorVar, borderColor: `color-mix(in oklab, ${colorVar} 20%, transparent)` }}
                           >
                             {isEntrada ? 'Entrada' : 'Saída'}
                           </span>
                         </td>
-                        <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 md:text-right font-semibold whitespace-nowrap" style={{ color }}>
+                        <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 md:text-right font-semibold tabular-nums whitespace-nowrap" style={{ color: colorVar }}>
                           <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Valor</span>
                           <span>{isEntrada ? '+' : '-'} R$ {t.valor.toFixed(2).replace('.', ',')}</span>
                         </td>
-                        <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 md:text-right font-semibold whitespace-nowrap" style={{ color: 'var(--text-primary)' }}>
+                        <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 md:text-right font-semibold tabular-nums whitespace-nowrap">
                           <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Saldo</span>
                           <span>R$ {t.balance.toFixed(2).replace('.', ',')}</span>
                         </td>
                         {canAct && (
-                          <td className="flex justify-between items-center py-4 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 md:text-center">
+                          <td className="flex justify-between items-center py-4 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 md:text-center">
                             <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Ações</span>
                             <div className="flex items-center gap-2 justify-end md:justify-center">
                               {canEdit && (
-                                <button className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors hover:bg-white/10" style={{ color: 'var(--primary-color)' }} onClick={() => setEditingTx(t)}>
+                                <button className="px-3 py-1.5 rounded-[var(--radius-field)] text-sm font-medium text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10 transition-colors" onClick={() => setEditingTx(t)}>
                                   Editar
                                 </button>
                               )}
                               {canDelete && (
-                                <button className="px-3 py-1.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors" onClick={() => handleDelete(t.id)}>
+                                <button className="px-3 py-1.5 rounded-[var(--radius-field)] text-sm font-medium text-[var(--color-error)] hover:bg-[var(--color-error)]/10 transition-colors" onClick={() => handleDelete(t.id)}>
                                   Excluir
                                 </button>
                               )}
@@ -227,7 +233,7 @@ export default function TransactionList({
 
   return (
     <div className="w-full">
-      {/* CORREÇÃO 2: Cabeçalho Empilhável (flex-col sm:flex-row) */}
+      {ConfirmDialogElement}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 w-full">
         <div>
           <h1 className="text-2xl font-semibold mb-1">Lançamentos</h1>

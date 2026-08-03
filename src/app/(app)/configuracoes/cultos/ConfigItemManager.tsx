@@ -2,21 +2,23 @@
 
 import { useState } from 'react'
 import { createConfigItem, updateConfigItem, deleteConfigItem } from '@/app/actions/config'
+import { useConfirm } from '@/components/ui/ConfirmDialog'
 
 type Item = { id: string; nome: string; tipo?: string }
 
-export default function ConfigItemManager({ 
-  title, 
-  type, 
-  items 
-}: { 
-  title: string, 
-  type: 'categoria' | 'culto', 
-  items: Item[] 
+export default function ConfigItemManager({
+  title,
+  type,
+  items
+}: {
+  title: string,
+  type: 'categoria' | 'culto',
+  items: Item[]
 }) {
   const [isAdding, setIsAdding] = useState(false)
   const [editingItem, setEditingItem] = useState<Item | null>(null)
   const [loading, setLoading] = useState(false)
+  const { confirm, ConfirmDialogElement } = useConfirm()
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -24,7 +26,7 @@ export default function ConfigItemManager({
     const formData = new FormData(e.currentTarget)
     const nome = formData.get('nome') as string
     const itemTipo = formData.get('itemTipo') as string | undefined
-    
+
     if (editingItem) {
       await updateConfigItem(type, editingItem.id, nome, itemTipo)
       setEditingItem(null)
@@ -32,14 +34,18 @@ export default function ConfigItemManager({
       await createConfigItem(type, nome, itemTipo)
       setIsAdding(false)
     }
-    
+
     setLoading(false)
   }
 
   const handleDelete = async (id: string) => {
-    if (confirm('Tem certeza que deseja remover este item?')) {
-      await deleteConfigItem(type, id)
-    }
+    const ok = await confirm({
+      title: 'Remover item',
+      description: 'Tem certeza que deseja remover este item?',
+      tone: 'danger',
+      confirmLabel: 'Remover',
+    })
+    if (ok) await deleteConfigItem(type, id)
   }
 
   const cancelAction = () => {
@@ -48,15 +54,14 @@ export default function ConfigItemManager({
   }
 
   return (
-    /* Trocamos 'card' por 'card-glass' e adicionamos 'p-6' para o respiro interno perfeito */
-    <div className="card-glass w-full p-6 rounded-2xl relative">
-      
-      {/* Cabeçalho Ajustado */}
+    <div className="rounded-[var(--radius-box)] border border-[var(--color-base-300)] bg-[var(--color-base-100)] shadow-[var(--shadow-sm)] w-full p-6">
+      {ConfirmDialogElement}
+
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-white">{title}</h2>
+        <h2 className="text-xl font-semibold">{title}</h2>
         {!isAdding && !editingItem && (
-          <button 
-            className="btn-primary !rounded-lg px-5 py-2 text-sm font-medium" 
+          <button
+            className="btn-primary rounded-[var(--radius-field)] px-5 py-2 text-sm font-medium"
             onClick={() => setIsAdding(true)}
           >
             + Adicionar
@@ -64,26 +69,25 @@ export default function ConfigItemManager({
         )}
       </div>
 
-      {/* Formulário de Adição/Edição com fundo destacado */}
       {(isAdding || editingItem) && (
-        <form 
-          onSubmit={handleSave} 
-          className="flex flex-wrap items-center gap-4 mb-6 bg-black/20 p-5 rounded-xl border border-white/10 animate-[fadeIn_0.2s_ease-out]"
+        <form
+          onSubmit={handleSave}
+          className="flex flex-wrap items-center gap-4 mb-6 bg-[var(--color-base-200)] p-5 rounded-[var(--radius-box)] border border-[var(--color-base-300)]"
         >
-          <input 
-            name="nome" 
-            required 
-            className="input-field bg-black/20 text-white focus:border-[#3b82f6] transition-all h-[42px] px-4" 
-            style={{ flex: 1, minWidth: '200px' }} 
-            placeholder="Nome..." 
+          <input
+            name="nome"
+            required
+            className="input-field"
+            style={{ flex: 1, minWidth: '200px' }}
+            placeholder="Nome..."
             defaultValue={editingItem?.nome}
-            autoFocus 
+            autoFocus
           />
           {type === 'categoria' && (
-            <select 
-              name="itemTipo" 
-              required 
-              className="input-field bg-black/20 text-white focus:border-[#3b82f6] transition-all h-[42px] px-4" 
+            <select
+              name="itemTipo"
+              required
+              className="input-field"
               style={{ width: '150px' }}
               defaultValue={editingItem?.tipo || 'AMBOS'}
             >
@@ -92,14 +96,14 @@ export default function ConfigItemManager({
               <option value="SAIDA">Saída</option>
             </select>
           )}
-          
+
           <div className="flex items-center gap-2">
-            <button type="submit" className="btn-primary !rounded-lg px-6 py-2 h-[42px] flex items-center justify-center" disabled={loading}>
+            <button type="submit" className="btn-primary rounded-[var(--radius-field)] px-6 py-2 h-[42px] flex items-center justify-center" disabled={loading}>
               {loading ? 'Salvando...' : 'Salvar'}
             </button>
-            <button 
-              type="button" 
-              className="px-4 py-2 h-[42px] rounded-lg font-medium text-[var(--text-muted)] hover:text-white hover:bg-white/5 transition-all" 
+            <button
+              type="button"
+              className="px-4 py-2 h-[42px] rounded-[var(--radius-field)] font-medium text-[var(--text-muted)] hover:text-[var(--text-color)] hover:bg-[var(--color-base-300)] transition-colors"
               onClick={cancelAction}
             >
               Cancelar
@@ -108,15 +112,14 @@ export default function ConfigItemManager({
         </form>
       )}
 
-      {/* Tabela de Listagem */}
       {(!isAdding && !editingItem) && (
-        <div className="md:overflow-x-auto md:overflow-visible md:rounded-xl md:border md:border-white/5">
+        <div className="md:overflow-x-auto md:overflow-visible md:rounded-[var(--radius-box)] md:border md:border-[var(--color-base-300)]">
           <table className="table table-hover data-table w-full block md:table">
             <thead className="hidden md:table-header-group">
               <tr>
-                <th className="!bg-black/20 !text-blue-400 font-semibold">{type === 'categoria' ? 'Categoria' : 'Nome'}</th>
-                {type === 'categoria' && <th className="!bg-black/20 !text-blue-400 font-semibold">Tipo</th>}
-                <th className="!bg-black/20 !text-blue-400 font-semibold text-right">Ações</th>
+                <th>{type === 'categoria' ? 'Categoria' : 'Nome'}</th>
+                {type === 'categoria' && <th>Tipo</th>}
+                <th className="text-right">Ações</th>
               </tr>
             </thead>
             <tbody className="block md:table-row-group">
@@ -127,56 +130,48 @@ export default function ConfigItemManager({
                   </td>
                 </tr>
               ) : (
-                items.map(item => {
-                  return (
-                    <tr key={item.id} className="flex flex-col bg-transparent py-4 border-b border-white/5 last:border-b-0 md:table-row md:py-0 md:border-white/5 md:hover:bg-white/5 transition-colors">
-                      <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 font-medium text-white whitespace-normal break-words">
-                        <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">{type === 'categoria' ? 'Categoria' : 'Nome'}</span>
-                        <span className="text-right md:text-left">{item.nome}</span>
-                      </td>
-                      
-                      {type === 'categoria' && (
-                        <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 whitespace-normal break-words">
-                          <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Tipo</span>
-                          <div>
-                            {item.tipo === 'ENTRADA' && <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-medium border border-emerald-500/20">Entrada</span>}
-                            {item.tipo === 'SAIDA' && <span className="px-3 py-1 rounded-full bg-red-500/10 text-red-400 text-xs font-medium border border-red-500/20">Saída</span>}
-                            {(!item.tipo || item.tipo === 'AMBOS') && <span className="px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-xs font-medium border border-blue-500/20">Ambos</span>}
-                          </div>
-                        </td>
-                      )}
-                      
-                      <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 md:text-right whitespace-normal break-words">
-                        <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Ações</span>
-                        <div className="flex items-center gap-2 justify-end">
-                          <button 
-                            onClick={() => setEditingItem(item)} 
-                            className="px-3 py-1.5 rounded-lg text-sm font-medium text-blue-400 hover:bg-blue-500/10 transition-colors"
-                          >
-                            Editar
-                          </button>
-                          <button 
-                            onClick={() => handleDelete(item.id)} 
-                            className="px-3 py-1.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors"
-                          >
-                            Excluir
-                          </button>
+                items.map(item => (
+                  <tr key={item.id} className="flex flex-col bg-transparent py-4 border-b border-[var(--color-base-300)] last:border-b-0 md:table-row md:py-0 md:hover:bg-[var(--color-base-200)] transition-colors">
+                    <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 font-medium whitespace-normal break-words">
+                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">{type === 'categoria' ? 'Categoria' : 'Nome'}</span>
+                      <span className="text-right md:text-left">{item.nome}</span>
+                    </td>
+
+                    {type === 'categoria' && (
+                      <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 whitespace-normal break-words">
+                        <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Tipo</span>
+                        <div>
+                          {item.tipo === 'ENTRADA' && <span className="px-3 py-1 rounded-full bg-[var(--color-success)]/10 text-[var(--color-success)] text-xs font-medium border border-[var(--color-success)]/20">Entrada</span>}
+                          {item.tipo === 'SAIDA' && <span className="px-3 py-1 rounded-full bg-[var(--color-error)]/10 text-[var(--color-error)] text-xs font-medium border border-[var(--color-error)]/20">Saída</span>}
+                          {(!item.tipo || item.tipo === 'AMBOS') && <span className="px-3 py-1 rounded-full bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs font-medium border border-[var(--color-primary)]/20">Ambos</span>}
                         </div>
                       </td>
-                    </tr>
-                  )
-                })
+                    )}
+
+                    <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 md:text-right whitespace-normal break-words">
+                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Ações</span>
+                      <div className="flex items-center gap-2 justify-end">
+                        <button
+                          onClick={() => setEditingItem(item)}
+                          className="px-3 py-1.5 rounded-[var(--radius-field)] text-sm font-medium text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10 transition-colors"
+                        >
+                          Editar
+                        </button>
+                        <button
+                          onClick={() => handleDelete(item.id)}
+                          className="px-3 py-1.5 rounded-[var(--radius-field)] text-sm font-medium text-[var(--color-error)] hover:bg-[var(--color-error)]/10 transition-colors"
+                        >
+                          Excluir
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
               )}
             </tbody>
           </table>
         </div>
       )}
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(-5px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </div>
   )
 }

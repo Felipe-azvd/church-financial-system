@@ -4,10 +4,11 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Logo } from '@/components/ui/Logo'
-import { 
-  LayoutDashboard, ReceiptText, PieChart, Settings, Users, 
-  LogOut, Key, Menu, ChevronRight, X, Crown,
-  Building2, History, CreditCard, ShieldCheck, ChevronsUpDown, Star
+import {
+  LayoutDashboard, ReceiptText, PieChart, Settings, Users,
+  LogOut, Key, Menu, ChevronRight, Crown,
+  Building2, History, CreditCard, ShieldCheck, ChevronsUpDown, Star,
+  type LucideIcon
 } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import { sairModoSuporte } from '@/app/actions/superadmin'
@@ -25,17 +26,68 @@ const navItemsCliente = [
 const navItemsMaster = [
   { href: '/super-admin', label: 'Visão Geral', icon: ShieldCheck },
   { href: '/super-admin/igrejas', label: 'Gerenciar Igrejas', icon: Building2 },
-  { href: '/super-admin/auditoria', label: 'Auditoria', icon: History }, // 🔥 Trocado para apenas "Auditoria"
+  { href: '/super-admin/auditoria', label: 'Auditoria', icon: History },
   { href: '/super-admin/financeiro', label: 'Assinaturas', icon: CreditCard },
 ]
 
-export default function Sidebar({ 
-  userPermissions = [], 
+const navLinkClass = (isActive: boolean, isMaster: boolean, isCollapsed: boolean) => {
+  const active = isMaster
+    ? 'bg-[var(--color-accent)]/10 text-[var(--color-accent)] border-l-2 border-[var(--color-accent)]'
+    : 'bg-[var(--primary-soft)] text-[var(--primary-color)] border-l-2 border-[var(--primary-color)]'
+  const inactive = 'text-[var(--text-muted)] hover:text-[var(--text-color)] hover:bg-[var(--color-base-200)] border-l-2 border-transparent'
+  const padding = isCollapsed ? 'md:justify-center p-3' : 'px-4 py-3'
+  return `flex items-center rounded-lg transition-colors duration-150 ${isActive ? active : inactive} ${padding}`
+}
+
+function SidebarSubmenu({
+  icon: Icon,
+  label,
+  isSectionActive,
+  isCollapsed,
+  isOpen,
+  onToggle,
+  isMaster,
+  children,
+}: {
+  icon: LucideIcon
+  label: string
+  isSectionActive: boolean
+  isCollapsed: boolean
+  isOpen: boolean
+  onToggle: () => void
+  isMaster: boolean
+  children: React.ReactNode
+}) {
+  return (
+    <div className="flex flex-col">
+      <button
+        onClick={onToggle}
+        className={`justify-between ${navLinkClass(isSectionActive && !isOpen, isMaster, isCollapsed)}`}
+      >
+        <div className="flex items-center gap-3">
+          <Icon className="w-5 h-5 flex-shrink-0" />
+          {!isCollapsed && <span>{label}</span>}
+        </div>
+        {!isCollapsed && <ChevronRight className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-90' : ''}`} />}
+      </button>
+      <div
+        className={`overflow-hidden transition-all duration-200 flex flex-col gap-1 ${
+          isOpen && !isCollapsed ? 'max-h-64 mt-1 opacity-100' : 'max-h-0 opacity-0'
+        }`}
+      >
+        {children}
+      </div>
+    </div>
+  )
+}
+
+export default function Sidebar({
+  userPermissions = [],
   userName = '',
   churchName = 'Sua Igreja',
   churchNetwork = []
-}: { 
-  userPermissions?: string[], 
+}: {
+  userPermissions?: string[],
   userName?: string,
   churchName?: string,
   churchNetwork?: { id: string, nome: string, isMatriz: boolean }[]
@@ -44,43 +96,53 @@ export default function Sidebar({
   const isMasterArea = pathname.startsWith('/super-admin')
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isConfigOpen, setIsConfigOpen] = useState(false)
-  const [isAuditoriaOpen, setIsAuditoriaOpen] = useState(false) // 🔥 Novo estado para o menu Auditoria
+  const [isAuditoriaOpen, setIsAuditoriaOpen] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
   const [isNetworkOpen, setIsNetworkOpen] = useState(false)
 
   const handleLinkClick = () => { if (window.innerWidth < 768) setIsMobileOpen(false) }
   const activeNavItems = isMasterArea ? navItemsMaster : navItemsCliente
 
+  const subLinkClass = (active: boolean) =>
+    `pl-12 py-2 text-sm rounded-lg ${
+      active
+        ? `font-medium ${isMasterArea ? 'text-[var(--color-accent)]' : 'text-[var(--primary-color)]'}`
+        : 'text-[var(--text-muted)] hover:text-[var(--text-color)] hover:bg-[var(--color-base-200)]'
+    }`
+
   return (
     <>
-      {/* MOBILE */}
-      <div className="md:hidden fixed top-0 left-0 right-0 h-16 sidebar-glass z-40 flex items-center justify-between px-5 backdrop-blur-md">
+      {/* MOBILE TOP BAR */}
+      <div className="md:hidden fixed top-0 left-0 right-0 h-16 sidebar-glass z-[var(--z-sticky)] flex items-center justify-between px-5">
         <div className="flex items-center gap-3">
           <Logo className="w-8 h-8 text-[var(--primary-color)]" />
-          <span className="font-sans font-bold text-xl text-white tracking-tight">Church<span className="text-[var(--primary-color)]">Fep</span></span>
+          <span className="font-serif font-semibold text-xl text-[var(--text-color)] tracking-tight">Church<span className="text-[var(--primary-color)]">Fep</span></span>
         </div>
-        <button onClick={() => setIsMobileOpen(true)} className="p-2 text-gray-400 hover:text-white">
+        <button onClick={() => setIsMobileOpen(true)} className="p-2 text-[var(--text-muted)] hover:text-[var(--text-color)]">
           <Menu className="w-6 h-6" />
         </button>
       </div>
 
       {isMobileOpen && (
-        <div className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40" onClick={() => setIsMobileOpen(false)} />
+        <div className="md:hidden fixed inset-0 bg-black/30 z-[var(--z-sticky)]" onClick={() => setIsMobileOpen(false)} />
       )}
 
       {/* SIDEBAR */}
-      <aside className={`sidebar-glass backdrop-blur-md flex flex-col flex-shrink-0 h-full overflow-hidden transition-all duration-300 z-50 fixed md:relative top-0 left-0 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} ${isCollapsed ? 'w-64 md:w-24 px-4' : 'w-64 px-6'}`} style={{ paddingBottom: '2rem', paddingTop: '2rem' }}>
-        
+      <aside
+        className={`sidebar-glass flex flex-col flex-shrink-0 h-full overflow-hidden transition-all duration-300 z-[var(--z-overlay)] fixed md:relative top-0 left-0 py-8 ${
+          isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+        } ${isCollapsed ? 'w-64 md:w-24 px-4' : 'w-64 px-6'}`}
+      >
         {/* LOGO */}
         <div className={`mb-10 flex items-center min-h-[48px] transition-all duration-300 ${isCollapsed ? 'md:justify-center' : 'justify-start gap-3'}`}>
           <Logo className="w-10 h-10 flex-shrink-0 text-[var(--primary-color)]" />
-          <span className={`font-sans font-bold text-xl text-white tracking-tight transition-all duration-300 ${isCollapsed ? 'md:w-0 md:opacity-0 overflow-hidden' : 'opacity-100'}`}>
+          <span className={`font-serif font-semibold text-xl text-[var(--text-color)] tracking-tight transition-all duration-300 ${isCollapsed ? 'md:w-0 md:opacity-0 overflow-hidden' : 'opacity-100'}`}>
             Church<span className="text-[var(--primary-color)]">Fep</span>
           </span>
         </div>
 
         {/* MENU */}
-        <nav className="flex flex-col gap-2 flex-1 overflow-x-hidden overflow-y-auto no-scrollbar">
+        <nav className="flex flex-col gap-1 flex-1 overflow-x-hidden overflow-y-auto no-scrollbar">
           {activeNavItems.map((item) => {
             if (userPermissions[0] !== '*' && !isMasterArea) {
               const permKey = `${item.href.replace('/', '')}.visualizar`
@@ -89,51 +151,48 @@ export default function Sidebar({
 
             const isActive = pathname === item.href || (item.href !== '/super-admin' && pathname.startsWith(item.href))
             const Icon = item.icon
-            
-            // 🔥 CONDICIONAL: MENU CONFIGURAÇÕES (CLIENTE)
+
             if (item.label === 'Configurações') {
               return (
-                <div key={item.href} className="flex flex-col">
-                  <button onClick={() => { if (isCollapsed) setIsCollapsed(false); setIsConfigOpen(!isConfigOpen); }} className={`flex items-center justify-between rounded-lg transition-all duration-200 ${pathname.startsWith('/configuracoes') && !isConfigOpen ? 'bg-[var(--primary-soft)] text-[var(--primary-color)] border-l-2 border-[var(--primary-color)] [box-shadow:0_0_15px_var(--primary-glow)]' : 'text-gray-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent'} ${isCollapsed ? 'md:justify-center p-3' : 'px-4 py-3'}`}>
-                    <div className="flex items-center gap-3">
-                      <Icon className="w-5 h-5 flex-shrink-0" />
-                      {!isCollapsed && <span className="transition-all duration-300">{item.label}</span>}
-                    </div>
-                    {!isCollapsed && <ChevronRight className={`w-4 h-4 transition-transform ${isConfigOpen ? 'rotate-90' : ''}`} />}
-                  </button>
-                  <div className={`overflow-hidden transition-all duration-300 flex flex-col gap-1 ${isConfigOpen && !isCollapsed ? 'max-h-64 mt-1 opacity-100' : 'max-h-0 opacity-0'}`}>
-                    <Link href="/configuracoes/cultos" onClick={handleLinkClick} className={`pl-12 py-2 text-sm rounded-lg ${pathname.includes('/cultos') ? 'text-[var(--primary-color)] font-medium' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>Cultos</Link>
-                    <Link href="/configuracoes/personalizacao" onClick={handleLinkClick} className={`pl-12 py-2 text-sm rounded-lg ${pathname.includes('/personalizacao') ? 'text-[var(--primary-color)] font-medium' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>Personalização</Link>
-                    <Link href="/configuracoes/changelog" onClick={handleLinkClick} className={`pl-12 py-2 text-sm rounded-lg ${pathname.includes('/changelog') ? 'text-[var(--primary-color)] font-medium' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>Atualizações</Link>
-                  </div>
-                </div>
+                <SidebarSubmenu
+                  key={item.href}
+                  icon={Icon}
+                  label={item.label}
+                  isSectionActive={pathname.startsWith('/configuracoes')}
+                  isCollapsed={isCollapsed}
+                  isOpen={isConfigOpen}
+                  isMaster={false}
+                  onToggle={() => { if (isCollapsed) setIsCollapsed(false); setIsConfigOpen(!isConfigOpen) }}
+                >
+                  <Link href="/configuracoes/cultos" onClick={handleLinkClick} className={subLinkClass(pathname.includes('/cultos'))}>Cultos</Link>
+                  <Link href="/configuracoes/personalizacao" onClick={handleLinkClick} className={subLinkClass(pathname.includes('/personalizacao'))}>Personalização</Link>
+                  <Link href="/configuracoes/changelog" onClick={handleLinkClick} className={subLinkClass(pathname.includes('/changelog'))}>Atualizações</Link>
+                </SidebarSubmenu>
               )
             }
 
-            // 🔥 CONDICIONAL: MENU AUDITORIA (MASTER)
             if (item.label === 'Auditoria') {
               return (
-                <div key={item.href} className="flex flex-col">
-                  <button onClick={() => { if (isCollapsed) setIsCollapsed(false); setIsAuditoriaOpen(!isAuditoriaOpen); }} className={`flex items-center justify-between rounded-lg transition-all duration-200 ${pathname.startsWith('/super-admin/auditoria') && !isAuditoriaOpen ? 'bg-amber-500/10 text-amber-500 border-l-2 border-amber-500' : 'text-gray-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent'} ${isCollapsed ? 'md:justify-center p-3' : 'px-4 py-3'}`}>
-                    <div className="flex items-center gap-3">
-                      <Icon className={`w-5 h-5 flex-shrink-0 ${pathname.startsWith('/super-admin/auditoria') ? 'text-amber-500' : ''}`} />
-                      {!isCollapsed && <span className="transition-all duration-300">{item.label}</span>}
-                    </div>
-                    {!isCollapsed && <ChevronRight className={`w-4 h-4 transition-transform ${isAuditoriaOpen ? 'rotate-90' : ''}`} />}
-                  </button>
-                  <div className={`overflow-hidden transition-all duration-300 flex flex-col gap-1 ${isAuditoriaOpen && !isCollapsed ? 'max-h-40 mt-1 opacity-100' : 'max-h-0 opacity-0'}`}>
-                    <Link href="/super-admin/auditoria/clientes" onClick={handleLinkClick} className={`pl-12 py-2 text-sm rounded-lg ${pathname.includes('/auditoria/clientes') ? 'text-amber-500 font-medium' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>Auditoria Clientes</Link>
-                    <Link href="/super-admin/auditoria/master" onClick={handleLinkClick} className={`pl-12 py-2 text-sm rounded-lg ${pathname.includes('/auditoria/master') || pathname === '/super-admin/auditoria' ? 'text-amber-500 font-medium' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>Auditoria Super Admin</Link>
-                  </div>
-                </div>
+                <SidebarSubmenu
+                  key={item.href}
+                  icon={Icon}
+                  label={item.label}
+                  isSectionActive={pathname.startsWith('/super-admin/auditoria')}
+                  isCollapsed={isCollapsed}
+                  isOpen={isAuditoriaOpen}
+                  isMaster
+                  onToggle={() => { if (isCollapsed) setIsCollapsed(false); setIsAuditoriaOpen(!isAuditoriaOpen) }}
+                >
+                  <Link href="/super-admin/auditoria/clientes" onClick={handleLinkClick} className={subLinkClass(pathname.includes('/auditoria/clientes'))}>Auditoria Clientes</Link>
+                  <Link href="/super-admin/auditoria/master" onClick={handleLinkClick} className={subLinkClass(pathname.includes('/auditoria/master') || pathname === '/super-admin/auditoria')}>Auditoria Super Admin</Link>
+                </SidebarSubmenu>
               )
             }
 
-            // PADRÃO PARA OS DEMAIS ITENS
             return (
-              <Link key={item.href} href={item.href} onClick={handleLinkClick} className={`flex items-center gap-3 rounded-lg transition-all duration-200 ${isActive ? (isMasterArea ? 'bg-amber-500/10 text-amber-500 border-l-2 border-amber-500' : 'bg-[var(--primary-soft)] text-[var(--primary-color)] border-l-2 border-[var(--primary-color)] [box-shadow:0_0_15px_var(--primary-glow)]') : 'text-gray-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent'} ${isCollapsed ? 'md:justify-center p-3' : 'px-4 py-3'}`}>
-                <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? (isMasterArea ? 'text-amber-500' : 'text-[var(--primary-color)]') : ''}`} />
-                {!isCollapsed && <span className="truncate transition-all duration-300">{item.label}</span>}
+              <Link key={item.href} href={item.href} onClick={handleLinkClick} className={navLinkClass(isActive, isMasterArea, isCollapsed)}>
+                <Icon className="w-5 h-5 flex-shrink-0" />
+                {!isCollapsed && <span className="truncate ml-3">{item.label}</span>}
               </Link>
             )
           })}
@@ -141,19 +200,14 @@ export default function Sidebar({
 
         {/* FOOTER ACTIONS */}
         <div className="mt-auto flex flex-col gap-2">
-          
-          {/* DOCK DE BOTÕES (ADMIN + OCULTAR) */}
           <div className={`flex items-center ${isCollapsed ? 'flex-col gap-2' : 'flex-row justify-between'}`}>
-            
-            {/* ÁREA DO BOTÃO ADMINISTRATIVO */}
             <div className={isCollapsed ? '' : 'flex-1'}>
-              {/* Se for Master e estiver no CLIENTE, mostra ENCERRAR SUPORTE */}
               {userPermissions[0] === '*' && churchName !== 'Ministério Sol da Justiça' && !isMasterArea && (
                 <form action={sairModoSuporte} className="w-full">
-                  <button 
-                    type="submit" 
+                  <button
+                    type="submit"
                     title={isCollapsed ? "Encerrar Suporte" : undefined}
-                    className={`flex items-center justify-center rounded-lg transition-all duration-300 bg-transparent text-rose-400 border border-transparent hover:bg-rose-500/10 hover:border-rose-500/30 ${isCollapsed ? 'p-3' : 'px-5 py-2 text-sm font-medium w-full'}`}
+                    className={`flex items-center justify-center rounded-lg transition-colors bg-transparent text-[var(--color-accent)] border border-transparent hover:bg-[var(--color-accent)]/10 hover:border-[var(--color-accent)]/30 ${isCollapsed ? 'p-3' : 'px-5 py-2 text-sm font-medium w-full'}`}
                   >
                     <LogOut className="w-4 h-4 flex-shrink-0 rotate-180" />
                     {!isCollapsed && <span className="ml-2.5">Encerrar Suporte</span>}
@@ -161,12 +215,11 @@ export default function Sidebar({
                 </form>
               )}
 
-              {/* Se for Master, estiver na MATRIZ e NÃO estiver na Master Area, mostra PAINEL MASTER */}
               {userPermissions[0] === '*' && churchName === 'Ministério Sol da Justiça' && !isMasterArea && (
-                <Link 
-                  href="/super-admin" 
+                <Link
+                  href="/super-admin"
                   title={isCollapsed ? "Painel Master" : undefined}
-                  className={`flex items-center justify-center rounded-lg transition-all duration-300 bg-transparent text-amber-500 border border-transparent hover:bg-amber-500/10 hover:border-amber-500/30 ${isCollapsed ? 'p-3' : 'px-5 py-2 text-sm font-medium w-full'}`}
+                  className={`flex items-center justify-center rounded-lg transition-colors bg-transparent text-[var(--color-accent)] border border-transparent hover:bg-[var(--color-accent)]/10 hover:border-[var(--color-accent)]/30 ${isCollapsed ? 'p-3' : 'px-5 py-2 text-sm font-medium w-full'}`}
                 >
                   <Crown className="w-4 h-4 flex-shrink-0" />
                   {!isCollapsed && <span className="ml-2.5">Painel Master</span>}
@@ -174,11 +227,9 @@ export default function Sidebar({
               )}
             </div>
 
-            {/* BOTÃO OCULTAR SIDEBAR */}
-            {/* 🔥 Atualizado para fechar também o menu de Auditoria ao recolher */}
-            <button 
-              onClick={() => { setIsCollapsed(!isCollapsed); setIsConfigOpen(false); setIsAuditoriaOpen(false); }} 
-              className={`p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors flex-shrink-0 ${isCollapsed ? '' : 'ml-2'}`}
+            <button
+              onClick={() => { setIsCollapsed(!isCollapsed); setIsConfigOpen(false); setIsAuditoriaOpen(false) }}
+              className={`p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-color)] hover:bg-[var(--color-base-200)] transition-colors flex-shrink-0 ${isCollapsed ? '' : 'ml-2'}`}
               title={isCollapsed ? "Expandir" : "Recolher"}
             >
               <Menu className="w-5 h-5" />
@@ -186,42 +237,41 @@ export default function Sidebar({
           </div>
 
           {/* PERFIL E SELETOR DE REDE */}
-          <div className={`relative pt-4 border-t border-white/5 flex items-center ${isCollapsed ? 'md:flex-col md:gap-4 md:justify-center' : 'justify-between px-2 md:px-0'}`}>
+          <div className={`relative pt-4 border-t border-[var(--border-tint)] flex items-center ${isCollapsed ? 'md:flex-col md:gap-4 md:justify-center' : 'justify-between px-2 md:px-0'}`}>
             {!isCollapsed && (
               <div className="flex flex-col flex-1 min-w-0 pr-2 relative">
-                <span className="text-sm font-semibold text-white truncate">{userName}</span>
-                
+                <span className="text-sm font-semibold text-[var(--text-color)] truncate">{userName}</span>
+
                 {churchNetwork.length > 1 ? (
                   <>
-                    <button 
+                    <button
                       onClick={() => setIsNetworkOpen(!isNetworkOpen)}
                       className="flex items-center gap-1 group mt-0.5 max-w-full text-left"
                     >
-                      <span className="text-[10px] font-medium text-accent truncate uppercase tracking-tighter group-hover:text-white transition-colors">
+                      <span className="text-xs font-medium text-[var(--primary-color)] truncate uppercase tracking-tight">
                         {churchName}
                       </span>
-                      <ChevronsUpDown className="w-3 h-3 text-accent flex-shrink-0 group-hover:text-white transition-colors" />
+                      <ChevronsUpDown className="w-3 h-3 text-[var(--text-muted)] flex-shrink-0 group-hover:text-[var(--text-color)] transition-colors" />
                     </button>
-                    
-                    {/* DROPDOWN SOLID BACKGROUND */}
+
                     {isNetworkOpen && (
-                      <div className="absolute bottom-full left-0 mb-2 w-56 rounded-xl border border-[var(--border-tint)] bg-[var(--bg-page)] shadow-2xl z-[100] animate-[fadeIn_0.2s_ease-out] p-2">
-                        <div className="text-[10px] uppercase font-bold tracking-widest text-accent mb-2 px-2 pt-1 border-b border-white/5 pb-2">
+                      <div className="absolute bottom-full left-0 mb-2 w-56 rounded-[var(--radius-box)] border border-[var(--color-base-300)] bg-[var(--color-base-100)] shadow-[var(--shadow-lg)] z-[var(--z-dropdown)] p-2">
+                        <div className="text-[10px] uppercase font-bold tracking-widest text-[var(--text-muted)] mb-2 px-2 pt-1 border-b border-[var(--border-tint)] pb-2">
                           Selecione o Tenant
                         </div>
                         <div className="flex flex-col gap-1 max-h-48 overflow-y-auto no-scrollbar">
                           {churchNetwork.map(net => (
-                            <button 
+                            <button
                               key={net.id}
                               onClick={async () => {
                                 setIsNetworkOpen(false)
                                 const res = await alternarIgrejaAtiva(net.id)
-                                if(res?.success) window.location.href = '/dashboard'
+                                if (res?.success) window.location.href = '/dashboard'
                               }}
-                              className={`flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg text-left transition-all ${
-                                net.nome === churchName 
-                                ? 'bg-[var(--primary-soft)] text-[var(--primary-color)]' 
-                                : 'text-gray-300 hover:bg-white/5 hover:text-white transition-colors'
+                              className={`flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg text-left transition-colors ${
+                                net.nome === churchName
+                                  ? 'bg-[var(--primary-soft)] text-[var(--primary-color)]'
+                                  : 'text-[var(--text-muted)] hover:bg-[var(--color-base-200)] hover:text-[var(--text-color)]'
                               }`}
                             >
                               {net.isMatriz ? <Star className="w-3.5 h-3.5 text-[var(--primary-color)] flex-shrink-0" /> : <Building2 className="w-3.5 h-3.5 flex-shrink-0 opacity-70" />}
@@ -233,15 +283,15 @@ export default function Sidebar({
                     )}
                   </>
                 ) : (
-                  <span className="text-[10px] mt-0.5 font-medium text-accent truncate uppercase tracking-tighter">
+                  <span className="text-xs mt-0.5 font-medium text-[var(--primary-color)] truncate uppercase tracking-tight">
                     {churchName}
                   </span>
                 )}
               </div>
             )}
-            <button 
-              onClick={() => signOut({ callbackUrl: '/login' })} 
-              className="p-2 rounded-lg text-red-400 hover:bg-red-400/10 transition-colors flex-shrink-0" 
+            <button
+              onClick={() => signOut({ callbackUrl: '/login' })}
+              className="p-2 rounded-lg text-[var(--color-error)] hover:bg-[var(--color-error)]/10 transition-colors flex-shrink-0"
               title="Sair"
             >
               <LogOut className="w-5 h-5" />

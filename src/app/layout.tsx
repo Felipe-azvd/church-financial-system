@@ -1,13 +1,14 @@
 import type { Metadata } from 'next';
-import { Manrope, Sulphur_Point } from 'next/font/google';
+import { Inter, Newsreader } from 'next/font/google';
 import './globals.css';
-import ThemeProvider from '@/components/ThemeProvider'; 
+import ThemeProvider from '@/components/ThemeProvider';
+import { ToastProvider } from '@/components/ui/Toast';
 
-const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope' });
-const sulphurPoint = Sulphur_Point({
-  weight: ['400', '700'],
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+const newsreader = Newsreader({
+  weight: ['500', '600'],
   subsets: ['latin'],
-  variable: '--font-sulphur-point',
+  variable: '--font-newsreader',
   display: 'swap',
 });
 
@@ -26,21 +27,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning className={`${sulphurPoint.variable} ${manrope.variable} dark`}>
-      <body className="font-sans bg-neutral-dark text-accent">
+    <html lang="pt-BR" suppressHydrationWarning className={`${newsreader.variable} ${inter.variable}`}>
+      <body className="font-sans">
         <ThemeProvider>
-          {/* Fundo dinâmico da página inteira (Pega no Login e no App) */}
-          <div className="min-h-screen bg-[var(--bg-page)] text-[var(--text-color)] transition-colors duration-500 relative">
-            
-            {/* Luzes de Fundo Globais */}
-            <div className="fixed top-0 left-0 w-[500px] h-[500px] bg-[var(--primary-color)] opacity-[0.08] rounded-full blur-[128px] pointer-events-none -translate-x-1/2 -translate-y-1/2 z-0 hidden md:block transition-colors duration-500"></div>
-            
-            <div className="fixed bottom-0 right-0 w-[500px] h-[500px] bg-[var(--primary-color)] opacity-[0.05] rounded-full blur-[128px] pointer-events-none translate-x-1/2 translate-y-1/2 z-0 hidden md:block transition-colors duration-500"></div>
-
-            <div className="relative z-10 w-full h-full">
+          <ToastProvider>
+            <div className="min-h-screen bg-[var(--bg-page)] text-[var(--text-color)]">
               {children}
             </div>
-          </div>
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -12,37 +12,31 @@ export default async function FiliaisPage() {
     where: { id: user.igreja_id }
   })
 
-  // Evita erros caso a igreja tenha sumido no meio do processo
   if (!igrejaAtual) redirect('/login')
 
-  // Checa a lógica de negócios
   const isPremium = igrejaAtual.plano === 'PREMIUM'
 
-  // SE NÃO FOR PREMIUM: Tela de Paywall com Glassmorphism
   if (!isPremium) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[75vh] animate-[fadeIn_0.3s_ease-out]">
-        <div className="max-w-xl w-full rounded-3xl border border-amber-500/20 bg-black/40 backdrop-blur-md p-10 text-center shadow-[0_0_50px_rgba(245,158,11,0.05)] relative overflow-hidden">
-          {/* Brilho Superior */}
-          <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-amber-600 via-amber-400 to-amber-600 shadow-[0_0_20px_rgba(245,158,11,1)]"></div>
-          
-          <div className="flex justify-center mb-6 relative">
-            <div className="p-5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 shadow-[0_0_30px_rgba(245,158,11,0.15)] relative">
+      <div className="flex flex-col items-center justify-center min-h-[75vh]">
+        <div className="max-w-xl w-full rounded-[var(--radius-box)] border border-[var(--color-base-300)] bg-[var(--color-base-100)] p-10 text-center shadow-[var(--shadow-md)]">
+          <div className="flex justify-center mb-6">
+            <div className="p-5 rounded-full bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/20 text-[var(--color-accent)] relative">
               <Network className="w-12 h-12" />
-              <div className="absolute -bottom-2 -right-2 bg-black rounded-full p-1 border border-amber-500/20">
-                <Lock className="w-5 h-5 text-amber-500/80" />
+              <div className="absolute -bottom-2 -right-2 bg-[var(--color-base-100)] rounded-full p-1 border border-[var(--color-accent)]/20">
+                <Lock className="w-5 h-5 text-[var(--color-accent)]" />
               </div>
             </div>
           </div>
 
-          <h1 className="text-3xl font-bold text-white mb-4 tracking-tight">Gestão de Filiais</h1>
+          <h1 className="text-3xl font-serif font-semibold mb-4 tracking-tight">Gestão de Filiais</h1>
           <p className="text-[var(--text-muted)] text-lg mb-8 leading-relaxed">
-            A gestão multi-tenant (Matriz e Filiais) é um recurso avançado exclusivo do plano <span className="font-bold text-amber-500 uppercase tracking-wide">Premium</span>. Centralize cadastros, relatórios e permissões de todas as congregações em um único ambiente.
+            A gestão multi-tenant (Matriz e Filiais) é um recurso avançado exclusivo do plano <span className="font-semibold text-[var(--color-accent)] uppercase tracking-wide">Premium</span>. Centralize cadastros, relatórios e permissões de todas as congregações em um único ambiente.
           </p>
 
-          <Link 
-            href="/configuracoes/assinatura" 
-            className="inline-flex items-center gap-3 px-8 py-4 rounded-xl font-bold text-white bg-amber-600 hover:bg-amber-500 transition-all shadow-[0_0_20px_rgba(245,158,11,0.2)] hover:shadow-[0_0_30px_rgba(245,158,11,0.4)] hover:-translate-y-1"
+          <Link
+            href="/configuracoes/assinatura"
+            className="inline-flex items-center gap-3 px-8 py-4 rounded-[var(--radius-field)] font-semibold text-[var(--color-primary-content)] bg-[var(--color-primary)] hover:opacity-90 transition-opacity"
           >
             <Crown className="w-5 h-5" />
             Fazer Upgrade Agora
@@ -53,42 +47,44 @@ export default async function FiliaisPage() {
     )
   }
 
-  // SE FOR PREMIUM: Gerenciador de Filiais
   const filiais = await prisma.igreja.findMany({
     where: { matriz_id: igrejaAtual.id },
     orderBy: { nome: 'asc' }
   })
 
   return (
-    <div className="flex flex-col gap-6 animate-[fadeIn_0.2s_ease-out]">
+    <div className="flex flex-col gap-6">
       {/* CABEÇALHO */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
         <div className="flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.15)]">
-            <Network className="w-6 h-6 text-amber-500" />
+          <div className="p-3 rounded-[var(--radius-field)] bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/30">
+            <Network className="w-6 h-6 text-[var(--color-accent)]" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Unidades e Filiais</h1>
-            <p className="text-sm text-[var(--text-muted)] mt-1 font-medium">Gestão centralizada de congregações</p>
+            <h1 className="text-2xl font-serif font-semibold tracking-tight">Unidades e Filiais</h1>
+            <p className="text-sm text-[var(--text-muted)] mt-1">Gestão centralizada de congregações</p>
           </div>
         </div>
-        
-        {/* BOTÃO + NOVA FILIAL (Estrutura visual preparada para o modal futuro) */}
-        <button 
-          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg font-bold text-white bg-amber-600 hover:bg-amber-500 transition-all shadow-[0_0_15px_rgba(245,158,11,0.2)] hover:-translate-y-0.5 hover:shadow-[0_0_20px_rgba(245,158,11,0.4)]"
-          title="Cadastrar Nova Filial"
-        >
-          <Plus className="w-5 h-5" />
-          Nova Filial
-        </button>
+
+        <div className="flex items-center gap-2">
+          <button
+            disabled
+            title="Em breve"
+            className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-[var(--radius-field)] font-medium text-[var(--text-muted)] bg-[var(--color-base-200)] border border-[var(--color-base-300)] cursor-not-allowed opacity-70"
+          >
+            <Plus className="w-4 h-4" />
+            Nova Filial
+          </button>
+          <span className="text-xs font-medium text-[var(--text-muted)] bg-[var(--color-base-200)] px-2 py-1 rounded-full border border-[var(--color-base-300)]">Em breve</span>
+        </div>
       </div>
 
-      {/* LISTA DE FILIAIS (Tabela Glassmorphism) */}
-      <div className="rounded-2xl border border-white/10 bg-[#0B1121]/50 backdrop-blur-md shadow-2xl relative overflow-hidden flex flex-col">
-        <div className="overflow-x-auto relative z-10 w-full">
+      {/* LISTA DE FILIAIS */}
+      <div className="rounded-[var(--radius-box)] border border-[var(--color-base-300)] bg-[var(--color-base-100)] shadow-[var(--shadow-sm)] overflow-hidden">
+        <div className="overflow-x-auto w-full">
           <table className="w-full text-left border-collapse min-w-[600px]">
             <thead>
-              <tr className="border-b border-white/10 text-sm font-medium text-[var(--text-muted)] bg-white/[0.01]">
+              <tr className="border-b border-[var(--color-base-300)] text-sm font-medium text-[var(--text-muted)]">
                 <th className="py-4 pl-6 font-semibold">Nome da Filial</th>
                 <th className="py-4 font-semibold">Status</th>
                 <th className="py-4 text-right pr-6 font-semibold">Ações</th>
@@ -96,41 +92,44 @@ export default async function FiliaisPage() {
             </thead>
             <tbody className="text-sm">
               {filiais.map((filial) => (
-                <tr key={filial.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group">
+                <tr key={filial.id} className="border-b border-[var(--color-base-300)] last:border-b-0 hover:bg-[var(--color-base-200)] transition-colors">
                   <td className="py-4 pl-6">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-white/5 rounded-lg border border-white/10 text-amber-500/70 shadow-[0_0_10px_rgba(245,158,11,0.05)]">
+                      <div className="p-2 bg-[var(--color-base-200)] rounded-[var(--radius-field)] border border-[var(--color-base-300)] text-[var(--color-accent)]">
                         <Building2 className="w-4 h-4" />
                       </div>
-                      <span className="font-semibold text-white">{filial.nome}</span>
+                      <span className="font-semibold">{filial.nome}</span>
                     </div>
                   </td>
                   <td className="py-4">
                     {filial.ativo ? (
-                      <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]">
+                      <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--color-success)]/10 text-[var(--color-success)] border border-[var(--color-success)]/20">
                         Ativa
                       </span>
                     ) : (
-                      <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-red-500/10 text-red-400 border border-red-500/20 shadow-[0_0_10px_rgba(239,68,68,0.1)]">
+                      <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--color-error)]/10 text-[var(--color-error)] border border-[var(--color-error)]/20">
                         Bloqueada
                       </span>
                     )}
                   </td>
                   <td className="py-4 text-right pr-6">
-                    <button className="text-xs px-4 py-2 rounded-lg font-semibold bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 border border-amber-500/20 transition-all opacity-80 group-hover:opacity-100 shadow-[0_0_10px_rgba(245,158,11,0.1)] hover:shadow-lg">
+                    <button
+                      disabled
+                      title="Em breve"
+                      className="text-xs px-4 py-2 rounded-[var(--radius-field)] font-medium bg-[var(--color-base-200)] text-[var(--text-muted)] border border-[var(--color-base-300)] cursor-not-allowed"
+                    >
                       Gerenciar
                     </button>
                   </td>
                 </tr>
               ))}
-              
-              {/* ESTADO VAZIO */}
+
               {filiais.length === 0 && (
                 <tr>
                   <td colSpan={3} className="py-16 text-center">
-                    <Network className="w-12 h-12 text-white/5 mx-auto mb-4" />
+                    <Network className="w-12 h-12 text-[var(--color-base-300)] mx-auto mb-4" />
                     <p className="text-base text-[var(--text-muted)] font-medium">Nenhuma filial localizada.</p>
-                    <p className="text-sm text-white/30 mt-1">Clique em 'Nova Filial' para adicionar a primeira congregação à Matriz.</p>
+                    <p className="text-sm text-[var(--text-muted)] mt-1 opacity-70">O cadastro de novas filiais estará disponível em breve.</p>
                   </td>
                 </tr>
               )}

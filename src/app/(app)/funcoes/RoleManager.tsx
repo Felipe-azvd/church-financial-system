@@ -2,6 +2,9 @@
 
 import { useState } from 'react'
 import { createRole, updateRole, deleteRole } from '@/app/actions/role'
+import { useConfirm } from '@/components/ui/ConfirmDialog'
+import { useToast } from '@/components/ui/Toast'
+import { Check } from 'lucide-react'
 
 type PermissionData = { id: string; key: string; description: string }
 type RoleData = {
@@ -19,6 +22,8 @@ const MODULE_LABELS: Record<string, string> = {
   funcoes:       'Funções',
 }
 
+const DEFAULT_ROLES = ['ADMINISTRADOR', 'TESOUREIRO', 'VISUALIZADOR']
+
 export default function RoleManager({
   initialRoles,
   availablePermissions
@@ -30,6 +35,8 @@ export default function RoleManager({
   const [editingRole, setEditingRole] = useState<RoleData | null>(null)
   const [selectedPermissions, setSelectedPermissions] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
+  const { confirm, ConfirmDialogElement } = useConfirm()
+  const { toast } = useToast()
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -40,7 +47,7 @@ export default function RoleManager({
       if (editingRole) {
         const result = await updateRole(editingRole.id, nome, selectedPermissions)
         if (result && !result.success) {
-          alert(result.message || 'Erro ao atualizar função.')
+          toast(result.message || 'Erro ao atualizar função.', 'error')
           setLoading(false)
           return
         }
@@ -51,22 +58,27 @@ export default function RoleManager({
       }
       setSelectedPermissions([])
     } catch (err) {
-      alert('Não foi possível salvar a função no momento.')
+      toast('Não foi possível salvar a função no momento.', 'error')
     }
     setLoading(false)
   }
 
   const handleDelete = async (id: string, nome: string) => {
-    if (['ADMINISTRADOR', 'TESOUREIRO', 'VISUALIZADOR'].includes(nome)) {
-      alert('Não é possível excluir as funções pré-definidas do sistema.')
+    if (DEFAULT_ROLES.includes(nome)) {
+      toast('Não é possível excluir as funções pré-definidas do sistema.', 'error')
       return
     }
-    if (confirm('Tem certeza que deseja excluir esta função? Usuários vinculados poderão ser afetados.')) {
-      try {
-        await deleteRole(id)
-      } catch (err) {
-        alert('Erro inesperado: a função não pôde ser removida.')
-      }
+    const ok = await confirm({
+      title: 'Excluir função',
+      description: 'Tem certeza que deseja excluir esta função? Usuários vinculados poderão ser afetados.',
+      tone: 'danger',
+      confirmLabel: 'Excluir',
+    })
+    if (!ok) return
+    try {
+      await deleteRole(id)
+    } catch (err) {
+      toast('Erro inesperado: a função não pôde ser removida.', 'error')
     }
   }
 
@@ -104,14 +116,15 @@ export default function RoleManager({
 
   return (
     <div className="w-full">
-      {/* Cabeçalho Responsivo (Empilha no celular) */}
+      {ConfirmDialogElement}
+
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
-          <h2 className="text-2xl font-semibold mb-1 text-white">Gerenciar Funções</h2>
+          <h2 className="text-2xl font-semibold mb-1">Gerenciar Funções</h2>
           <p className="text-xs text-[var(--text-muted)]">Defina funções e controle o acesso de cada usuário</p>
         </div>
         {!isAdding && !editingRole && (
-          <button className="btn-primary !rounded-lg px-4 py-2" onClick={() => setIsAdding(true)}>
+          <button className="btn-primary rounded-[var(--radius-field)] px-4 py-2" onClick={() => setIsAdding(true)}>
             + Adicionar Função
           </button>
         )}
@@ -120,18 +133,18 @@ export default function RoleManager({
       <div className="w-full">
         {(isAdding || editingRole) && (
           <form onSubmit={handleSave} className="mb-8">
-            <div className="card-glass p-8 relative rounded-2xl animate-[fadeIn_0.2s_ease-out]">
-              
-              <h3 className="text-xl font-semibold mb-6 text-white border-b border-white/10 pb-4">
+            <div className="card-glass p-8 relative rounded-[var(--radius-box)]">
+
+              <h3 className="text-xl font-semibold mb-6 border-b border-[var(--color-base-300)] pb-4">
                 {editingRole ? 'Editar Função' : 'Nova Função'}
               </h3>
 
               <div className="flex flex-col gap-2 mb-8">
-                <label className="text-sm font-medium text-[var(--text-color)]">Nome da Função</label>
+                <label className="text-sm font-medium">Nome da Função</label>
                 <input
                   name="nome"
                   required
-                  className="input-field bg-black/20 focus:border-[var(--primary-color)] transition-all text-white h-[42px] px-4"
+                  className="input-field"
                   placeholder="Ex: Auxiliar Administrativo"
                   defaultValue={editingRole?.nome}
                   autoFocus
@@ -139,7 +152,7 @@ export default function RoleManager({
               </div>
 
               <div>
-                <p className="text-sm font-medium text-[var(--text-color)] mb-4">Permissões do Sistema</p>
+                <p className="text-sm font-medium mb-4">Permissões do Sistema</p>
                 <div className="flex flex-col gap-4">
                   {Object.entries(groupedPermissions).map(([module, perms]) => {
                     const allSelected = perms.every(p => selectedPermissions.includes(p.id))
@@ -148,50 +161,44 @@ export default function RoleManager({
                     const label = MODULE_LABELS[module] || module.charAt(0).toUpperCase() + module.slice(1)
 
                     return (
-                      <details key={module} className="bg-black/20 border border-white/10 rounded-xl overflow-hidden" open={someSelected}>
-                        <summary className="flex items-center justify-between p-4 cursor-pointer select-none hover:bg-white/5 transition-colors" style={{ listStyle: 'none' }}>
+                      <details key={module} className="bg-[var(--color-base-200)] border border-[var(--color-base-300)] rounded-[var(--radius-box)] overflow-hidden" open={someSelected}>
+                        <summary className="flex items-center justify-between p-4 cursor-pointer select-none hover:bg-[var(--color-base-300)]/40 transition-colors list-none">
                           <div className="flex items-center gap-3">
-                            <span className="font-semibold text-white">{label}</span>
+                            <span className="font-semibold">{label}</span>
                             {selectedCount > 0 && (
-                              <span 
-                                className="px-2 py-0.5 rounded-full text-xs font-semibold border"
-                                style={{ backgroundColor: 'var(--primary-soft)', color: 'var(--primary-color)', borderColor: 'var(--border-tint)' }}
-                              >
+                              <span className="px-2 py-0.5 rounded-full text-xs font-semibold border bg-[var(--primary-soft)] text-[var(--primary-color)] border-[var(--border-tint)]">
                                 {selectedCount}/{perms.length}
                               </span>
                             )}
                           </div>
                           <button
                             type="button"
-                            className={`text-sm font-medium transition-colors ${allSelected ? 'text-red-400 hover:text-red-300' : 'text-blue-400 hover:text-blue-300'}`}
-                            style={{ color: !allSelected ? 'var(--primary-color)' : '' }}
+                            className={`text-sm font-medium transition-colors ${allSelected ? 'text-[var(--color-error)] hover:opacity-80' : 'text-[var(--color-primary)] hover:opacity-80'}`}
                             onClick={(e) => { e.preventDefault(); toggleModule(perms, allSelected) }}
                           >
                             {allSelected ? 'Remover todos' : 'Selecionar todos'}
                           </button>
                         </summary>
 
-                        <div className="flex flex-col gap-3 p-5 border-t border-white/10 bg-black/10">
+                        <div className="flex flex-col gap-3 p-5 border-t border-[var(--color-base-300)]">
                           {perms.map(p => {
                             const isChecked = selectedPermissions.includes(p.id)
                             return (
                               <label key={p.id} className="flex items-center gap-3 cursor-pointer group">
-                                <div className="relative flex items-center justify-center">
-                                  <input
-                                    type="checkbox"
-                                    className="peer appearance-none w-5 h-5 border border-white/20 rounded bg-black/40 transition-all cursor-pointer"
-                                    style={{ 
-                                      backgroundColor: isChecked ? 'var(--primary-color)' : '', 
-                                      borderColor: isChecked ? 'var(--primary-color)' : '' 
-                                    }}
-                                    checked={isChecked}
-                                    onChange={(e) => togglePermission(p.id, e.target.checked)}
-                                  />
-                                  <svg className="absolute w-3 h-3 text-white opacity-0 peer-checked:opacity-100 pointer-events-none" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M1 5L4.5 8.5L13 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                  </svg>
-                                </div>
-                                <span className="text-sm text-gray-300 group-hover:text-white transition-colors">{p.description}</span>
+                                <span
+                                  className={`w-5 h-5 rounded flex items-center justify-center flex-shrink-0 border transition-colors ${
+                                    isChecked ? 'bg-[var(--color-primary)] border-[var(--color-primary)]' : 'border-[var(--color-base-300)] bg-[var(--color-base-100)]'
+                                  }`}
+                                >
+                                  {isChecked && <Check className="w-3.5 h-3.5 text-[var(--color-primary-content)]" />}
+                                </span>
+                                <input
+                                  type="checkbox"
+                                  className="sr-only"
+                                  checked={isChecked}
+                                  onChange={(e) => togglePermission(p.id, e.target.checked)}
+                                />
+                                <span className="text-sm text-[var(--text-muted)] group-hover:text-[var(--text-color)] transition-colors">{p.description}</span>
                               </label>
                             )
                           })}
@@ -202,11 +209,11 @@ export default function RoleManager({
                 </div>
               </div>
 
-              <div className="flex gap-3 mt-8 pt-6 border-t border-white/10">
-                <button type="submit" className="btn-primary !rounded-lg px-8 py-2" disabled={loading}>
+              <div className="flex gap-3 mt-8 pt-6 border-t border-[var(--color-base-300)]">
+                <button type="submit" className="btn-primary rounded-[var(--radius-field)] px-8 py-2" disabled={loading}>
                   {loading ? 'Salvando...' : 'Salvar Função'}
                 </button>
-                <button type="button" className="px-6 py-2 rounded-lg font-medium text-[var(--text-muted)] hover:text-white hover:bg-white/5 transition-all border border-transparent hover:border-white/10" onClick={cancelAction}>
+                <button type="button" className="px-6 py-2 rounded-[var(--radius-field)] font-medium text-[var(--text-muted)] hover:text-[var(--text-color)] hover:bg-[var(--color-base-200)] transition-colors" onClick={cancelAction}>
                   Cancelar
                 </button>
               </div>
@@ -214,45 +221,43 @@ export default function RoleManager({
           </form>
         )}
 
-        {/* Tabela Responsiva com Cores do Tema */}
         {!isAdding && !editingRole && (
-          <div className="w-full overflow-x-auto md:overflow-visible md:rounded-2xl md:border md:border-[var(--border-tint)] md:bg-[var(--surface-tint)] md:shadow-sm">
+          <div className="w-full overflow-x-auto md:overflow-visible md:rounded-[var(--radius-box)] md:border md:border-[var(--color-base-300)]">
             <table className="table table-hover data-table w-full block md:table md:min-w-[700px]">
               <thead className="hidden md:table-header-group">
                 <tr>
-                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)]">Função</th>
-                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)] text-center">Permissões</th>
-                  <th className="!bg-[var(--surface-tint)] !text-[var(--primary-color)] text-right">Ações</th>
+                  <th>Função</th>
+                  <th className="text-center">Permissões</th>
+                  <th className="text-right">Ações</th>
                 </tr>
               </thead>
               <tbody className="block md:table-row-group">
                 {initialRoles.map((r) => {
-                  const isDefault = ['ADMINISTRADOR', 'TESOUREIRO', 'VISUALIZADOR'].includes(r.nome)
+                  const isDefault = DEFAULT_ROLES.includes(r.nome)
                   return (
-                    <tr key={r.id} className="flex flex-col bg-transparent py-4 border-b border-white/5 last:border-b-0 md:table-row md:py-0 md:border-white/5 md:hover:bg-white/5 transition-colors">
-                      <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 font-semibold text-white">
+                    <tr key={r.id} className="flex flex-col bg-transparent py-4 border-b border-[var(--color-base-300)] last:border-b-0 md:table-row md:py-0 md:hover:bg-[var(--color-base-200)] transition-colors">
+                      <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 font-semibold">
                         <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Função</span>
                         <span>{r.nome}</span>
                       </td>
-                      <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 md:text-center">
+                      <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 md:text-center">
                         <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Permissões</span>
                         {isDefault ? (
-                          <span className="px-3 py-1 rounded-full bg-white/10 text-gray-300 text-xs font-medium border border-white/10">Acesso Padrão</span>
+                          <span className="px-3 py-1 rounded-full bg-[var(--color-base-200)] text-[var(--text-muted)] text-xs font-medium border border-[var(--color-base-300)]">Acesso Padrão</span>
                         ) : (
-                          <span className="px-3 py-1 rounded-full text-xs font-medium border"
-                                style={{ backgroundColor: 'var(--primary-soft)', color: 'var(--primary-color)', borderColor: 'var(--border-tint)' }}>
+                          <span className="px-3 py-1 rounded-full text-xs font-medium border bg-[var(--primary-soft)] text-[var(--primary-color)] border-[var(--border-tint)]">
                             {r.permissions?.length || 0} permissões
                           </span>
                         )}
                       </td>
-                      <td className="flex justify-between items-center py-2 border-b border-white/5 last:border-b-0 md:table-cell md:border-none md:py-4 md:text-right">
+                      <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 md:text-right">
                         <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Ações</span>
                         <div className="flex items-center gap-2 justify-end">
-                          <button className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors" style={{ color: 'var(--primary-color)' }} onClick={() => handleEdit(r)}>
+                          <button className="px-3 py-1.5 rounded-[var(--radius-field)] text-sm font-medium text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10 transition-colors" onClick={() => handleEdit(r)}>
                             Editar
                           </button>
                           <button
-                            className="px-3 py-1.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
+                            className="px-3 py-1.5 rounded-[var(--radius-field)] text-sm font-medium text-[var(--color-error)] hover:bg-[var(--color-error)]/10 transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
                             onClick={() => handleDelete(r.id, r.nome)}
                             disabled={isDefault}
                           >
@@ -267,14 +272,7 @@ export default function RoleManager({
             </table>
           </div>
         )}
-
       </div>
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(-10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </div>
   )
 }

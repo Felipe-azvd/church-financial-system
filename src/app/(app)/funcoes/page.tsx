@@ -35,7 +35,7 @@ export default async function FuncoesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold mb-3">Cargos e Permissões</h1>
-          <p className="text-xs opacity-70" style={{ margin: 'var(--space-1) 0 0 0' }}>Defina funções e controle o acesso de cada usuário</p>
+          <p className="text-xs opacity-70 mt-1">Defina funções e controle o acesso de cada usuário</p>
         </div>
       </div>
       <RoleManager initialRoles={roles} availablePermissions={availablePermissions} />

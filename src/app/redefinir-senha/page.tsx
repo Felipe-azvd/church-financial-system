@@ -5,6 +5,8 @@ import { useSearchParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import { Lock, ArrowRight, ShieldAlert } from "lucide-react"
 import { salvarNovaSenha } from "@/app/actions/recuperacao"
+import { Logo } from "@/components/ui/Logo"
+import { useToast } from "@/components/ui/Toast"
 
 function RedefinirSenhaForm() {
   const searchParams = useSearchParams()
@@ -15,10 +17,11 @@ function RedefinirSenhaForm() {
   const [confirmarSenha, setConfirmarSenha] = useState("")
   const [loading, setLoading] = useState(false)
   const [erro, setErro] = useState("")
+  const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!token) return setErro("Link de recuperação inválido.")
     if (senha !== confirmarSenha) return setErro("As senhas não coincidem.")
     if (senha.length < 6) return setErro("A senha deve ter pelo menos 6 caracteres.")
@@ -27,9 +30,9 @@ function RedefinirSenhaForm() {
     setErro("")
 
     const res = await salvarNovaSenha(token, senha)
-    
+
     if (res.success) {
-      alert("Senha alterada com sucesso! Você já pode fazer login.")
+      toast("Senha alterada com sucesso! Você já pode fazer login.", "success")
       router.push("/login")
     } else {
       setErro(res.error || "Ocorreu um erro.")
@@ -41,7 +44,7 @@ function RedefinirSenhaForm() {
     return (
       <div className="text-center space-y-4">
         <ShieldAlert className="w-12 h-12 text-rose-500 mx-auto" />
-        <h2 className="text-white font-semibold text-lg">Link Inválido</h2>
+        <h2 className="text-[var(--text-color)] font-semibold text-lg">Link Inválido</h2>
         <p className="text-[var(--text-muted)] text-sm">O link de redefinição está ausente, mal formatado ou já expirou.</p>
         <Link href="/esqueci-senha" className="btn-primary w-full h-12 flex items-center justify-center text-base !rounded-lg mt-4">
           Solicitar novo link
@@ -67,7 +70,7 @@ function RedefinirSenhaForm() {
             required
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
-            className="input-field w-full pl-10 py-3 rounded-lg text-sm bg-black/20 focus:border-[var(--primary-color)] transition-all"
+            className="input-field w-full pl-10 text-sm"
             placeholder="Mínimo de 6 caracteres"
           />
         </div>
@@ -82,7 +85,7 @@ function RedefinirSenhaForm() {
             required
             value={confirmarSenha}
             onChange={(e) => setConfirmarSenha(e.target.value)}
-            className="input-field w-full pl-10 py-3 rounded-lg text-sm bg-black/20 focus:border-[var(--primary-color)] transition-all"
+            className="input-field w-full pl-10 text-sm"
             placeholder="Repita a senha"
           />
         </div>
@@ -97,20 +100,19 @@ function RedefinirSenhaForm() {
 
 export default function RedefinirSenhaPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[var(--bg-page)] text-[var(--text-color)] transition-colors duration-500">
-      {/* Luzes de fundo sincronizadas com o tema (Copiado do LoginForm) */}
-      <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-[var(--primary-color)] opacity-[0.07] rounded-full blur-[100px] -translate-x-1/3 -translate-y-1/3 pointer-events-none transition-colors duration-500"></div>
-      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[var(--primary-color)] opacity-[0.05] rounded-full blur-[100px] translate-x-1/3 translate-y-1/3 pointer-events-none transition-colors duration-500"></div>
-
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[var(--bg-page)] text-[var(--text-color)]">
       <div className="w-full max-w-md relative z-10">
-        {/* Cabeçalho com Logo PNG (Copiado do LoginForm) */}
+        {/* Cabeçalho com marca */}
         <div className="text-center mb-10 flex flex-col items-center">
-          <img src="/logo-c.png" alt="ChurchFep Logo" className="w-[280px] h-auto object-contain drop-shadow-[0_0_15px_var(--primary-glow)] transition-all duration-500 mb-3" />
+          <Logo className="w-14 h-14 text-[var(--primary-color)] mb-4" />
+          <span className="font-serif font-semibold text-3xl tracking-tight">
+            Church<span className="text-[var(--primary-color)]">Fep</span>
+          </span>
           <p className="text-[var(--text-muted)] mt-2">Segurança em primeiro lugar.</p>
         </div>
 
-        {/* Formulário Principal - Fundo Sincronizado (Copiado do LoginForm) */}
-        <div className="rounded-2xl border border-[var(--border-tint)] bg-[var(--surface-tint)] p-8 mb-6 shadow-2xl backdrop-blur-md transition-colors duration-500">
+        {/* Formulário Principal */}
+        <div className="rounded-lg border border-[var(--border-tint)] bg-[var(--surface-tint)] p-8 mb-6 shadow-md">
           <h2 className="text-xl font-semibold text-[var(--text-color)] mb-6 text-center">Criar Nova Senha</h2>
           <Suspense fallback={<div className="text-center text-[var(--text-muted)]">Carregando formulário...</div>}>
             <RedefinirSenhaForm />

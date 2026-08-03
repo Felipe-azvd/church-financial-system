@@ -1,292 +1,239 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
-@plugin "flyonui";
-
-:root {
-  --primary-color: #3b82f6;
-  --bg-page: #020617;
-  --bg-gradient-soft: #0f172a;
-  --text-color: #f8fafc;
-  --glass-bg: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-blur: 15px;
-}
+@plugin "flyonui" {
+  themes: "light --default";
+};
 
 @theme {
-  --color-primary: #00E5FF;
-  --color-neutral: #101418;
-  --color-neutral-dark: #080A0C;
-  --color-neutral-glass: rgba(28, 36, 44, 0.6);
-  --color-accent: #A7B1B6;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-serif: var(--font-newsreader), Georgia, "Times New Roman", serif;
+}
 
-  --shadow-glow: 0 0 15px rgba(0, 229, 255, 0.4);
-  --drop-shadow-glow: 0 0 15px rgba(0, 229, 255, 0.4);
+/* ============================================================
+   Ledger — tema claro (padrão)
+   ============================================================ */
+:root {
+  color-scheme: light;
 
-  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-logo: var(--font-sulphur-point), sans-serif;
+  --color-base-100: #F7F5F0;
+  --color-base-200: #EFEBE2;
+  --color-base-300: #DFD9CC;
+  --color-base-content: #1C1917;
+
+  --color-primary: #1B3A5C;
+  --color-primary-content: #FFFFFF;
+  --color-secondary: #5B6270;
+  --color-secondary-content: #FFFFFF;
+  --color-accent: #7A5C28;
+  --color-accent-content: #FFFFFF;
+  --color-neutral: #EFEBE2;
+  --color-neutral-content: #1C1917;
+
+  --color-info: #3B5166;
+  --color-info-content: #FFFFFF;
+  --color-success: #1E5631;
+  --color-success-content: #FFFFFF;
+  --color-warning: #8A5A22;
+  --color-warning-content: #FFFFFF;
+  --color-error: #7A2E2E;
+  --color-error-content: #FFFFFF;
+  --color-brass-fill: #9C7A3C;
+
+  --radius-selector: 0.375rem;
+  --radius-field: 0.375rem;
+  --radius-box: 0.625rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+
+  --shadow-sm: 0 1px 2px rgba(28, 25, 23, 0.06);
+  --shadow-md: 0 4px 12px rgba(28, 25, 23, 0.08), 0 1px 2px rgba(28, 25, 23, 0.04);
+  --shadow-lg: 0 12px 32px rgba(28, 25, 23, 0.14), 0 2px 8px rgba(28, 25, 23, 0.06);
+
+  --z-dropdown: 30;
+  --z-sticky: 40;
+  --z-overlay: 50;
+  --z-modal: 60;
+  --z-toast: 70;
+
+  /* Ponte de compatibilidade: nomes antigos usados em componentes ainda não
+     migrados para os tokens novos acima. Remover conforme cada arquivo migra. */
+  --primary-color: var(--color-primary);
+  --bg-page: var(--color-base-100);
+  --bg-gradient-soft: var(--color-base-200);
+  --text-color: var(--color-base-content);
+  --text-muted: color-mix(in oklab, var(--color-base-content) 70%, transparent);
+  --border-tint: var(--color-base-300);
+  --surface-tint: var(--color-base-200);
+  --primary-soft: color-mix(in oklab, var(--color-primary) 10%, transparent);
+  --primary-glow: transparent;
+  --glass-bg: var(--color-base-100);
+  --glass-border: var(--color-base-300);
+  --glass-blur: 0px;
+
+  --chart-1: #1B3A5C;
+  --chart-2: #1E5631;
+  --chart-3: #7A5C28;
+  --chart-4: #7A2E2E;
+  --chart-5: #4A5C7A;
+  --chart-6: #2E6B66;
+  --chart-7: #5C3A5C;
+}
+
+[data-theme="ledger-dark"] {
+  color-scheme: dark;
+
+  --color-base-100: #10151B;
+  --color-base-200: #182029;
+  --color-base-300: #2A3542;
+  --color-base-content: #E8E4DA;
+
+  --color-primary: #7DA3CC;
+  --color-primary-content: #0D1520;
+  --color-secondary: #9298A3;
+  --color-secondary-content: #0D1520;
+  --color-accent: #D4B463;
+  --color-accent-content: #0D1520;
+  --color-neutral: #182029;
+  --color-neutral-content: #E8E4DA;
+
+  --color-info: #8FB3D9;
+  --color-info-content: #0D1520;
+  --color-success: #59A879;
+  --color-success-content: #0D1520;
+  --color-warning: #C99A55;
+  --color-warning-content: #0D1520;
+  --color-error: #C97873;
+  --color-error-content: #0D1520;
+  --color-brass-fill: #D4B463;
+
+  --shadow-sm: none;
+  --shadow-md: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --shadow-lg: 0 20px 48px rgba(0, 0, 0, 0.55);
+
+  --primary-color: var(--color-primary);
+  --bg-page: var(--color-base-100);
+  --bg-gradient-soft: var(--color-base-200);
+  --text-color: var(--color-base-content);
+  --text-muted: color-mix(in oklab, var(--color-base-content) 70%, transparent);
+  --border-tint: var(--color-base-300);
+  --surface-tint: var(--color-base-200);
+  --primary-soft: color-mix(in oklab, var(--color-primary) 14%, transparent);
+  --primary-glow: transparent;
+  --glass-bg: var(--color-base-100);
+  --glass-border: var(--color-base-300);
+  --glass-blur: 0px;
+
+  --chart-1: #7DA3CC;
+  --chart-2: #59A879;
+  --chart-3: #D4B463;
+  --chart-4: #C97873;
+  --chart-5: #7B93B8;
+  --chart-6: #5FA39D;
+  --chart-7: #A377A3;
 }
 
 @layer base {
   body {
-    background: radial-gradient(circle at top left, var(--bg-gradient-soft), var(--bg-page)) !important;
-    background-attachment: fixed !important;
-    color: var(--text-color) !important;
+    background: var(--color-base-100);
+    color: var(--color-base-content);
     min-height: 100vh;
   }
 
-  /* OBRIGANDO AS TABELAS DO SISTEMA A TEREM RESPIRO */
-  table.table th {
-    color: var(--primary-color) !important;
-    font-weight: 600 !important;
-    text-transform: uppercase;
-    font-size: 0.75rem !important;
-    letter-spacing: 0.05em;
-    padding: 1.25rem 1.5rem !important; /* Respiro */
-    border-bottom: 1px solid var(--glass-border) !important;
-    background: transparent !important;
-  }
-
-  table.table td {
-    padding: 1.25rem 1.5rem !important; /* Respiro */
-    border-bottom: 1px solid var(--glass-border) !important;
-    background: transparent !important;
-  }
-
-  table.table-hover tbody tr:hover td {
-    background: rgba(255, 255, 255, 0.05) !important;
-  }
-
-  /* HIERARQUIA VISUAL (ISOLADA APENAS NO CONTEÚDO PRINCIPAL) */
-  /* O uso do 'main' garante que a Home, Login e Sidebar fiquem intactos */
-  
   main h1 {
-    font-size: 1.5rem !important; /* 24px */
-    font-weight: 700 !important;
-    letter-spacing: -0.025em !important; /* tracking-tight para ar moderno */
-    color: var(--text-color) !important;
-    margin-bottom: 0.25rem !important;
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--color-base-content);
+    margin-bottom: 0.25rem;
   }
   @media (min-width: 768px) {
-    main h1 { font-size: 1.875rem !important; /* 30px */ }
+    main h1 { font-size: 1.875rem; }
   }
 
   main h2 {
-    font-size: 1.125rem !important; /* 18px */
-    font-weight: 600 !important;
-    letter-spacing: -0.025em !important;
-  }
-
-  /* Subtítulos Descritivos (Apenas dentro do main) */
-  main p[style*="opacity: 0.7"], main p.opacity-70 {
-    font-size: 0.875rem !important; /* 14px */
-    color: var(--text-muted) !important;
-    font-weight: 500 !important;
-    opacity: 1 !important; 
-    margin-top: 0.25rem !important;
-  }
-
-  /* Tipografia Limpa para Tabelas */
-  table.table th {
-    font-size: 0.75rem !important; /* 12px */
-    font-weight: 600 !important;
-    color: var(--text-muted) !important;
-    letter-spacing: 0.05em !important;
-    text-transform: uppercase !important;
-  }
-  table.table td {
-    font-size: 0.875rem !important; /* 14px */
-    font-weight: 500 !important;
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
   }
 }
 
 @layer components {
-  /* =========================================
-     1. CARDS GENÉRICOS (Fundo Transparente e Borda Forte)
-     ========================================= */
-  main .card, 
-  main .card-glass {
-    background: transparent !important; 
-    backdrop-filter: blur(var(--glass-blur)) !important;
-    -webkit-backdrop-filter: blur(var(--glass-blur)) !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important; /* Borda ajustada para destacar */
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2) !important; 
-    border-radius: 1rem !important;
-    color: var(--text-color) !important;
+  /* Alias de compatibilidade: componentes ainda referenciam "card-glass"
+     diretamente. Superfície plana, sem blur/glow. */
+  .card-glass {
+    background-color: var(--color-base-100);
+    border: 1px solid var(--color-base-300);
+    border-radius: var(--radius-box);
+    box-shadow: var(--shadow-sm);
+    color: var(--color-base-content);
   }
 
-  main .card-body {
-    padding: 2rem !important;
+  .metric-card {
+    @apply relative overflow-hidden transition-all duration-200;
+    background-color: var(--color-base-100);
+    border: 1px solid var(--color-base-300);
+    border-radius: var(--radius-box);
+    box-shadow: var(--shadow-sm);
+  }
+  .metric-card:hover {
+    box-shadow: var(--shadow-md);
   }
 
-  /* =========================================
-     2. CARDS DE MÉTRICA (Coloridos com Iluminação)
-     ========================================= */
-  main .metric-card {
-    @apply relative overflow-hidden rounded-2xl backdrop-blur-md shadow-xl transition-all duration-300;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  .metric-card-green { border-left: 3px solid var(--color-success); }
+  .metric-card-red { border-left: 3px solid var(--color-error); }
+  .metric-card-blue { border-left: 3px solid var(--color-primary); }
+  .metric-card-orange { border-left: 3px solid var(--color-warning); }
+  .metric-card-purple { border-left: 3px solid var(--color-info); }
+
+  /* Efeito de "blob" decorativo aposentado — mantém a marcação sem exigir
+     mudança de JSX nos componentes que ainda a renderizam. */
+  .metric-blob {
+    display: none;
   }
 
-  main .metric-card-green { border-color: rgba(16, 185, 129, 0.4) !important; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.02)) !important; }
-  main .metric-card-red { border-color: rgba(239, 68, 68, 0.4) !important; background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.02)) !important; }
-  main .metric-card-blue { border-color: rgba(59, 130, 246, 0.4) !important; background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.02)) !important; }
-  main .metric-card-orange { border-color: rgba(249, 115, 22, 0.4) !important; background: linear-gradient(135deg, rgba(249, 115, 22, 0.15), rgba(249, 115, 22, 0.02)) !important; }
-  main .metric-card-purple { border-color: rgba(139, 92, 246, 0.4) !important; background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(139, 92, 246, 0.02)) !important; }
-
-  main .metric-card:hover {
-    transform: translateY(-2px);
-    filter: brightness(1.15); 
+  .icon-box {
+    @apply rounded-md p-2 flex items-center justify-center;
+    background-color: var(--color-base-200);
+    border: 1px solid var(--color-base-300);
   }
 
-  main .metric-blob {
-    @apply absolute -bottom-10 -right-10 w-24 h-24 rounded-full blur-2xl transition-all duration-300 pointer-events-none;
-    background-color: var(--text-color); 
-    opacity: 0.03;
-  }
-  main .metric-card:hover .metric-blob {
-    opacity: 0.1; 
-  }
-
-  main .icon-box {
-    @apply rounded-lg bg-black/20 border border-[var(--glass-border)] p-2 flex items-center justify-center;
-  }
-
-  /* =========================================
-     3. TIPOGRAFIA INTERNA E COMPONENTES GERAIS
-     ========================================= */
-  main .text-metric {
-    font-size: 1.5rem !important; 
-    font-weight: 700 !important;
-    letter-spacing: -0.025em !important;
+  .text-metric {
+    font-variant-numeric: tabular-nums;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
   }
   @media (min-width: 640px) {
-    main .text-metric { font-size: 1.875rem !important; }
+    .text-metric { font-size: 1.875rem; }
   }
 
-  main .metric-card .uppercase {
-    font-size: 0.875rem !important; 
-    font-weight: 500 !important;
-    text-transform: none !important; 
-    letter-spacing: normal !important;
-    color: var(--text-muted) !important;
-  }
-
-  main .btn {
-    font-size: 0.875rem !important;
-    font-weight: 500 !important;
-    letter-spacing: normal !important;
-  }
-
-  /* PADRONIZANDO BOTÕES E INPUTS COM EFEITO DE VIDRO/GLOW */
   .btn-primary {
-    background: var(--primary-color) !important;
-    color: white !important;
-    border: none !important;
-    box-shadow: var(--shadow-glow) !important;
-  }
-  
-  .input-field, select.input-field {
-    background: rgba(0, 0, 0, 0.2) !important;
-    border: 1px solid var(--glass-border) !important;
-    color: var(--text-color) !important;
+    background: var(--color-primary);
+    color: var(--color-primary-content);
+    border: none;
   }
 
-  /* RESTAURAÇÃO DO MENU LATERAL (PROTÓTIPO HTML) */
+  .input-field, select.input-field {
+    background: var(--color-base-100);
+    border: 1px solid var(--color-base-300);
+    color: var(--color-base-content);
+    border-radius: var(--radius-field);
+    height: 42px;
+    padding: 0 1rem;
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+  .input-field:focus, select.input-field:focus {
+    border-color: var(--color-primary);
+  }
+
   .sidebar-glass {
-    background: var(--glass-bg);
-    backdrop-filter: blur(var(--glass-blur));
-    -webkit-backdrop-filter: blur(var(--glass-blur));
-    border-right: 1px solid var(--glass-border);
+    background-color: var(--color-base-100);
+    border-right: 1px solid var(--color-base-300);
   }
 
   .logo-glow {
-    color: var(--primary-color);
-    text-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
-  }
-
-  .nav-item {
-    padding: 12px 15px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    color: rgba(255, 255, 255, 0.7);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .nav-item.active {
-    background: linear-gradient(90deg, rgba(59, 130, 246, 0.15), transparent);
-    color: var(--primary-color);
-    border-left: 3px solid var(--primary-color);
-    box-shadow: -10px 0 20px -10px var(--primary-color);
-  }
-
-  .nav-item:hover:not(.active) {
-    background: rgba(255, 255, 255, 0.05);
-    color: #fff;
-  }
-
-  /* =========================================
-     4. INPUTS E DROPDOWNS (Seletor de Período, Filtros, etc)
-     ========================================= */
-  main select, 
-  main .select,
-  main input.input-field {
-    background-color: rgba(0, 0, 0, 0.2) !important; 
-    backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important; 
-    color: var(--text-color) !important;
-    border-radius: 0.5rem !important;
-    outline: none !important;
-    transition: all 0.2s ease !important;
-
-    /* CORREÇÃO AQUI: Altura fixa para não achatar e cortar a fonte */
-    font-size: 0.95rem !important; 
-    height: 42px !important; 
-    padding: 0 2rem 0 1rem !important; /* Zerei o padding em cima e embaixo */
-    text-align: center !important; 
-    text-align-last: center !important; 
-    cursor: pointer !important;
-  }
-
-  main select:focus, 
-  main .select:focus,
-  main input.input-field:focus {
-    border-color: var(--primary-color) !important; 
-  }
-
-  main select option {
-    background-color: #0f172a !important; 
-    color: var(--text-color) !important;
-    text-align: center !important;
-    font-size: 0.95rem !important;
-  }
-
-  /* CORREÇÃO DO TEXTO "PERÍODO:" DE FORA */
-  /* Alvo exato: O texto que acompanha os filtros no topo da tela */
-  main .flex.items-center.gap-3 span,
-  main .flex.items-center.gap-3 label {
-    font-size: 0.95rem !important; /* Agora tem o mesmíssimo tamanho do texto de dentro da caixa */
-    font-weight: 500 !important;
-    color: var(--text-muted) !important;
-  }
-
-  /* =========================================
-     ESTILO ISOLADO DA TELA DE LOGIN
-     ========================================= */
-  .card-glass.login-box-auth {
-    background: #0f172a !important; 
-    border: 2px solid rgba(255, 255, 255, 0.2) !important; 
-    border-radius: 1rem !important;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5) !important;
-    backdrop-filter: blur(20px) !important;
-    -webkit-backdrop-filter: blur(20px) !important;
-  }
-
-  /* Borda elegante para o bloco de informação inferior */
-  .card-glass.login-box-info {
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    border-radius: 1rem !important;
+    color: var(--color-primary);
   }
 }

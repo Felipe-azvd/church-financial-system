@@ -10,7 +10,7 @@ export default function NewChurchButton() {
     <>
       <button 
         onClick={() => setIsModalOpen(true)}
-        className="bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border border-amber-500/30 px-4 py-2 rounded-lg text-sm font-semibold transition-colors shrink-0"
+        className="bg-[var(--color-accent)]/10 hover:bg-[var(--color-accent)]/20 text-[var(--color-accent)] border border-[var(--color-accent)]/30 px-4 py-2 rounded-[var(--radius-field)] text-sm font-semibold transition-colors shrink-0"
       >
         + Nova Igreja
       </button>

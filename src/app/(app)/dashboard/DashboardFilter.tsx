@@ -50,7 +50,7 @@ export default function DashboardFilter() {
           name="inicio"
           defaultValue={inicio} 
           required 
-          className="bg-black/20 border border-[var(--border-tint)] rounded-lg px-3 py-1.5 text-sm text-white outline-none focus:border-[#10b981] transition-all cursor-pointer [&::-webkit-calendar-picker-indicator]:invert" 
+          className="input-field h-auto px-3 py-1.5 text-sm cursor-pointer"
         />
       </div>
 
@@ -62,22 +62,22 @@ export default function DashboardFilter() {
           name="fim"
           defaultValue={fim} 
           required 
-          className="bg-black/20 border border-[var(--border-tint)] rounded-lg px-3 py-1.5 text-sm text-white outline-none focus:border-[#10b981] transition-all cursor-pointer [&::-webkit-calendar-picker-indicator]:invert" 
+          className="input-field h-auto px-3 py-1.5 text-sm cursor-pointer"
         />
       </div>
 
       {/* Botões */}
       <div className="flex items-center gap-2 ml-1">
-        <button 
+        <button
           type="button"
           onClick={handleCancel}
-          className="bg-transparent border border-white/10 text-[var(--text-muted)] hover:bg-white/5 hover:text-white px-4 py-1.5 rounded-lg text-sm font-medium transition-all"
+          className="bg-transparent border border-[var(--color-base-300)] text-[var(--text-muted)] hover:bg-[var(--color-base-200)] hover:text-[var(--text-color)] px-4 py-1.5 rounded-[var(--radius-field)] text-sm font-medium transition-colors"
         >
           Cancelar
         </button>
-        <button 
+        <button
           type="submit"
-          className="bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/30 hover:bg-[#10b981]/20 px-4 py-1.5 rounded-lg text-sm font-medium transition-all shadow-[0_0_10px_rgba(16,185,129,0.1)]"
+          className="bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/30 hover:bg-[var(--color-primary)]/20 px-4 py-1.5 rounded-[var(--radius-field)] text-sm font-medium transition-colors"
         >
           Aplicar
         </button>

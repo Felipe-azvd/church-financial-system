@@ -5,7 +5,8 @@ import FinancialInsights from "@/components/dashboard/FinancialInsights"
 import { getMonthlyTotals } from "@/app/actions/finance"
 import PeriodSelector from "@/components/PeriodSelector"
 import { Suspense } from "react"
-import { TrendingUp, TrendingDown, DollarSign } from 'lucide-react'
+import { TrendingUp, TrendingDown, DollarSign, AlertOctagon, AlertTriangle, CheckCircle2 } from 'lucide-react'
+import { StatCard } from "@/components/ui/StatCard"
 
 export default async function DashboardPage({
   searchParams,
@@ -128,96 +129,51 @@ export default async function DashboardPage({
         </div>
       </div>
 
-      {/* Key Metrics Premium Responsivo */}
+      {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 w-full">
-        
-        {/* Card: Entradas */}
-        <div className="metric-card metric-card-green p-5 md:p-6 group">
-          <div className="flex flex-row items-center justify-between pb-2 md:pb-4">
-            <div className="uppercase text-xs md:text-sm">Total Entradas</div>
-            <div className="icon-box">
-              <TrendingUp className="text-emerald-400 w-4 h-4 md:w-5 md:h-5" />
-            </div>
-          </div>
-          <div className="flex items-end justify-between">
-            <div className="text-xl md:text-2xl lg:text-3xl font-bold text-[var(--success)] truncate pr-2">
-              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalEntradas)}
-            </div>
-            {entradasPct !== null ? (
-              <div className={`flex items-center font-medium rounded-full border px-2 py-1 text-[10px] md:text-xs whitespace-nowrap ${entradasPct >= 0 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}>
-                {entradasPct >= 0 ? '↑' : '↓'} {Math.abs(entradasPct).toFixed(1)}%
-              </div>
-            ) : (
-              <div className="text-[10px] md:text-xs font-medium opacity-50 whitespace-nowrap">Sem dados</div>
-            )}
-          </div>
-          <div className="metric-blob"></div>
+        <StatCard
+          label="Total Entradas"
+          value={new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalEntradas)}
+          icon={TrendingUp}
+          tone="success"
+          trend={entradasPct !== null ? { value: entradasPct, direction: entradasPct >= 0 ? 'up' : 'down' } : undefined}
+        />
+        <StatCard
+          label="Total Saídas"
+          value={new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalSaidas)}
+          icon={TrendingDown}
+          tone="danger"
+          trend={saidasPct !== null ? { value: saidasPct, direction: saidasPct >= 0 ? 'up' : 'down', tone: saidasPct <= 0 ? 'success' : 'danger' } : undefined}
+        />
+        <div className="sm:col-span-2 xl:col-span-1">
+          <StatCard
+            label="Saldo Atual"
+            value={new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(saldo)}
+            icon={DollarSign}
+            tone={saldo >= 0 ? 'success' : 'danger'}
+            trend={saldoPct !== null ? { value: saldoPct, direction: saldoPct >= 0 ? 'up' : 'down' } : undefined}
+          />
         </div>
-
-        {/* Card: Saídas */}
-        <div className="metric-card metric-card-red p-5 md:p-6 group">
-          <div className="flex flex-row items-center justify-between pb-2 md:pb-4">
-            <div className="uppercase text-xs md:text-sm">Total Saídas</div>
-            <div className="icon-box">
-              <TrendingDown className="text-red-400 w-4 h-4 md:w-5 md:h-5" />
-            </div>
-          </div>
-          <div className="flex items-end justify-between">
-            <div className="text-xl md:text-2xl lg:text-3xl font-bold text-[var(--danger)] truncate pr-2">
-              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalSaidas)}
-            </div>
-            {saidasPct !== null ? (
-              <div className={`flex items-center font-medium rounded-full border px-2 py-1 text-[10px] md:text-xs whitespace-nowrap ${saidasPct <= 0 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}>
-                {saidasPct >= 0 ? '↑' : '↓'} {Math.abs(saidasPct).toFixed(1)}%
-              </div>
-            ) : (
-              <div className="text-[10px] md:text-xs font-medium opacity-50 whitespace-nowrap">Sem dados</div>
-            )}
-          </div>
-          <div className="metric-blob"></div>
-        </div>
-
-        {/* Card: Saldo */}
-        <div className={`metric-card p-5 md:p-6 group sm:col-span-2 xl:col-span-1 ${saldo >= 0 ? 'metric-card-green' : 'metric-card-red'}`}>
-          <div className="flex flex-row items-center justify-between pb-2 md:pb-4">
-            <div className="uppercase text-xs md:text-sm">Saldo Atual</div>
-            <div className="icon-box">
-              <DollarSign className="text-blue-400 w-4 h-4 md:w-5 md:h-5" />
-            </div>
-          </div>
-          <div className="flex items-end justify-between">
-            <div className={`text-xl md:text-2xl lg:text-3xl font-bold truncate pr-2 ${saldo >= 0 ? 'text-[var(--success)]' : 'text-[var(--danger)]'}`}>
-              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(saldo)}
-            </div>
-            {saldoPct !== null ? (
-              <div className={`flex items-center font-medium rounded-full border px-2 py-1 text-[10px] md:text-xs whitespace-nowrap ${saldoPct >= 0 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}>
-                {saldoPct >= 0 ? '↑' : '↓'} {Math.abs(saldoPct).toFixed(1)}%
-              </div>
-            ) : (
-              <div className="text-[10px] md:text-xs font-medium opacity-50 whitespace-nowrap">Sem dados</div>
-            )}
-          </div>
-          <div className="metric-blob"></div>
-        </div>
-
       </div>
 
-      {/* Financial Health Indicator Responsivo */}
+      {/* Financial Health Indicator */}
       {(() => {
         const expenseRatio = totalEntradas > 0 ? totalSaidas / totalEntradas : 1
         const health =
           saldo < 0
-            ? { label: 'Crítica', badge: 'badge-error', icon: '🔴' }
+            ? { label: 'Crítica', className: 'bg-[var(--color-error)]/10 text-[var(--color-error)]', icon: AlertOctagon }
             : expenseRatio > 0.8
-              ? { label: 'Atenção', badge: 'badge-warning', icon: '🟡' }
-              : { label: 'Estável', badge: 'badge-success', icon: '🟢' }
+              ? { label: 'Atenção', className: 'bg-[var(--color-warning)]/10 text-[var(--color-warning)]', icon: AlertTriangle }
+              : { label: 'Estável', className: 'bg-[var(--color-success)]/10 text-[var(--color-success)]', icon: CheckCircle2 }
+        const HealthIcon = health.icon
         return (
           <div className="flex flex-wrap items-center gap-2 mt-1">
-            <span className={`badge badge-soft ${health.badge}`} style={{ fontSize: 'var(--text-xs)', padding: 'var(--space-1) var(--space-2)' }}>
-              {health.icon} <span className="hidden sm:inline">Saúde Financeira:</span> {health.label}
+            <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${health.className}`}>
+              <HealthIcon className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Saúde Financeira:</span> {health.label}
             </span>
             {totalEntradas > 0 && (
-              <span className="text-[10px] md:text-xs opacity-60">
+              <span className="text-xs text-[var(--text-muted)]">
                 Despesas são {(expenseRatio * 100).toFixed(0)}% das receitas
               </span>
             )}

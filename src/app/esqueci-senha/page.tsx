@@ -4,6 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { Mail, ArrowLeft, CheckCircle2 } from "lucide-react"
 import { enviarEmailRecuperacao } from "@/app/actions/recuperacao"
+import { Logo } from "@/components/ui/Logo"
 
 export default function EsqueciSenhaPage() {
   const [email, setEmail] = useState("")
@@ -20,28 +21,27 @@ export default function EsqueciSenhaPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[var(--bg-page)] text-[var(--text-color)] transition-colors duration-500">
-      {/* Luzes de fundo sincronizadas com o tema (Copiado do LoginForm) */}
-      <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-[var(--primary-color)] opacity-[0.07] rounded-full blur-[100px] -translate-x-1/3 -translate-y-1/3 pointer-events-none transition-colors duration-500"></div>
-      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[var(--primary-color)] opacity-[0.05] rounded-full blur-[100px] translate-x-1/3 translate-y-1/3 pointer-events-none transition-colors duration-500"></div>
-
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[var(--bg-page)] text-[var(--text-color)]">
       <div className="w-full max-w-md relative z-10">
-        {/* Cabeçalho com Logo PNG (Copiado do LoginForm) */}
+        {/* Cabeçalho com marca */}
         <div className="text-center mb-10 flex flex-col items-center">
-          <img src="/logo-c.png" alt="ChurchFep Logo" className="w-[280px] h-auto object-contain drop-shadow-[0_0_15px_var(--primary-glow)] transition-all duration-500 mb-3" />
+          <Logo className="w-14 h-14 text-[var(--primary-color)] mb-4" />
+          <span className="font-serif font-semibold text-3xl tracking-tight">
+            Church<span className="text-[var(--primary-color)]">Fep</span>
+          </span>
           <p className="text-[var(--text-muted)] mt-2">Recuperação de Acesso</p>
         </div>
 
-        {/* Formulário Principal - Fundo Sincronizado (Copiado do LoginForm) */}
-        <div className="rounded-2xl border border-[var(--border-tint)] bg-[var(--surface-tint)] p-8 mb-6 shadow-2xl backdrop-blur-md transition-colors duration-500">
+        {/* Formulário Principal */}
+        <div className="rounded-lg border border-[var(--border-tint)] bg-[var(--surface-tint)] p-8 mb-6 shadow-md">
           {enviado ? (
             <div className="text-center space-y-4 animate-[fadeIn_0.3s_ease-out]">
               <div className="w-16 h-16 bg-[var(--primary-color)]/20 text-[var(--primary-color)] rounded-full flex items-center justify-center mx-auto mb-4 border border-[var(--primary-color)]/30">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
-              <h2 className="text-white font-semibold text-lg">E-mail enviado!</h2>
+              <h2 className="text-[var(--text-color)] font-semibold text-lg">E-mail enviado!</h2>
               <p className="text-[var(--text-muted)] text-sm leading-relaxed">
-                Se existir uma conta associada a <strong className="text-white">{email}</strong>, você receberá um link de redefinição em instantes.
+                Se existir uma conta associada a <strong className="text-[var(--text-color)]">{email}</strong>, você receberá um link de redefinição em instantes.
               </p>
               <Link href="/login" className="btn-primary w-full h-12 flex items-center justify-center text-base !rounded-lg mt-6">
                 Voltar para o Login
@@ -59,7 +59,7 @@ export default function EsqueciSenhaPage() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="input-field w-full pl-10 py-3 rounded-lg text-sm bg-black/20 focus:border-[var(--primary-color)] transition-all"
+                    className="input-field w-full pl-10 text-sm"
                     placeholder="seu@email.com"
                   />
                 </div>
