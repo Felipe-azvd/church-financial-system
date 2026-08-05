@@ -75,13 +75,13 @@ export async function resolveActiveTenantId(user: { igreja_id: string | null; is
 
   const cookieStore = await cookies();
 
-  // 🔥 Super Admin em modo suporte pode olhar pelo "buraco da fechadura" usando o cookie
+  // 🔥 Super Admin em modo suporte pode olhar pelo "buraco da fechadura" usando o cookie.
+  // Tem prioridade sobre a troca de matriz/filial abaixo.
   if (user.is_superadmin) {
     const masterTenantId = cookieStore.get('master_tenant_id')?.value;
     if (masterTenantId) {
       return masterTenantId;
     }
-    return user.igreja_id;
   }
 
   // Troca entre matriz/filiais: só é respeitada se a igreja de destino

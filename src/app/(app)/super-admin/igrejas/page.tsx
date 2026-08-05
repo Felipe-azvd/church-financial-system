@@ -49,15 +49,15 @@ export default async function ManageChurchesPage() {
         </div>
 
         <div className="overflow-x-auto w-full max-md:px-4">
-          <table className="w-full text-left border-collapse block md:table md:min-w-[700px]">
+          <table className="w-full text-left border-collapse block md:table md:table-fixed md:min-w-[700px]">
             <thead className="hidden md:table-header-group">
               <tr className="border-b border-[var(--color-base-300)] text-sm font-medium text-[var(--text-muted)]">
-                <th className="py-4 pl-6 font-semibold">ID</th>
-                <th className="py-4 font-semibold">Nome da Igreja</th>
-                <th className="py-4 font-semibold">Administrador</th>
-                <th className="py-4 font-semibold">Usuários</th>
-                <th className="py-4 font-semibold">Status</th>
-                <th className="py-4 text-right pr-6 font-semibold">Ações</th>
+                <th className="py-4 pl-6 font-semibold md:w-[12%]">ID</th>
+                <th className="py-4 font-semibold md:w-[20%]">Nome da Igreja</th>
+                <th className="py-4 font-semibold md:w-[26%]">Administrador</th>
+                <th className="py-4 font-semibold md:w-[10%]">Usuários</th>
+                <th className="py-4 font-semibold md:w-[12%]">Status</th>
+                <th className="py-4 text-right pr-6 font-semibold md:w-[20%]">Ações</th>
               </tr>
             </thead>
             <tbody className="block md:table-row-group text-sm">
@@ -82,9 +82,9 @@ export default async function ManageChurchesPage() {
                     <td className="flex justify-between items-center gap-3 py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4">
                       <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs flex-shrink-0">Administrador</span>
                       {master ? (
-                        <div className="flex flex-col md:block text-right md:text-left min-w-0 break-words">
+                        <div className="flex flex-col text-right md:text-left min-w-0 max-w-[220px] break-words">
                           <span className="text-sm font-semibold">{master.nome}</span>
-                          <span className="text-xs text-[var(--text-muted)]">{master.email}</span>
+                          <span className="block text-xs text-[var(--text-muted)]">{master.email}</span>
                         </div>
                       ) : (
                         <span className="text-sm italic text-[var(--text-muted)]">Sem admin</span>
