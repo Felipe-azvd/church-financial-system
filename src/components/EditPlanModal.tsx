@@ -42,7 +42,7 @@ export default function EditPlanModal({ igrejaId, currentPlan, currentVencimento
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 text-xs px-4 py-2 rounded-[var(--radius-field)] font-semibold bg-transparent border border-[var(--color-accent)]/30 text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 transition-colors"
+        className="flex items-center justify-center gap-2 text-xs px-4 py-2 rounded-[var(--radius-field)] font-semibold bg-transparent border border-[var(--color-accent)]/30 text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 transition-colors w-full md:w-auto"
         title="Upgrade ou Editar Plano"
       >
         <ArrowUpCircle className="w-3.5 h-3.5" />

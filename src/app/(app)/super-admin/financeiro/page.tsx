@@ -122,16 +122,16 @@ export default async function FinancialSubscriptionsPage() {
                         {statusText}
                       </span>
                     </td>
-                    <td className="flex justify-between items-center py-4 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 md:text-right md:pr-6">
+                    <td className="flex flex-col gap-2 py-4 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 md:text-right md:pr-6">
                       <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Ações</span>
-                      <div className="flex items-center justify-end gap-3">
+                      <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 md:justify-end">
                         <EditPlanModal
                           igrejaId={igreja.id}
                           currentPlan={igreja.plano}
                           currentVencimento={igreja.dia_vencimento}
                         />
                         <button
-                          className="flex items-center gap-2 text-xs px-4 py-2 rounded-[var(--radius-field)] font-semibold bg-transparent border border-[var(--color-success)]/30 text-[var(--color-success)] hover:bg-[var(--color-success)]/10 transition-colors"
+                          className="flex items-center justify-center gap-2 text-xs px-4 py-2 rounded-[var(--radius-field)] font-semibold bg-transparent border border-[var(--color-success)]/30 text-[var(--color-success)] hover:bg-[var(--color-success)]/10 transition-colors w-full md:w-auto"
                           title="Marcar como Paga"
                         >
                           <Check className="w-3.5 h-3.5" />
