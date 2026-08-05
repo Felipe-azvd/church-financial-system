@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth-options"
 import { cookies } from "next/headers"
+import { cache } from "react"
 import { prisma } from "./prisma"
 import { prismaTenant } from "./prisma-tenant"
 
@@ -54,7 +55,10 @@ export async function checkPermission(arg1: any, arg2?: string) {
 
 // Duas igrejas pertencem à mesma rede se uma for a matriz da outra, ou se
 // ambas forem filiais da mesma matriz.
-export async function pertenceMesmaRede(igrejaIdA: string, igrejaIdB: string): Promise<boolean> {
+// Memoizado por requisição: essa checagem roda a cada query multi-tenant
+// (dentro do $extends do Prisma), então sem cache ela dispararia 2 consultas
+// extras ao banco por query da página inteira.
+export const pertenceMesmaRede = cache(async (igrejaIdA: string, igrejaIdB: string): Promise<boolean> => {
   if (igrejaIdA === igrejaIdB) return true
 
   const [a, b] = await Promise.all([
@@ -66,7 +70,7 @@ export async function pertenceMesmaRede(igrejaIdA: string, igrejaIdB: string): P
   const rootA = a.matriz_id ?? igrejaIdA
   const rootB = b.matriz_id ?? igrejaIdB
   return rootA === rootB
-}
+})
 
 export async function resolveActiveTenantId(user: { igreja_id: string | null; is_superadmin?: boolean }): Promise<string> {
   if (!user.igreja_id) {
