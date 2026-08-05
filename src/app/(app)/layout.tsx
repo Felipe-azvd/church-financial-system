@@ -57,7 +57,7 @@ export default async function AppLayout({
       />
 
       {/* Conteúdo Principal: Responsividade aplicada no padding */}
-      <main className="flex-1 overflow-y-auto w-full p-4 pt-24 md:p-8 md:pt-8 lg:p-10">
+      <main className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden w-full p-4 pt-24 md:p-8 md:pt-8 lg:p-10">
         <div className="w-full max-w-[1600px] mx-auto">
           {children}
         </div>

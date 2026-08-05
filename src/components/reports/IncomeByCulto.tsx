@@ -46,7 +46,7 @@ export default function IncomeByCulto({
       )}
 
       <div className="md:overflow-x-auto md:overflow-visible" style={{ maxHeight: '360px', overflowY: 'auto' }}>
-        <table className="table table-hover data-table block md:table w-full">
+        <table className="table table-hover data-table !block md:!table w-full">
           <thead className="hidden md:table-header-group">
             <tr>
               <th>Culto</th>

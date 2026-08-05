@@ -46,19 +46,23 @@ export default function IncomeByCategory({
       )}
 
       <div style={{ maxHeight: '360px', overflowY: 'auto' }}>
-        <table className="table table-hover data-table">
-          <thead>
+        <table className="table table-hover data-table !block md:!table w-full">
+          <thead className="hidden md:table-header-group">
             <tr>
               <th>Categoria</th>
-              <th style={{ textAlign: 'right' }}>Total</th>
+              <th className="text-right">Total</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="block md:table-row-group">
             {hasData && data.map((item, index) => (
-              <tr key={`${item.category}-${index}`}>
-                <td style={{ fontWeight: 500 }}>{item.category}</td>
-                <td style={{ textAlign: 'right', fontWeight: 'bold', color: 'var(--color-success)' }} className="tabular-nums">
-                  {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.total)}
+              <tr key={`${item.category}-${index}`} className="flex flex-col bg-transparent py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-row md:py-0">
+                <td className="flex justify-between items-center gap-3 py-1 md:table-cell md:py-4 font-medium">
+                  <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs flex-shrink-0">Categoria</span>
+                  <span className="truncate min-w-0 text-right md:text-left">{item.category}</span>
+                </td>
+                <td className="flex justify-between items-center gap-3 py-1 md:table-cell md:py-4 md:text-right font-bold text-[var(--color-success)] tabular-nums">
+                  <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs flex-shrink-0">Total</span>
+                  <span>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.total)}</span>
                 </td>
               </tr>
             ))}

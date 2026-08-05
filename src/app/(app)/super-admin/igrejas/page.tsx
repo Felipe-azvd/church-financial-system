@@ -75,14 +75,14 @@ export default async function ManageChurchesPage() {
                       <span className="md:hidden font-semibold text-[var(--text-muted)]">ID</span>
                       <span>{igreja.id.length < 5 ? `#${igreja.id.padStart(4, '0')}` : `#${igreja.id.slice(1, 9).toUpperCase()}`}</span>
                     </td>
-                    <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 font-semibold">
-                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Igreja</span>
-                      <span>{igreja.nome}</span>
+                    <td className="flex justify-between items-center gap-3 py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 font-semibold">
+                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs flex-shrink-0">Igreja</span>
+                      <span className="truncate min-w-0 text-right md:text-left">{igreja.nome}</span>
                     </td>
-                    <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4">
-                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Administrador</span>
+                    <td className="flex justify-between items-center gap-3 py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4">
+                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs flex-shrink-0">Administrador</span>
                       {master ? (
-                        <div className="flex flex-col md:block text-right md:text-left">
+                        <div className="flex flex-col md:block text-right md:text-left min-w-0 break-words">
                           <span className="text-sm font-semibold">{master.nome}</span>
                           <span className="text-xs text-[var(--text-muted)]">{master.email}</span>
                         </div>

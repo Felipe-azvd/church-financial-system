@@ -147,7 +147,7 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
 
       {(!isAdding && !editingUser) && (
         <div className="w-full overflow-x-auto md:overflow-visible md:rounded-[var(--radius-box)] md:border md:border-[var(--color-base-300)] max-h-[500px] overflow-y-auto">
-          <table className="table table-hover data-table w-full block md:table md:min-w-[700px]">
+          <table className="table table-hover data-table w-full !block md:!table md:min-w-[700px]">
             <thead className="hidden md:table-header-group">
               <tr>
                 <th>Nome</th>
@@ -169,17 +169,17 @@ export default function UserManager({ initialUsers, initialRoles }: { initialUse
               ) : (
                 initialUsers.map((u) => (
                   <tr key={u.id} className="flex flex-col bg-transparent py-4 border-b border-[var(--color-base-300)] last:border-b-0 md:table-row md:py-0 md:hover:bg-[var(--color-base-200)] transition-colors">
-                    <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 font-semibold">
-                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Nome</span>
-                      <span>{u.nome}</span>
+                    <td className="flex justify-between items-center gap-3 py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 font-semibold">
+                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs flex-shrink-0">Nome</span>
+                      <span className="truncate min-w-0 text-right md:text-left">{u.nome}</span>
                     </td>
-                    <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 text-[var(--text-muted)]">
-                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Email</span>
-                      <span>{u.email}</span>
+                    <td className="flex justify-between items-center gap-3 py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 text-[var(--text-muted)]">
+                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs flex-shrink-0">Email</span>
+                      <span className="truncate min-w-0 text-right md:text-left">{u.email}</span>
                     </td>
-                    <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4">
-                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Perfil</span>
-                      <span className="px-3 py-1 rounded-full text-xs font-medium border bg-[var(--primary-soft)] text-[var(--primary-color)] border-[var(--border-tint)]">
+                    <td className="flex justify-between items-center gap-3 py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4">
+                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs flex-shrink-0">Perfil</span>
+                      <span className="px-3 py-1 rounded-full text-xs font-medium border bg-[var(--primary-soft)] text-[var(--primary-color)] border-[var(--border-tint)] truncate min-w-0">
                         {u.role_nome.toUpperCase()}
                       </span>
                     </td>

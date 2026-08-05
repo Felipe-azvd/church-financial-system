@@ -56,15 +56,15 @@ export default async function AuditoriaClientesPage() {
                       <span className="md:hidden font-bold text-[var(--text-muted)] text-xs uppercase tracking-wider">Data</span>
                       <span>{format(log.criado_em, "dd/MM HH:mm", { locale: ptBR })}</span>
                     </td>
-                    <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:p-4 text-sm font-semibold">
-                      <span className="md:hidden font-bold text-[var(--text-muted)] text-xs uppercase tracking-wider">Igreja</span>
-                      <div className="flex items-center gap-2 text-[var(--color-accent)]">
-                        <Building2 size={14} /> {log.igreja.nome}
+                    <td className="flex justify-between items-center gap-3 py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:p-4 text-sm font-semibold">
+                      <span className="md:hidden font-bold text-[var(--text-muted)] text-xs uppercase tracking-wider flex-shrink-0">Igreja</span>
+                      <div className="flex items-center gap-2 text-[var(--color-accent)] min-w-0">
+                        <Building2 size={14} className="flex-shrink-0" /> <span className="truncate">{log.igreja.nome}</span>
                       </div>
                     </td>
-                    <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:p-4 text-sm text-[var(--text-muted)]">
-                      <span className="md:hidden font-bold text-[var(--text-muted)] text-xs uppercase tracking-wider">Usuário</span>
-                      <span>{log.usuario.nome}</span>
+                    <td className="flex justify-between items-center gap-3 py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:p-4 text-sm text-[var(--text-muted)]">
+                      <span className="md:hidden font-bold text-[var(--text-muted)] text-xs uppercase tracking-wider flex-shrink-0">Usuário</span>
+                      <span className="truncate min-w-0 text-right md:text-left">{log.usuario.nome}</span>
                     </td>
                     <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:p-4">
                       <span className="md:hidden font-bold text-[var(--text-muted)] text-xs uppercase tracking-wider">Ação</span>

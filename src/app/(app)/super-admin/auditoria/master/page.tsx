@@ -55,19 +55,19 @@ export default async function AuditoriaMasterPage() {
                         <span className="md:hidden font-bold text-[var(--text-muted)] text-xs uppercase tracking-wider">Data / Hora</span>
                         <span>{format(log.criado_em, "dd/MM/yy HH:mm", { locale: ptBR })}</span>
                       </td>
-                      <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:p-4">
-                        <span className="md:hidden font-bold text-[var(--text-muted)] text-xs uppercase tracking-wider">Usuário</span>
-                        <div className="flex items-center gap-2">
-                          <User size={14} className={isMasterAction ? "text-[var(--color-accent)]" : "text-[var(--text-muted)]"} />
-                          <span className={`text-sm font-medium ${isMasterAction ? "text-[var(--color-accent)]" : ""}`}>
+                      <td className="flex justify-between items-center gap-3 py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:p-4">
+                        <span className="md:hidden font-bold text-[var(--text-muted)] text-xs uppercase tracking-wider flex-shrink-0">Usuário</span>
+                        <div className="flex items-center gap-2 min-w-0">
+                          <User size={14} className={`flex-shrink-0 ${isMasterAction ? "text-[var(--color-accent)]" : "text-[var(--text-muted)]"}`} />
+                          <span className={`text-sm font-medium truncate ${isMasterAction ? "text-[var(--color-accent)]" : ""}`}>
                             {log.usuario.nome}
                           </span>
                         </div>
                       </td>
-                      <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:p-4 text-sm text-[var(--text-muted)]">
-                        <span className="md:hidden font-bold text-[var(--text-muted)] text-xs uppercase tracking-wider">Igreja</span>
-                        <div className="flex items-center gap-2">
-                          <Building2 size={14} className="opacity-60" /> {log.igreja.nome}
+                      <td className="flex justify-between items-center gap-3 py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:p-4 text-sm text-[var(--text-muted)]">
+                        <span className="md:hidden font-bold text-[var(--text-muted)] text-xs uppercase tracking-wider flex-shrink-0">Igreja</span>
+                        <div className="flex items-center gap-2 min-w-0">
+                          <Building2 size={14} className="opacity-60 flex-shrink-0" /> <span className="truncate">{log.igreja.nome}</span>
                         </div>
                       </td>
                       <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:p-4">

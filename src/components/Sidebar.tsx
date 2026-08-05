@@ -66,13 +66,13 @@ function SidebarSubmenu({
       >
         <div className="flex items-center gap-3">
           <Icon className="w-5 h-5 flex-shrink-0" />
-          {!isCollapsed && <span>{label}</span>}
+          <span className={isCollapsed ? 'md:hidden' : ''}>{label}</span>
         </div>
-        {!isCollapsed && <ChevronRight className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-90' : ''}`} />}
+        <ChevronRight className={`w-4 h-4 transition-transform ${isCollapsed ? 'md:hidden' : ''} ${isOpen ? 'rotate-90' : ''}`} />
       </button>
       <div
         className={`overflow-hidden transition-all duration-200 flex flex-col gap-1 ${
-          isOpen && !isCollapsed ? 'max-h-64 mt-1 opacity-100' : 'max-h-0 opacity-0'
+          !isOpen ? 'max-h-0 opacity-0' : isCollapsed ? 'max-h-64 mt-1 opacity-100 md:max-h-0 md:opacity-0' : 'max-h-64 mt-1 opacity-100'
         }`}
       >
         {children}
@@ -192,7 +192,7 @@ export default function Sidebar({
             return (
               <Link key={item.href} href={item.href} onClick={handleLinkClick} className={navLinkClass(isActive, isMasterArea, isCollapsed)}>
                 <Icon className="w-5 h-5 flex-shrink-0" />
-                {!isCollapsed && <span className="truncate ml-3">{item.label}</span>}
+                <span className={`truncate ml-3 ${isCollapsed ? 'md:hidden' : ''}`}>{item.label}</span>
               </Link>
             )
           })}
@@ -210,7 +210,7 @@ export default function Sidebar({
                     className={`flex items-center justify-center rounded-lg transition-colors bg-transparent text-[var(--color-accent)] border border-transparent hover:bg-[var(--color-accent)]/10 hover:border-[var(--color-accent)]/30 ${isCollapsed ? 'p-3' : 'px-5 py-2 text-sm font-medium w-full'}`}
                   >
                     <LogOut className="w-4 h-4 flex-shrink-0 rotate-180" />
-                    {!isCollapsed && <span className="ml-2.5">Encerrar Suporte</span>}
+                    <span className={`ml-2.5 ${isCollapsed ? 'md:hidden' : ''}`}>Encerrar Suporte</span>
                   </button>
                 </form>
               )}
@@ -222,14 +222,14 @@ export default function Sidebar({
                   className={`flex items-center justify-center rounded-lg transition-colors bg-transparent text-[var(--color-accent)] border border-transparent hover:bg-[var(--color-accent)]/10 hover:border-[var(--color-accent)]/30 ${isCollapsed ? 'p-3' : 'px-5 py-2 text-sm font-medium w-full'}`}
                 >
                   <Crown className="w-4 h-4 flex-shrink-0" />
-                  {!isCollapsed && <span className="ml-2.5">Painel Master</span>}
+                  <span className={`ml-2.5 ${isCollapsed ? 'md:hidden' : ''}`}>Painel Master</span>
                 </Link>
               )}
             </div>
 
             <button
               onClick={() => { setIsCollapsed(!isCollapsed); setIsConfigOpen(false); setIsAuditoriaOpen(false) }}
-              className={`p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-color)] hover:bg-[var(--color-base-200)] transition-colors flex-shrink-0 ${isCollapsed ? '' : 'ml-2'}`}
+              className={`hidden md:flex p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-color)] hover:bg-[var(--color-base-200)] transition-colors flex-shrink-0 ${isCollapsed ? '' : 'ml-2'}`}
               title={isCollapsed ? "Expandir" : "Recolher"}
             >
               <Menu className="w-5 h-5" />
@@ -238,8 +238,7 @@ export default function Sidebar({
 
           {/* PERFIL E SELETOR DE REDE */}
           <div className={`relative pt-4 border-t border-[var(--border-tint)] flex items-center ${isCollapsed ? 'md:flex-col md:gap-4 md:justify-center' : 'justify-between px-2 md:px-0'}`}>
-            {!isCollapsed && (
-              <div className="flex flex-col flex-1 min-w-0 pr-2 relative">
+            <div className={`flex flex-col flex-1 min-w-0 pr-2 relative ${isCollapsed ? 'md:hidden' : ''}`}>
                 <span className="text-sm font-semibold text-[var(--text-color)] truncate">{userName}</span>
 
                 {churchNetwork.length > 1 ? (
@@ -288,7 +287,6 @@ export default function Sidebar({
                   </span>
                 )}
               </div>
-            )}
             <button
               onClick={() => signOut({ callbackUrl: '/login' })}
               className="p-2 rounded-lg text-[var(--color-error)] hover:bg-[var(--color-error)]/10 transition-colors flex-shrink-0"

@@ -223,7 +223,7 @@ export default function RoleManager({
 
         {!isAdding && !editingRole && (
           <div className="w-full overflow-x-auto md:overflow-visible md:rounded-[var(--radius-box)] md:border md:border-[var(--color-base-300)]">
-            <table className="table table-hover data-table w-full block md:table md:min-w-[700px]">
+            <table className="table table-hover data-table w-full !block md:!table md:min-w-[700px]">
               <thead className="hidden md:table-header-group">
                 <tr>
                   <th>Função</th>
@@ -236,9 +236,9 @@ export default function RoleManager({
                   const isDefault = DEFAULT_ROLES.includes(r.nome)
                   return (
                     <tr key={r.id} className="flex flex-col bg-transparent py-4 border-b border-[var(--color-base-300)] last:border-b-0 md:table-row md:py-0 md:hover:bg-[var(--color-base-200)] transition-colors">
-                      <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 font-semibold">
-                        <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Função</span>
-                        <span>{r.nome}</span>
+                      <td className="flex justify-between items-center gap-3 py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 font-semibold">
+                        <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs flex-shrink-0">Função</span>
+                        <span className="truncate min-w-0 text-right md:text-left">{r.nome}</span>
                       </td>
                       <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 md:text-center">
                         <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Permissões</span>

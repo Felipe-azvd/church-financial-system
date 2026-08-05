@@ -134,7 +134,7 @@ export default function TransactionList({
         {/* CORREÇÃO 1: Fundo responsivo e rolagem para a tabela não estourar a tela */}
         <div className="w-full overflow-hidden max-h-[500px] overflow-y-auto md:rounded-2xl md:border md:border-[var(--border-tint)] md:bg-[var(--surface-tint)] md:shadow-sm">
           <div className="w-full overflow-x-auto md:overflow-visible">
-            <table className="table table-hover data-table w-full block md:table md:min-w-[800px]">
+            <table className="table table-hover data-table w-full !block md:!table md:min-w-[800px]">
               <thead className="hidden md:table-header-group">
                 <tr>
                   <th className="text-[var(--primary-color)]">Data</th>
@@ -169,21 +169,21 @@ export default function TransactionList({
                     const colorVar = isEntrada ? 'var(--color-success)' : 'var(--color-error)'
                     return (
                       <tr key={t.id} className="flex flex-col bg-transparent py-4 border-b border-[var(--color-base-300)] last:border-b-0 md:table-row md:py-0 md:hover:bg-[var(--color-base-200)] transition-colors">
-                        <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 whitespace-nowrap">
-                          <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Data</span>
+                        <td className="flex justify-between items-center gap-3 py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 whitespace-nowrap">
+                          <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs flex-shrink-0">Data</span>
                           <span>{new Date(t.data).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</span>
                         </td>
-                        <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 font-semibold text-right md:text-left">
-                          <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Descrição</span>
-                          <span>{t.descricao}</span>
+                        <td className="flex justify-between items-center gap-3 py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 font-semibold text-right md:text-left">
+                          <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs flex-shrink-0">Descrição</span>
+                          <span className="truncate min-w-0">{t.descricao}</span>
                         </td>
-                        <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 text-[var(--text-muted)] text-right md:text-left">
-                          <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Categoria</span>
-                          <span>{t.categoria?.nome || '-'}</span>
+                        <td className="flex justify-between items-center gap-3 py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 text-[var(--text-muted)] text-right md:text-left">
+                          <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs flex-shrink-0">Categoria</span>
+                          <span className="truncate min-w-0">{t.categoria?.nome || '-'}</span>
                         </td>
-                        <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 text-[var(--text-muted)] text-right md:text-left">
-                          <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Culto</span>
-                          <span>{t.culto?.nome || '-'}</span>
+                        <td className="flex justify-between items-center gap-3 py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 text-[var(--text-muted)] text-right md:text-left">
+                          <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs flex-shrink-0">Culto</span>
+                          <span className="truncate min-w-0">{t.culto?.nome || '-'}</span>
                         </td>
                         <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 md:text-center">
                           <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Tipo</span>

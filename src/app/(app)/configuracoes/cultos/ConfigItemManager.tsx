@@ -114,7 +114,7 @@ export default function ConfigItemManager({
 
       {(!isAdding && !editingItem) && (
         <div className="md:overflow-x-auto md:overflow-visible md:rounded-[var(--radius-box)] md:border md:border-[var(--color-base-300)]">
-          <table className="table table-hover data-table w-full block md:table">
+          <table className="table table-hover data-table w-full !block md:!table">
             <thead className="hidden md:table-header-group">
               <tr>
                 <th>{type === 'categoria' ? 'Categoria' : 'Nome'}</th>

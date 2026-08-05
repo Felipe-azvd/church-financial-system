@@ -98,9 +98,9 @@ export default async function FinancialSubscriptionsPage() {
 
                 return (
                   <tr key={igreja.id} className="flex flex-col bg-transparent py-4 border-b border-[var(--color-base-300)] last:border-b-0 md:table-row md:py-0 md:hover:bg-[var(--color-base-200)] transition-colors group">
-                    <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 md:pl-6 font-semibold">
-                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Igreja</span>
-                      <span>{igreja.nome}</span>
+                    <td className="flex justify-between items-center gap-3 py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4 md:pl-6 font-semibold">
+                      <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs flex-shrink-0">Igreja</span>
+                      <span className="truncate min-w-0 text-right md:text-left">{igreja.nome}</span>
                     </td>
                     <td className="flex justify-between items-center py-2 border-b border-[var(--color-base-300)] last:border-b-0 md:table-cell md:border-none md:py-4">
                       <span className="md:hidden font-semibold text-[var(--text-muted)] text-xs">Plano</span>
