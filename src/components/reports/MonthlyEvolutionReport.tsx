@@ -55,7 +55,7 @@ export default function MonthlyEvolutionReport({
         </div>
       )}
 
-      <div style={{ maxHeight: '360px', overflowY: 'auto' }}>
+      <div className="px-6" style={{ maxHeight: '360px', overflowY: 'auto' }}>
         <table className="table table-hover data-table !block md:!table w-full">
           <thead className="hidden md:table-header-group">
             <tr>

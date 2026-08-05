@@ -68,7 +68,7 @@ export default async function FinancialSubscriptionsPage() {
           <h2 className="text-lg font-semibold">Controle de Mensalidades</h2>
         </div>
 
-        <div className="overflow-x-auto md:overflow-visible w-full">
+        <div className="overflow-x-auto md:overflow-visible w-full max-md:px-4">
           <table className="w-full text-left border-collapse block md:table md:min-w-[700px]">
             <thead className="hidden md:table-header-group">
               <tr className="border-b border-[var(--color-base-300)] text-sm font-medium text-[var(--text-muted)]">

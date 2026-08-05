@@ -35,7 +35,7 @@ export default async function AuditoriaClientesPage() {
       </div>
 
       <div className="rounded-[var(--radius-box)] border border-[var(--color-base-300)] bg-[var(--color-base-100)] shadow-[var(--shadow-sm)] overflow-hidden">
-        <div className="overflow-x-auto md:overflow-visible">
+        <div className="overflow-x-auto md:overflow-visible max-md:px-4">
           <table className="w-full text-left border-collapse block md:table md:min-w-[800px]">
             <thead className="hidden md:table-header-group">
               <tr className="bg-[var(--color-base-200)] border-b border-[var(--color-base-300)]">
