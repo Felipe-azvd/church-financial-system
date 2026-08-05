@@ -1,6 +1,7 @@
 import Sidebar from "@/components/Sidebar"
 import { getCurrentUser, getTenantPrisma } from "@/lib/auth" // 🔥 Adicionado getTenantPrisma
 import { redirect } from "next/navigation"
+import { cookies } from "next/headers"
 
 export default async function AppLayout({
   children,
@@ -44,16 +45,19 @@ export default async function AppLayout({
 
   // Se tiver nome no banco, usa ele. Se não, mostra um aviso.
   const nomeDaIgreja = igreja?.nome || "Igreja não configurada"
+  const cookieStore = await cookies()
+  const isSupportMode = user.is_superadmin === true && !!cookieStore.get('master_tenant_id')?.value
 
   return (
     <div className="flex h-screen overflow-hidden">
-      
+
       {/* Menu Lateral Inteligente (Lida com Desktop e Mobile) */}
-      <Sidebar 
-        userPermissions={user.permissions} 
-        userName={user.name || 'Usuário'} 
-        churchName={nomeDaIgreja} 
+      <Sidebar
+        userPermissions={user.permissions}
+        userName={user.name || 'Usuário'}
+        churchName={nomeDaIgreja}
         churchNetwork={churchNetwork} // 🔥 NOVO: PASSA A REDE DE IGREJAS
+        isSupportMode={isSupportMode}
       />
 
       {/* Conteúdo Principal: Responsividade aplicada no padding */}

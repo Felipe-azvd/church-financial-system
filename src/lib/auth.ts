@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth-options"
 import { cookies } from "next/headers"
+import { prisma } from "./prisma"
 import { prismaTenant } from "./prisma-tenant"
 
 export class UnauthorizedError extends Error {}
@@ -51,23 +52,54 @@ export async function checkPermission(arg1: any, arg2?: string) {
   return user;
 }
 
-export async function getTenantPrisma() {
-  const user = await getCurrentUser()
+// Duas igrejas pertencem à mesma rede se uma for a matriz da outra, ou se
+// ambas forem filiais da mesma matriz.
+export async function pertenceMesmaRede(igrejaIdA: string, igrejaIdB: string): Promise<boolean> {
+  if (igrejaIdA === igrejaIdB) return true
 
+  const [a, b] = await Promise.all([
+    prisma.igreja.findUnique({ where: { id: igrejaIdA }, select: { matriz_id: true } }),
+    prisma.igreja.findUnique({ where: { id: igrejaIdB }, select: { matriz_id: true } }),
+  ])
+  if (!a || !b) return false
+
+  const rootA = a.matriz_id ?? igrejaIdA
+  const rootB = b.matriz_id ?? igrejaIdB
+  return rootA === rootB
+}
+
+export async function resolveActiveTenantId(user: { igreja_id: string | null; is_superadmin?: boolean }): Promise<string> {
   if (!user.igreja_id) {
     throw new Error("Tenant não encontrado")
   }
 
-  let tenantId = user.igreja_id;
+  const cookieStore = await cookies();
 
-  // 🔥 AJUSTE AQUI: Se for Super Admin, ele pode olhar pelo "buraco da fechadura" usando o cookie
+  // 🔥 Super Admin em modo suporte pode olhar pelo "buraco da fechadura" usando o cookie
   if (user.is_superadmin) {
-    const cookieStore = await cookies();
     const masterTenantId = cookieStore.get('master_tenant_id')?.value;
     if (masterTenantId) {
-      tenantId = masterTenantId;
+      return masterTenantId;
+    }
+    return user.igreja_id;
+  }
+
+  // Troca entre matriz/filiais: só é respeitada se a igreja de destino
+  // pertencer à mesma rede da igreja original do usuário.
+  const activeIgrejaId = cookieStore.get('igreja_id')?.value;
+  if (activeIgrejaId && activeIgrejaId !== user.igreja_id) {
+    const pertence = await pertenceMesmaRede(user.igreja_id, activeIgrejaId);
+    if (pertence) {
+      return activeIgrejaId;
     }
   }
+
+  return user.igreja_id;
+}
+
+export async function getTenantPrisma() {
+  const user = await getCurrentUser()
+  const tenantId = await resolveActiveTenantId(user)
 
   return {
     db: prismaTenant,

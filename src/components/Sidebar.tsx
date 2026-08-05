@@ -85,12 +85,14 @@ export default function Sidebar({
   userPermissions = [],
   userName = '',
   churchName = 'Sua Igreja',
-  churchNetwork = []
+  churchNetwork = [],
+  isSupportMode = false
 }: {
   userPermissions?: string[],
   userName?: string,
   churchName?: string,
-  churchNetwork?: { id: string, nome: string, isMatriz: boolean }[]
+  churchNetwork?: { id: string, nome: string, isMatriz: boolean }[],
+  isSupportMode?: boolean
 }) {
   const pathname = usePathname()
   const isMasterArea = pathname.startsWith('/super-admin')
@@ -202,8 +204,8 @@ export default function Sidebar({
         <div className="mt-auto flex flex-col gap-2">
           <div className={`flex items-center ${isCollapsed ? 'flex-col gap-2' : 'flex-row justify-between'}`}>
             <div className={isCollapsed ? '' : 'flex-1'}>
-              {userPermissions[0] === '*' && churchName !== 'Ministério Sol da Justiça' && !isMasterArea && (
-                <form action={sairModoSuporte} className="w-full">
+              {userPermissions[0] === '*' && isSupportMode && !isMasterArea && (
+                <form action={sairModoSuporte} className="w-full" onSubmit={handleLinkClick}>
                   <button
                     type="submit"
                     title={isCollapsed ? "Encerrar Suporte" : undefined}
@@ -215,9 +217,10 @@ export default function Sidebar({
                 </form>
               )}
 
-              {userPermissions[0] === '*' && churchName === 'Ministério Sol da Justiça' && !isMasterArea && (
+              {userPermissions[0] === '*' && !isSupportMode && !isMasterArea && (
                 <Link
                   href="/super-admin"
+                  onClick={handleLinkClick}
                   title={isCollapsed ? "Painel Master" : undefined}
                   className={`flex items-center justify-center rounded-lg transition-colors bg-transparent text-[var(--color-accent)] border border-transparent hover:bg-[var(--color-accent)]/10 hover:border-[var(--color-accent)]/30 ${isCollapsed ? 'p-3' : 'px-5 py-2 text-sm font-medium w-full'}`}
                 >

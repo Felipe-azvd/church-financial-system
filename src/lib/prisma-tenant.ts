@@ -1,6 +1,5 @@
 import { prisma } from './prisma'
-import { getSessionUser } from './auth'
-import { cookies } from 'next/headers'
+import { getSessionUser, resolveActiveTenantId } from './auth'
 
 const tenantModels = ['Usuario', 'Role', 'Culto', 'Categoria', 'Transacao']
 
@@ -21,16 +20,7 @@ export const prismaTenant = prisma.$extends({
             throw new Error("Tenant context not found")
           }
 
-          let tenantId = sessionUser.igreja_id
-
-          // Super admin em modo suporte: respeita o mesmo cookie usado por getTenantPrisma()
-          if (sessionUser.is_superadmin) {
-            const cookieStore = await cookies()
-            const masterTenantId = cookieStore.get('master_tenant_id')?.value
-            if (masterTenantId) {
-              tenantId = masterTenantId
-            }
-          }
+          const tenantId = await resolveActiveTenantId(sessionUser)
 
           // Block unsafe operations that rely solely on unique IDs without tenant bounds
           const unsafeOperations = ['findUnique', 'findUniqueOrThrow', 'update', 'delete']

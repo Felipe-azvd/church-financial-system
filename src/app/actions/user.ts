@@ -1,7 +1,7 @@
 'use server'
 
 import { registrarLog } from "@/lib/logger"
-import { getTenantPrisma } from "@/lib/auth"
+import { getTenantPrisma, getCurrentUser, pertenceMesmaRede } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
 import bcrypt from 'bcryptjs'
 import { cookies } from "next/headers"
@@ -119,8 +119,21 @@ export async function deleteUser(id: string) {
 }
 
 export async function alternarIgrejaAtiva(novaIgrejaId: string) {
+  const user = await getCurrentUser()
+
+  if (!user.igreja_id) {
+    return { success: false, error: 'Sessão inválida.' }
+  }
+
+  if (novaIgrejaId !== user.igreja_id) {
+    const pertence = await pertenceMesmaRede(user.igreja_id, novaIgrejaId)
+    if (!pertence) {
+      return { success: false, error: 'Esta igreja não pertence à sua rede.' }
+    }
+  }
+
   const cookieStore = await cookies()
   cookieStore.set('igreja_id', novaIgrejaId, { path: '/' })
-  
+
   return { success: true }
 }
