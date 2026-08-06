@@ -1,7 +1,7 @@
 'use server'
 
 import { registrarLog } from "@/lib/logger"
-import { getTenantPrisma, getCurrentUser, pertenceMesmaRede } from "@/lib/auth"
+import { getTenantPrisma, getCurrentUser } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
 import bcrypt from 'bcryptjs'
 import { cookies } from "next/headers"
@@ -125,13 +125,11 @@ export async function alternarIgrejaAtiva(novaIgrejaId: string) {
     return { success: false, error: 'Sessão inválida.' }
   }
 
-  if (novaIgrejaId !== user.igreja_id) {
-    const pertence = await pertenceMesmaRede(user.igreja_id, novaIgrejaId)
-    if (!pertence) {
-      return { success: false, error: 'Esta igreja não pertence à sua rede.' }
-    }
-  }
-
+  // A validação de pertencimento à rede acontece em resolveActiveTenantId()
+  // no momento da leitura (renderização/queries), que é a fonte única de
+  // verdade — um cookie adulterado nunca chega a valer nada lá. Não repetir
+  // essa checagem aqui evita uma consulta ao banco redundante nesta Server
+  // Action a cada troca de matriz/filial.
   const cookieStore = await cookies()
   cookieStore.set('igreja_id', novaIgrejaId, { path: '/' })
 
