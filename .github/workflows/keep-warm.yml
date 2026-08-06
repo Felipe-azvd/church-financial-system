@@ -1,0 +1,13 @@
+name: Manter banco de dados ativo
+
+on:
+  schedule:
+    - cron: '*/5 * * * *' # menor intervalo suportado pelo GitHub Actions; execução não é garantida no segundo exato
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping /api/health
+        run: curl -sf https://churchfep.netlify.app/api/health
