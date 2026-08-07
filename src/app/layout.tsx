@@ -1,8 +1,9 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, Newsreader } from 'next/font/google';
 import './globals.css';
 import ThemeProvider from '@/components/ThemeProvider';
 import { ToastProvider } from '@/components/ui/Toast';
+import ServiceWorkerRegister from '@/components/ServiceWorkerRegister';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const newsreader = Newsreader({
@@ -16,9 +17,20 @@ const newsreader = Newsreader({
 export const metadata: Metadata = {
   title: 'ChurchFep | Inovação com propósito',
   description: 'Gestão inteligente para igrejas modernas',
+  manifest: '/manifest.webmanifest',
   icons: {
     icon: '/favicon.ico',
+    apple: '/icons/apple-touch-icon.png',
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'ChurchFep',
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#1B3A5C',
 };
 
 export default function RootLayout({
@@ -29,6 +41,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" suppressHydrationWarning className={`${newsreader.variable} ${inter.variable}`}>
       <body className="font-sans">
+        <ServiceWorkerRegister />
         <ThemeProvider>
           <ToastProvider>
             <div className="min-h-screen bg-[var(--bg-page)] text-[var(--text-color)]">
