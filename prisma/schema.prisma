@@ -155,3 +155,16 @@ model LogAuditoria {
 
   @@map("logs_auditoria")
 }
+
+// Changelog técnico de uso exclusivo do super admin — diferente do changelog
+// do cliente (que é curado/simplificado), registra toda alteração feita no
+// sistema, sem vínculo com nenhuma igreja específica.
+model ChangelogInterno {
+  id        String   @id @default(cuid())
+  categoria String // "Feature" | "Correção" | "Segurança" | "Infraestrutura" | "Design"
+  titulo    String
+  descricao String
+  criado_em DateTime @default(now())
+
+  @@map("changelog_interno")
+}

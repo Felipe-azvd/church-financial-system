@@ -8,6 +8,7 @@ import {
   LayoutDashboard, ReceiptText, PieChart, Settings, Users,
   LogOut, Key, Menu, ChevronRight, Crown,
   Building2, History, CreditCard, ShieldCheck, ChevronsUpDown, Star,
+  BookOpen,
   type LucideIcon
 } from 'lucide-react'
 import { signOut } from 'next-auth/react'
@@ -28,6 +29,7 @@ const navItemsMaster = [
   { href: '/super-admin/igrejas', label: 'Gerenciar Igrejas', icon: Building2 },
   { href: '/super-admin/auditoria', label: 'Auditoria', icon: History },
   { href: '/super-admin/financeiro', label: 'Assinaturas', icon: CreditCard },
+  { href: '/super-admin/sistema', label: 'Sistema', icon: BookOpen },
 ]
 
 const navLinkClass = (isActive: boolean, isMaster: boolean, isCollapsed: boolean) => {
@@ -99,6 +101,7 @@ export default function Sidebar({
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isConfigOpen, setIsConfigOpen] = useState(false)
   const [isAuditoriaOpen, setIsAuditoriaOpen] = useState(false)
+  const [isSistemaOpen, setIsSistemaOpen] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
   const [isNetworkOpen, setIsNetworkOpen] = useState(false)
 
@@ -187,6 +190,24 @@ export default function Sidebar({
                 >
                   <Link href="/super-admin/auditoria/clientes" onClick={handleLinkClick} className={subLinkClass(pathname.includes('/auditoria/clientes'))}>Auditoria Clientes</Link>
                   <Link href="/super-admin/auditoria/master" onClick={handleLinkClick} className={subLinkClass(pathname.includes('/auditoria/master') || pathname === '/super-admin/auditoria')}>Auditoria Super Admin</Link>
+                </SidebarSubmenu>
+              )
+            }
+
+            if (item.label === 'Sistema') {
+              return (
+                <SidebarSubmenu
+                  key={item.href}
+                  icon={Icon}
+                  label={item.label}
+                  isSectionActive={pathname.startsWith('/super-admin/sistema')}
+                  isCollapsed={isCollapsed}
+                  isOpen={isSistemaOpen}
+                  isMaster
+                  onToggle={() => { if (isCollapsed) setIsCollapsed(false); setIsSistemaOpen(!isSistemaOpen) }}
+                >
+                  <Link href="/super-admin/sistema/documentacao" onClick={handleLinkClick} className={subLinkClass(pathname.includes('/sistema/documentacao'))}>Documentação</Link>
+                  <Link href="/super-admin/sistema/changelog" onClick={handleLinkClick} className={subLinkClass(pathname.includes('/sistema/changelog'))}>Changelog Interno</Link>
                 </SidebarSubmenu>
               )
             }

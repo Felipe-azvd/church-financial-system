@@ -9,6 +9,18 @@ type VersionEntry = { version: string; date: string; changes: ChangeItem[]; fixe
 
 const VERSIONS: VersionEntry[] = [
   {
+    version: 'Versão 2.1.0',
+    date: '7 de Agosto de 2026',
+    changes: [
+      { tag: 'Alterado', text: <>O ChurchFep agora pode ser <strong>instalado como aplicativo</strong> em celulares Android — abra o site pelo Chrome e escolha "Instalar app" no menu para ter um ícone próprio na tela inicial, em tela cheia.</> },
+      { tag: 'Alterado', text: 'Ajustes de responsividade em telas menores: menu lateral, tabelas e botões de ação agora se adaptam corretamente a qualquer tamanho de celular.' },
+    ],
+    fixes: [
+      { tag: 'Corrigido', text: 'Troca entre matriz e filiais, que em alguns casos não atualizava os dados exibidos.' },
+      { tag: 'Corrigido', text: 'Estabilidade geral de carregamento em períodos de baixo uso do sistema.' },
+    ],
+  },
+  {
     version: 'Versão 2.0.0',
     date: '3 de Agosto de 2026',
     changes: [
